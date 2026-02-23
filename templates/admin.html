@@ -1,0 +1,2405 @@
+<!DOCTYPE html>
+<html lang="tg" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Панели идоракунии системаи идоракунии донишгоҳ">
+    <title>Панели Админ | Системаи идоракунии донишгоҳ</title>
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b1120;
+            --bg-secondary: #0d1929;
+            --bg-card: #131e2e;
+            --border-color: #1e2d40;
+            --border-color-light: #253347;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #1a56db;
+            --accent-blue-light: #3b82f6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --sidebar-width: 260px;
+            --transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.25);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.45);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: var(--sidebar-width);
+            min-height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .sidebar-logo {
+            padding: 1.5rem 1.5rem 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(135deg, var(--accent-blue), #2563eb);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(26, 86, 219, 0.35);
+        }
+
+        .logo-icon img {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        .logo-text {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.25rem;
+            background: linear-gradient(to right, var(--accent-blue-light), var(--accent-purple));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.1;
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .user-profile {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(19, 30, 46, 0.7);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.5rem 0;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-red), #dc2626);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: white;
+            flex-shrink: 0;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role-badge {
+            display: inline-block;
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            font-size: 0.7rem;
+            font-weight: 600;
+            padding: 0.15rem 0.5rem;
+            border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            margin-top: 0.25rem;
+            letter-spacing: 0.3px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 0.75rem 0;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color-light) transparent;
+        }
+
+        .nav-menu::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .nav-menu::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .nav-menu::-webkit-scrollbar-thumb {
+            background-color: var(--border-color-light);
+            border-radius: 3px;
+        }
+
+        .nav-section {
+            padding: 0.75rem 1.5rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            padding: 0.875rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.925rem;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(26, 86, 219, 0.15);
+            color: var(--accent-blue-light);
+            border-left-color: var(--accent-blue-light);
+        }
+
+        .nav-item.active::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent-blue-light);
+        }
+
+        .nav-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-icon svg {
+            width: 16px;
+            height: 16px;
+            fill: currentColor;
+        }
+
+        .sidebar-footer {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(19, 30, 46, 0.8);
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--accent-red);
+            font-weight: 500;
+            font-size: 0.9rem;
+            text-decoration: none;
+            padding: 0.625rem 0;
+            transition: var(--transition);
+            width: 100%;
+            border-radius: var(--radius-sm);
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fecaca;
+        }
+
+        .logout-btn svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        .top-bar {
+            height: 64px;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.75rem;
+            position: sticky;
+            top: 0;
+            z-index: 900;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .page-title-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
+            font-size: 1.375rem;
+            background: linear-gradient(to right, var(--text-primary), var(--accent-blue-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .page-badge {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            letter-spacing: 0.5px;
+        }
+
+        .content-container {
+            padding: 1.75rem;
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color-light) transparent;
+        }
+
+        .content-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .content-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .content-container::-webkit-scrollbar-thumb {
+            background-color: var(--border-color-light);
+            border-radius: 3px;
+        }
+
+        /* PAGE SYSTEM */
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* STAT CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-light));
+        }
+
+        .stat-card.deans::before { background: linear-gradient(90deg, var(--accent-purple), #a78bfa); }
+        .stat-card.curators::before { background: linear-gradient(90deg, var(--accent-orange), #fbbf24); }
+        .stat-card.admins::before { background: linear-gradient(90deg, var(--accent-green), #34d399); }
+        .stat-card.students::before { background: linear-gradient(90deg, var(--accent-red), #f87171); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+        }
+
+        .stat-icon-container {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .stat-card .stat-icon-container {
+            background: rgba(26, 86, 219, 0.15);
+        }
+        .stat-card.deans .stat-icon-container { background: rgba(139, 92, 246, 0.15); }
+        .stat-card.curators .stat-icon-container { background: rgba(245, 158, 11, 0.15); }
+        .stat-card.admins .stat-icon-container { background: rgba(16, 185, 129, 0.15); }
+        .stat-card.students .stat-icon-container { background: rgba(239, 68, 68, 0.15); }
+
+        .stat-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+
+        .stat-card .stat-icon { color: var(--accent-blue-light); }
+        .stat-card.deans .stat-icon { color: var(--accent-purple); }
+        .stat-card.curators .stat-icon { color: var(--accent-orange); }
+        .stat-card.admins .stat-icon { color: var(--accent-green); }
+        .stat-card.students .stat-icon { color: var(--accent-red); }
+
+        .stat-value {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.25rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.25rem;
+            background: linear-gradient(to right, var(--text-primary), #cbd5e1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.12);
+            box-shadow: var(--shadow-md);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.875rem;
+            border-bottom: 1px solid var(--border-color-light);
+        }
+
+        .card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+        }
+
+        .card-title svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--accent-blue-light);
+            flex-shrink: 0;
+        }
+
+        /* FORM STYLES */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1.5px solid var(--border-color-light);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-blue-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .form-control::placeholder {
+            color: #475569;
+        }
+
+        .form-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 16px;
+        }
+
+        .form-note {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: #fde68a;
+            font-size: 0.85rem;
+            padding: 0.875rem;
+            border-radius: var(--radius-sm);
+            margin: 1rem 0;
+            line-height: 1.5;
+        }
+
+        .form-note strong {
+            color: #fbbf24;
+        }
+
+        /* BUTTONS */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.625rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: var(--radius-sm);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 0.925rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), #1e40af);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #1e40af, #1d4ed8);
+            box-shadow: 0 4px 15px rgba(26, 86, 219, 0.4);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+            border-color: rgba(239, 68, 68, 0.45);
+        }
+
+        .btn-warning {
+            background: rgba(245, 158, 11, 0.15);
+            color: #fde68a;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: rgba(245, 158, 11, 0.25);
+            border-color: rgba(245, 158, 11, 0.45);
+        }
+
+        .btn-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            background: rgba(16, 185, 129, 0.25);
+            border-color: rgba(16, 185, 129, 0.45);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 0.875rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+        }
+
+        /* TABLE STYLES */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color-light);
+            background: rgba(19, 30, 46, 0.6);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        thead {
+            background: rgba(30, 45, 64, 0.9);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        th {
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border-color-light);
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 50px;
+            font-size: 0.825rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .role-badge.admin {
+            background: rgba(239, 68, 68, 0.18);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .role-badge.dean {
+            background: rgba(26, 86, 219, 0.18);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .role-badge.vice_dean {
+            background: rgba(139, 92, 246, 0.18);
+            color: #c4b5fd;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .role-badge.curator {
+            background: rgba(16, 185, 129, 0.18);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* EMPTY STATE */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.25rem;
+            opacity: 0.4;
+            color: var(--accent-blue-light);
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-message {
+            font-size: 0.95rem;
+            max-width: 400px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* LOADING STATE */
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-color-light);
+            border-top-color: var(--accent-blue-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* SEARCH BAR */
+        .search-container {
+            max-width: 500px;
+            margin-bottom: 1.5rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            padding-left: 2.75rem;
+            background: rgba(15, 23, 42, 0.85);
+            border: 1.5px solid var(--border-color-light);
+            border-radius: 50px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue-light);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 18px;
+            height: 18px;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        /* TOAST NOTIFICATIONS */
+        .toast-container {
+            position: fixed;
+            bottom: 1.75rem;
+            right: 1.75rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-width: 360px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color-light);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.25rem;
+            color: var(--text-primary);
+            font-size: 0.925rem;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+            transform: translateX(400px);
+            opacity: 0;
+            transition: var(--transition);
+            animation: slideIn 0.3s forwards, fadeOut 0.3s 2.7s forwards;
+        }
+
+        @keyframes slideIn {
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes fadeOut {
+            to { opacity: 0; transform: translateX(100px); }
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .toast-success .toast-icon {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-green);
+        }
+
+        .toast-error .toast-icon {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--accent-red);
+        }
+
+        .toast-warning .toast-icon {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-orange);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 0.125rem;
+        }
+
+        .toast-message {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toast-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 992px) {
+            :root {
+                --sidebar-width: 240px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            :root {
+                --sidebar-width: 72px;
+            }
+            
+            .sidebar-logo {
+                padding: 1.25rem;
+                justify-content: center;
+            }
+            
+            .logo-text, .logo-subtitle, .user-name, .user-role-badge, 
+            .nav-section, .nav-text, .sidebar-footer span {
+                display: none;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            
+            .nav-item {
+                justify-content: center;
+                padding: 0.875rem;
+            }
+            
+            .nav-icon {
+                margin: 0;
+            }
+            
+            .top-bar {
+                padding: 0 1.25rem;
+            }
+            
+            .content-container {
+                padding: 1.25rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .toast-container {
+                bottom: 1rem;
+                right: 1rem;
+                left: 1rem;
+                align-items: center;
+            }
+            
+            .toast {
+                width: 100%;
+                max-width: none;
+            }
+        }
+
+        /* ACCESSIBILITY */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+
+        /* PRINT STYLES */
+        @media print {
+            .sidebar, .top-bar, .action-buttons {
+                display: none !important;
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .content-container {
+                padding: 1rem !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            
+            .card, .stat-card {
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <a href="/" class="logo-container">
+                <div class="logo-icon">
+                    {% if logo_url %}
+                        <img src="{{ logo_url }}" alt="Логотип">
+                    {% else %}
+                        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    {% endif %}
+                </div>
+                <div>
+                    <div class="logo-text">Мех-мат</div>
+                    <div class="logo-subtitle">Системаи идоракунӣ</div>
+                </div>
+            </a>
+        </div>
+
+        <div class="user-profile">
+            <div class="user-info">
+                <div class="user-avatar">
+                    {{ user.full_name[0] if user.full_name else 'А' }}
+                </div>
+                <div class="user-details">
+                    <div class="user-name">{{ user.full_name or 'Администратор' }}</div>
+                    <span class="user-role-badge">Администратор</span>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-section">Асосӣ</div>
+            <div class="nav-item active" data-page="dashboard">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Дашборд</span>
+            </div>
+            <div class="nav-item" data-page="users">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Корбарон</span>
+            </div>
+            <div class="nav-item" data-page="create-user">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Корбари нав</span>
+            </div>
+            <div class="nav-item" data-page="students">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Донишҷӯён</span>
+            </div>
+            <div class="nav-item" data-page="faculties">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Факултетҳо</span>
+            </div>
+            <div class="nav-item" data-page="audit-logs">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Сабтҳои аудит</span>
+            </div>
+
+            <div class="nav-section">Ҳисоб</div>
+            <div class="nav-item" data-page="profile">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Профил</span>
+            </div>
+            <a href="/logout" class="nav-item logout-btn">
+                <div class="nav-icon">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"></path>
+                    </svg>
+                </div>
+                <span class="nav-text">Баромадан</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div style="text-align: center; padding: 0.75rem 0; color: var(--text-muted); font-size: 0.825rem;">
+                <div>© {{ current_year }} Донишгоҳи миллии Тоҷикистон</div>
+                <div style="margin-top: 0.25rem; font-size: 0.75rem; opacity: 0.7;">Версия 2.1.0</div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <header class="top-bar">
+            <div class="page-title-container">
+                <h1 class="page-title" id="current-page-title">Дашборди Администратор</h1>
+                <span class="page-badge">Админ</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <div style="font-size: 0.875rem; color: var(--text-secondary);">
+                    <span id="current-time">{{ now.strftime('%H:%M') }}</span> | 
+                    <span id="current-date">{{ now.strftime('%d.%m.%Y') }}</span>
+                </div>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(59, 130, 246, 0.15); display: flex; align-items: center; justify-content: center; color: var(--accent-blue-light); font-weight: 600;">
+                    {{ user.full_name[0] if user.full_name else 'А' }}
+                </div>
+            </div>
+        </header>
+
+        <div class="content-container">
+            <!-- DASHBOARD PAGE -->
+            <section class="page active" id="page-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon-container">
+                                <svg class="stat-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-value" id="stat-total-users">—</div>
+                        </div>
+                        <div class="stat-label">Ҳамаи корбарон</div>
+                    </div>
+                    
+                    <div class="stat-card deans">
+                        <div class="stat-header">
+                            <div class="stat-icon-container">
+                                <svg class="stat-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-value" id="stat-deans">—</div>
+                        </div>
+                        <div class="stat-label">Деканон ва муовинҳо</div>
+                    </div>
+                    
+                    <div class="stat-card curators">
+                        <div class="stat-header">
+                            <div class="stat-icon-container">
+                                <svg class="stat-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-value" id="stat-curators">—</div>
+                        </div>
+                        <div class="stat-label">Кураторон</div>
+                    </div>
+                    
+                    <div class="stat-card students">
+                        <div class="stat-header">
+                            <div class="stat-icon-container">
+                                <svg class="stat-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <div class="stat-value" id="stat-students">—</div>
+                        </div>
+                        <div class="stat-label">Ҳамаи донишҷӯён</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            Фаъолиятҳои охирин
+                        </h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Вақт</th>
+                                    <th>Корбар</th>
+                                    <th>Амал</th>
+                                    <th>Мақсад</th>
+                                    <th>Натиҷа</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-logs-table">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="loading-container">
+                                            <div class="spinner"></div>
+                                            <div class="loading-text">Боркунӣ...</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- USERS PAGE -->
+            <section class="page" id="page-users">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"></path>
+                            </svg>
+                            Рӯйхати корбарон
+                        </h2>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-wrapper">
+                            <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                            </svg>
+                            <input type="text" id="user-search" class="search-input" placeholder="Ҷустуҷӯи корбар (нам, нақш, факултет)..." aria-label="Ҷустуҷӯи корбар">
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Номи пурра</th>
+                                    <th>Номи корбарӣ</th>
+                                    <th>Нақш</th>
+                                    <th>Факултет</th>
+                                    <th>Санаи эҷод</th>
+                                    <th>Амалиётҳо</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="loading-container">
+                                            <div class="spinner"></div>
+                                            <div class="loading-text">Боркунӣ...</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CREATE USER PAGE -->
+            <section class="page" id="page-create-user">
+                <div class="card" style="max-width: 650px;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Эҷоди корбари нав
+                        </h2>
+                    </div>
+                    <form id="create-user-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="full_name" class="form-label">Номи пурра</label>
+                                <input type="text" id="full_name" name="full_name" class="form-control" placeholder="Масалан: Алиев Аҳмад" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="username" class="form-label">Номи корбарӣ</label>
+                                <input type="text" id="username" name="username" class="form-control" placeholder="Масалан: ahmed_ali" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email" class="form-label">Почтаи электронӣ</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="ahmed@example.tj">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone" class="form-label">Рақами телефон</label>
+                                <input type="tel" id="phone" name="phone" class="form-control" placeholder="+992 90 123 45 67">
+                            </div>
+                            <div class="form-group">
+                                <label for="role" class="form-label">Нақш</label>
+                                <select id="role" name="role" class="form-control form-select" required>
+                                    <option value="">-- Интихоб кунед --</option>
+                                    <option value="dean">Декан</option>
+                                    <option value="vice_dean">Муовини декан</option>
+                                    <option value="curator">Куратор</option>
+                                </select>
+                            </div>
+                            <div class="form-group" id="faculty-field">
+                                <label for="faculty_id" class="form-label">Факултет</label>
+                                <select id="faculty_id" name="faculty_id" class="form-control form-select" required>
+                                    <option value="">-- Интихоб кунед --</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="form-note">
+                            💡 Пароли аввалӣ: <strong>020304</strong>. Корбар бори аввал ворид шуда, паролро иваз мекунад.
+                        </div>
+                        
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary btn-full">
+                                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                Эҷод кардан
+                            </button>
+                            <button type="button" class="btn btn-warning btn-full" id="reset-form-btn">
+                                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                                </svg>
+                                Тоза кардан
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- STUDENTS PAGE -->
+            <section class="page" id="page-students">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            Ҷустуҷӯи донишҷӯён
+                        </h2>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-wrapper">
+                            <svg class="search-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                            </svg>
+                            <input type="text" id="student-search" class="search-input" placeholder="Ҷустуҷӯи донишҷӯ (нам, рақами гурӯҳ, ҷойи таваллуд)..." aria-label="Ҷустуҷӯи донишҷӯ">
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Номи пурра</th>
+                                    <th>Рақами донишҷӯӣ</th>
+                                    <th>Гурӯҳ</th>
+                                    <th>Курс</th>
+                                    <th>НБ</th>
+                                    <th>Амалиёт</th>
+                                </tr>
+                            </thead>
+                            <tbody id="students-table-body">
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="empty-state">
+                                            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                            </svg>
+                                            <div class="empty-title">Ҷустуҷӯ кунед</div>
+                                            <div class="empty-message">Барои намоиш додани донишҷӯён, калидвораҳоро дар майдони ҷустуҷӯ ворид кунед</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FACULTIES PAGE -->
+            <section class="page" id="page-faculties">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732l-3.354 1.935-1.18 4.455a1 1 0 01-1.933 0L9.854 12.8 6.5 10.866a1 1 0 010-1.732l3.354-1.935 1.18-4.455A1 1 0 0112 2z" clip-rule="evenodd"></path>
+                            </svg>
+                            Факултетҳо
+                        </h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Ном</th>
+                                    <th>Код</th>
+                                    <th>Корбарон</th>
+                                    <th>Гурӯҳҳо</th>
+                                    <th>Донишҷӯён</th>
+                                    <th>Санаи эҷод</th>
+                                </tr>
+                            </thead>
+                            <tbody id="faculties-table-body">
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="loading-container">
+                                            <div class="spinner"></div>
+                                            <div class="loading-text">Боркунӣ...</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Дар саҳифаи факултетҳо (page-faculties) -->
+<!-- Дар дохили section#page-faculties -->
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Эҷоди факултети нав</h2>
+    </div>
+    <!-- Илова кардани id="create-faculty-form" ва нест кардани action/method -->
+    <form id="create-faculty-form">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Номи факултет</label>
+                <input type="text" name="name" required placeholder="Масалан: Механика ва математика">
+            </div>
+            <div class="form-group">
+                <label>Коди факултет</label>
+                <input type="text" name="code" required placeholder="Масалан: МЕХМАТ" maxlength="10">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Эҷод кардан</button>
+    </form>
+</div>
+            </section>
+
+            <!-- AUDIT LOGS PAGE -->
+            <section class="page" id="page-audit-logs">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                            </svg>
+                            Сабтҳои аудит
+                        </h2>
+                    </div>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Вақт</th>
+                                    <th>Корбар</th>
+                                    <th>Амал</th>
+                                    <th>Ҷадвал</th>
+                                    <th>ID-и ҳадф</th>
+                                </tr>
+                            </thead>
+                            <tbody id="audit-logs-body">
+                                <tr>
+                                    <td colspan="5">
+                                        <div class="loading-container">
+                                            <div class="spinner"></div>
+                                            <div class="loading-text">Боркунӣ...</div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROFILE PAGE -->
+            <section class="page" id="page-profile">
+                <div class="card" style="max-width: 650px;">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <svg viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"></path>
+                            </svg>
+                            Профили шахсӣ
+                        </h2>
+                    </div>
+                    <div style="display: flex; gap: 1.5rem; margin-bottom: 1.5rem;">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 700; color: white; flex-shrink: 0;">
+                            {{ user.full_name[0] if user.full_name else 'А' }}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.25rem;">{{ user.full_name or 'Администратор' }}</div>
+                            <div style="color: var(--accent-blue-light); font-weight: 500; margin-bottom: 0.5rem;">{{ user.email }}</div>
+                            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                                <span class="role-badge admin">Администратор</span>
+                                <span style="background: rgba(59, 130, 246, 0.15); color: var(--accent-blue-light); padding: 0.25rem 0.75rem; border-radius: 50px; font-size: 0.85rem; font-weight: 500;">ID: {{ user.id }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Номи пурра</label>
+                            <div class="form-control" style="background: rgba(30, 45, 64, 0.7);">{{ user.full_name or '—' }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Номи корбарӣ</label>
+                            <div class="form-control" style="background: rgba(30, 45, 64, 0.7); font-family: monospace;">@{{ user.username or 'admin' }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Почтаи электронӣ</label>
+                            <div class="form-control" style="background: rgba(30, 45, 64, 0.7);">{{ user.email or '—' }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Рақами телефон</label>
+                            <div class="form-control" style="background: rgba(30, 45, 64, 0.7);">{{ user.phone or '—' }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Санаи эҷод</label>
+                            <div class="form-control" style="background: rgba(30, 45, 64, 0.7);">{{ user.created_at.strftime('%d.%m.%Y') if user.created_at else '—' }}</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Охирин фаъолият</label>
+                            <div class="form-control" style="background: rgba(30, 45, 64, 0.7);">{{ user.updated_at.strftime('%d.%m.%Y %H:%M') if user.updated_at else '—' }}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border-color-light);">
+                        <a href="/change-password" class="btn btn-warning">
+                            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                            </svg>
+                            Тағйир додани парол
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- TOAST CONTAINER -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    
+    <script>
+        // ======================
+        // GLOBAL VARIABLES
+        // ======================
+        const API_BASE = '/admin/api';
+        let faculties = [];
+        
+        // ======================
+        // INITIALIZATION
+        // ======================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Setup navigation
+            document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const pageId = item.getAttribute('data-page');
+                    showPage(pageId);
+                });
+            });
+            
+            // Setup forms
+            setupCreateUserForm();
+            setupCreateFacultyForm();
+            
+            // Load initial data
+            loadDashboardStats();
+            loadAuditLogs();
+            loadFacultiesForSelect();
+            
+            // Setup search handlers
+            setupSearchHandlers();
+            
+            // Update time
+            updateTime();
+            setInterval(updateTime, 60000);
+            
+            // Show success/error messages from URL params
+            showUrlMessages();
+        });
+        
+        // ======================
+        // PAGE NAVIGATION
+        // ======================
+        function showPage(pageId) {
+            // Update active nav item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            document.querySelector(`.nav-item[data-page="${pageId}"]`).classList.add('active');
+            
+            // Update page title
+            const pageTitles = {
+                'dashboard': 'Дашборди Администратор',
+                'users': 'Рӯйхати корбарон',
+                'create-user': 'Эҷоди корбари нав',
+                'students': 'Донишҷӯён',
+                'faculties': 'Факултетҳо',
+                'audit-logs': 'Сабтҳои аудит',
+                'profile': 'Профили шахсӣ'
+            };
+            document.getElementById('current-page-title').textContent = pageTitles[pageId] || 'Саҳифа';
+            
+            // Show selected page
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`page-${pageId}`).classList.add('active');
+            
+            // Load page-specific data
+            if (pageId === 'users') loadUsers();
+            if (pageId === 'faculties') loadFaculties();
+            if (pageId === 'audit-logs') loadAuditLogs();
+            if (pageId === 'students') document.getElementById('student-search').focus();
+        }
+        
+        // ======================
+        // DATA LOADING FUNCTIONS
+        // ======================
+        async function loadDashboardStats() {
+            try {
+                const response = await fetch(`${API_BASE}/stats`);
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми боркунии омор');
+                const stats = await response.json();
+                document.getElementById('stat-total-users').textContent = stats.total_users || 0;
+                document.getElementById('stat-deans').textContent = (stats.role_counts?.dean || 0) + (stats.role_counts?.vice_dean || 0);
+                document.getElementById('stat-curators').textContent = stats.role_counts?.curator || 0;
+                document.getElementById('stat-students').textContent = stats.total_students || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+                showToast(error.message || 'Хатогӣ ҳангоми боркунии омор', 'error');
+            }
+        }
+        
+        async function loadUsers() {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <div class="loading-text">Боркунӣ...</div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            try {
+                const response = await fetch(`${API_BASE}/users`);
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми боркунии корбарон');
+                const users = await response.json();
+                renderUsersTable(users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <div class="empty-title">Хатогӣ</div>
+                                <div class="empty-message">Натавонистем рӯйхати корбаронро бор кунем. Лутфан, кӯшиш кунед дубора.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                showToast(error.message || 'Хатогӣ ҳангоми боркунии корбарон', 'error');
+            }
+        }
+        
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('users-table-body');
+            const searchQuery = document.getElementById('user-search')?.value.toLowerCase() || '';
+            
+            // Filter users
+            const filteredUsers = users.filter(user =>
+                (user.full_name?.toLowerCase().includes(searchQuery)) ||
+                (user.username?.toLowerCase().includes(searchQuery)) ||
+                (user.role?.toLowerCase().includes(searchQuery)) ||
+                (user.faculty_name?.toLowerCase().includes(searchQuery))
+            );
+            
+            if (filteredUsers.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <div class="empty-title">Ёфт нашуд</div>
+                                <div class="empty-message">Ба майдони ҷустуҷӯ калидвораҳои дигар ворид кунед</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = filteredUsers.map((user, index) => {
+                // Role badge
+                const roleBadges = {
+                    'admin': '<span class="role-badge admin">Админ</span>',
+                    'dean': '<span class="role-badge dean">Декан</span>',
+                    'vice_dean': '<span class="role-badge vice_dean">Муовин</span>',
+                    'curator': '<span class="role-badge curator">Куратор</span>'
+                };
+                
+                // Action buttons
+                let actions = '';
+                if (user.role !== 'admin') {
+                    actions = `
+                        <div class="action-buttons">
+                            <button class="btn btn-warning btn-sm" onclick="resetPassword(${user.id}, '${user.full_name.replace(/'/g, "\\'")}')">
+                                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"></path>
+                                </svg>
+                                Парол
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${user.id}, '${user.full_name.replace(/'/g, "\\'")}')">
+                                <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                Нест
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    actions = '<span style="color: var(--text-muted); font-size: 0.85rem;">Маҳфуз</span>';
+                }
+                
+                return `
+                    <tr>
+                        <td style="color: var(--text-muted); font-weight: 500;">${user.id}</td>
+                        <td style="font-weight: 500;">${user.full_name || '—'}</td>
+                        <td style="font-family: monospace; color: var(--accent-blue-light);">@${user.username || '—'}</td>
+                        <td>${roleBadges[user.role] || '<span class="role-badge">—</span>'}</td>
+                        <td>${user.faculty_name || '—'}</td>
+                        <td style="color: var(--text-secondary); font-size: 0.9rem;">${user.created_at ? new Date(user.created_at).toLocaleDateString('tg-TJ') : '—'}</td>
+                        <td>${actions}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        async function loadFaculties() {
+            const tbody = document.getElementById('faculties-table-body');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <div class="loading-text">Боркунӣ...</div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            try {
+                const response = await fetch(`${API_BASE}/faculties`);
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми боркунии факултетҳо');
+                const faculties = await response.json();
+                renderFacultiesTable(faculties);
+            } catch (error) {
+                console.error('Error loading faculties:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <div class="empty-title">Хатогӣ</div>
+                                <div class="empty-message">Натавонистем рӯйхати факултетҳоро бор кунем</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                showToast(error.message || 'Хатогӣ ҳангоми боркунии факултетҳо', 'error');
+            }
+        }
+        
+        function renderFacultiesTable(faculties) {
+            const tbody = document.getElementById('faculties-table-body');
+            
+            if (faculties.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <div class="empty-title">Факултет ёфт нашуд</div>
+                                <div class="empty-message">Ҳануз факултет эҷод нашудааст. Барои эҷодкунӣ, аз панели админ истифода баред.</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = faculties.map(faculty => `
+                <tr>
+                    <td style="color: var(--text-muted); font-weight: 500;">${faculty.id}</td>
+                    <td style="font-weight: 500;">${faculty.name || '—'}</td>
+                    <td style="font-family: monospace; color: var(--accent-purple);">${faculty.code || '—'}</td>
+                    <td>${faculty.user_count || 0}</td>
+                    <td>${faculty.group_count || 0}</td>
+                    <td>${faculty.student_count || 0}</td>
+                    <td style="color: var(--text-secondary); font-size: 0.9rem;">${faculty.created_at ? new Date(faculty.created_at).toLocaleDateString('tg-TJ') : '—'}</td>
+                </tr>
+            `).join('');
+        }
+        
+        async function loadAuditLogs() {
+            const container = document.getElementById('audit-logs-table') || document.getElementById('audit-logs-body');
+            if (!container) return;
+            
+            container.innerHTML = `
+                <tr>
+                    <td colspan="5">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <div class="loading-text">Боркунӣ...</div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            try {
+                const response = await fetch(`${API_BASE}/audit-log?limit=10`);
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми боркунии сабтҳо');
+                const logs = await response.json();
+                renderAuditLogs(logs, container);
+            } catch (error) {
+                console.error('Error loading audit logs:', error);
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <div class="empty-title">Хатогӣ</div>
+                                <div class="empty-message">Натавонистем сабтҳоро бор кунем</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        function renderAuditLogs(logs, container) {
+            if (logs.length === 0) {
+                container.innerHTML = `
+                    <tr>
+                        <td colspan="5">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <div class="empty-title">Сабтҳо нестанд</div>
+                                <div class="empty-message">Ҳануз ягон амалиёт сабт нашудааст</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            container.innerHTML = logs.map(log => {
+                const isSuccess = log.action?.includes('CREATED') || log.action?.includes('UPDATED') || log.action?.includes('LOGIN');
+                const statusColor = isSuccess ? 'var(--accent-green)' : 'var(--accent-red)';
+                const statusText = isSuccess ? 'Муваффақона' : 'Ноком';
+                
+                return `
+                    <tr>
+                        <td style="font-family: monospace; color: var(--text-secondary); white-space: nowrap;">${log.timestamp ? new Date(log.timestamp).toLocaleString('tg-TJ', { hour12: false }) : '—'}</td>
+                        <td>${log.user || 'Система'}</td>
+                        <td style="font-weight: 500;">${log.action || '—'}</td>
+                        <td style="font-family: monospace;">${log.target_table || '—'}</td>
+                        <td>
+                            <span style="color: ${statusColor}; font-weight: 500;">${statusText}</span>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        async function loadFacultiesForSelect() {
+            try {
+                const response = await fetch(`${API_BASE}/faculties`);
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми боркунии факултетҳо');
+                const data = await response.json();
+                faculties = data;
+                
+                // Populate faculty select in create user form
+                const facultySelect = document.getElementById('faculty_id');
+                if (facultySelect) {
+                    facultySelect.innerHTML = '<option value="">-- Интихоб кунед --</option>';
+                    faculties.forEach(faculty => {
+                        facultySelect.innerHTML += `<option value="${faculty.id}">${faculty.name}</option>`;
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading faculties for select:', error);
+            }
+        }
+        
+        // ======================
+        // FORM HANDLERS - USER
+        // ======================
+        function setupCreateUserForm() {
+            const form = document.getElementById('create-user-form');
+            const roleSelect = document.getElementById('role');
+            const facultyField = document.getElementById('faculty-field');
+            const resetBtn = document.getElementById('reset-form-btn');
+            
+            // Toggle faculty field based on role
+            if (roleSelect && facultyField) {
+                roleSelect.addEventListener('change', () => {
+                    facultyField.style.display = ['dean', 'vice_dean', 'curator'].includes(roleSelect.value) ? 'block' : 'none';
+                });
+                facultyField.style.display = 'none';
+            }
+            
+            // Reset form button
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    if (form) form.reset();
+                    if (facultyField) facultyField.style.display = 'none';
+                });
+            }
+            
+            // Form submission
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0;"></div> Эҷодкунӣ...';
+                    
+                    try {
+                        // ✅ ИСТИФОДАИ FormData (мувофиқ бо Form(...) дар Python)
+                        const formData = new FormData(form);
+                        formData.append('password', '020304');
+                        
+                        // Validate required fields
+                        if (!formData.get('full_name') || !formData.get('username') || !formData.get('role')) {
+                            throw new Error('Лутфан, ҳамаи майдонҳои ҳатмӣ-ро пур кунед');
+                        }
+                        
+                        const response = await fetch(`${API_BASE}/users`, {
+                            method: 'POST',
+                            headers: {
+                                // ✅ Content-Type-ро нест кунед (барои FormData браузер худаш мегузорад)
+                                'X-CSRF-Token': getCsrfToken()
+                            },
+                            body: formData
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData.detail || errorData.message || 'Хатогӣ ҳангоми эҷодкунии корбар');
+                        }
+                        
+                        showToast('Корбар бомуваффақият эҷод шуд!', 'success');
+                        form.reset();
+                        if (facultyField) facultyField.style.display = 'none';
+                        
+                        // Reload users page if visible
+                        if (document.getElementById('page-users').classList.contains('active')) {
+                            loadUsers();
+                        }
+                        
+                        // Switch to users page
+                        showPage('users');
+                    } catch (error) {
+                        console.error('Error creating user:', error);
+                        showToast(error.message || 'Хатогӣ ҳангоми эҷодкунии корбар', 'error');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                });
+            }
+        }
+        
+        // ======================
+        // FORM HANDLERS - FACULTY
+        // ======================
+        function setupCreateFacultyForm() {
+            const form = document.querySelector('#page-faculties form');
+            
+            if (form) {
+                // ✅ Нест кардани method ва action-и кӯҳна
+                form.removeAttribute('method');
+                form.removeAttribute('action');
+                form.id = 'create-faculty-form';
+                
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<div class="spinner" style="width:18px;height:18px;border-width:2px;margin:0;"></div> Эҷодкунӣ...';
+                    
+                    try {
+                        // ✅ ИСТИФОДАИ FormData (мувофиқ бо Form(...) дар Python)
+                        const formData = new FormData(form);
+                        
+                        // Validate required fields
+                        if (!formData.get('name') || !formData.get('code')) {
+                            throw new Error('Лутфан, ҳамаи майдонҳои ҳатмӣ-ро пур кунед');
+                        }
+                        
+                        const response = await fetch(`${API_BASE}/faculties`, {
+                            method: 'POST',
+                            headers: {
+                                // ✅ Content-Type-ро нест кунед (барои FormData браузер худаш мегузорад)
+                                'X-CSRF-Token': getCsrfToken()
+                            },
+                            body: formData
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            throw new Error(errorData.detail || errorData.message || 'Хатогӣ ҳангоми эҷодкунии факултет');
+                        }
+                        
+                        showToast('Факултет бомуваффақият эҷод шуд!', 'success');
+                        form.reset();
+                        loadFaculties(); // Навсозии ҷадвали факултетҳо
+                    } catch (error) {
+                        console.error('Error creating faculty:', error);
+                        showToast(error.message || 'Хатогӣ ҳангоми эҷодкунии факултет', 'error');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                    }
+                });
+            }
+        }
+        
+        // ======================
+        // SEARCH HANDLERS
+        // ======================
+        function setupSearchHandlers() {
+            // User search
+            const userSearch = document.getElementById('user-search');
+            if (userSearch) {
+                let searchTimeout;
+                userSearch.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        if (document.getElementById('page-users').classList.contains('active')) {
+                            loadUsers();
+                        }
+                    }, 300);
+                });
+            }
+            
+            // Student search
+            const studentSearch = document.getElementById('student-search');
+            if (studentSearch) {
+                let searchTimeout;
+                studentSearch.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        searchStudents(e.target.value);
+                    }, 400);
+                });
+            }
+        }
+        
+        async function searchStudents(query) {
+            const tbody = document.getElementById('students-table-body');
+            
+            if (query.length < 2) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <div class="empty-title">Ҷустуҷӯ кунед</div>
+                                <div class="empty-message">Камаш 2 ҳарф нависед барои ҷустуҷӯи донишҷӯён</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="loading-container">
+                            <div class="spinner"></div>
+                            <div class="loading-text">Ҷустуҷӯ...</div>
+                        </div>
+                    </td>
+                </tr>
+            `;
+            
+            try {
+                const response = await fetch(`/admin/api/students/search?query=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми ҷустуҷӯ');
+                const students = await response.json();
+                renderStudentsTable(students);
+            } catch (error) {
+                console.error('Error searching students:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                </svg>
+                                <div class="empty-title">Хатогӣ</div>
+                                <div class="empty-message">Натавонистем донишҷӯёнро дарёбем</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                showToast(error.message || 'Хатогӣ ҳангоми ҷустуҷӯи донишҷӯён', 'error');
+            }
+        }
+        
+        function renderStudentsTable(students) {
+            const tbody = document.getElementById('students-table-body');
+            
+            if (students.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                                <div class="empty-title">Ёфт нашуд</div>
+                                <div class="empty-message">Донишҷӯе бо ин калидвора ёфт нашуд</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = students.map(student => `
+                <tr>
+                    <td style="color: var(--text-muted);">${student.id}</td>
+                    <td style="font-weight: 500;">${student.full_name || '—'}</td>
+                    <td style="font-family: monospace;">${student.student_code || '—'}</td>
+                    <td>${student.group_number || '—'}</td>
+                    <td>${student.course_year || '—'}</td>
+                    <td style="color: ${student.total_absent_hours > 35 ? 'var(--accent-red)' : 'var(--text-primary)'}; font-weight: 500;">
+                        ${student.total_absent_hours || 0}
+                    </td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick="viewStudentProfile(${student.id})">
+                            <svg class="btn-icon" viewBox="0 0 20 20" fill="currentColor">
+                                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            Намоиш
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // ======================
+        // USER ACTIONS
+        // ======================
+        async function resetPassword(userId, userName) {
+            if (!confirm(`Оё шумо мехоҳед, ки пароли "${userName}" ба арзиши аввала (020304) барқарор кунед?`)) {
+                return;
+            }
+            
+            try {
+                const formData = new FormData();
+                formData.append('new_password', '020304');
+                
+                const response = await fetch(`${API_BASE}/users/${userId}/reset-password`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': getCsrfToken()
+                    },
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми барқароркунии парол');
+                showToast(`Пароли "${userName}" ба 020304 барқарор шуд`, 'success');
+            } catch (error) {
+                console.error('Error resetting password:', error);
+                showToast(error.message || 'Хатогӣ ҳангоми барқароркунии парол', 'error');
+            }
+        }
+        
+        async function deleteUser(userId, userName) {
+            if (!confirm(`Оё шумо мехоҳед, ки корбари "${userName}"-ро нест кунед? Ин амал ғайриқобил қарор аст!`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/users/${userId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-Token': getCsrfToken()
+                    }
+                });
+                
+                if (!response.ok) throw new Error('Хатогӣ ҳангоми несткунии корбар');
+                showToast(`Корбари "${userName}" бомуваффақият нест шуд`, 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showToast(error.message || 'Хатогӣ ҳангоми несткунии корбар', 'error');
+            }
+        }
+        
+        function viewStudentProfile(studentId) {
+            showToast('Намоиши профили донишҷӯ ҳануз дастгирӣ намешавад', 'warning');
+        }
+        
+        // ======================
+        // UTILITY FUNCTIONS
+        // ======================
+        function getCsrfToken() {
+            return document.querySelector('meta[name="csrf-token"]')?.content || '';
+        }
+        
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('current-time').textContent = now.toLocaleTimeString('tg-TJ', { hour12: false });
+            document.getElementById('current-date').textContent = now.toLocaleDateString('tg-TJ');
+        }
+        
+        function showToast(message, type = 'success') {
+            // ✅ ИСЛОҲ: Агар message объект бошад, онро ба матн табдил диҳед
+            if (typeof message === 'object') {
+                message = message.message || message.detail || JSON.stringify(message);
+            }
+            
+            const container = document.getElementById('toast-container');
+            const toastId = 'toast-' + Date.now();
+            const icons = {
+                'success': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>',
+                'error': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>',
+                'warning': '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>'
+            };
+            
+            const toast = document.createElement('div');
+            toast.id = toastId;
+            toast.className = `toast toast-${type} show`;
+            toast.innerHTML = `
+                <div class="toast-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        ${icons[type] || icons.success}
+                    </svg>
+                </div>
+                <div class="toast-content">
+                    <div class="toast-title">${type === 'success' ? 'Муваффақият' : type === 'error' ? 'Хатогӣ' : 'Диққат'}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" aria-label="Нест кардан">
+                    <svg viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                    </svg>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Setup close button
+            toast.querySelector('.toast-close').addEventListener('click', () => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode === container) {
+                        container.removeChild(toast);
+                    }
+                }, 300);
+            });
+            
+            // Auto-remove after delay
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode === container) {
+                        container.removeChild(toast);
+                    }
+                }, 300);
+            }, 5000);
+        }
+        
+        function showUrlMessages() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('success')) {
+                showToast(decodeURIComponent(urlParams.get('success')), 'success');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            if (urlParams.has('error')) {
+                showToast(decodeURIComponent(urlParams.get('error')), 'error');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        }
+        </script>
+</body>
+</html>

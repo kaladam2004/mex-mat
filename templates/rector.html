@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="tj">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ректор — Мех-мат</title>
+    <style>
+        /* ── RESET ─────────────────────────────── */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary:      #1e40af;
+            --primary-dark: #1e3a8a;
+            --primary-light:#3b82f6;
+            --secondary:    #64748b;
+            --success:      #16a34a;
+            --warning:      #d97706;
+            --danger:       #dc2626;
+            --bg-body:      #f1f5f9;
+            --bg-card:      #ffffff;
+            --bg-header:    #1e293b;
+            --text-main:    #0f172a;
+            --text-sub:     #64748b;
+            --text-muted:   #94a3b8;
+            --text-white:   #ffffff;
+            --border:       #e2e8f0;
+            --radius:       0.5rem;
+            --radius-lg:    1rem;
+            --shadow:       0 1px 3px rgba(0,0,0,.1),0 1px 2px rgba(0,0,0,.06);
+            --shadow-md:    0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+            --tr:           all 0.18s ease;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* ── HEADER ─────────────────────────────── */
+        .r-header {
+            background: var(--bg-header);
+            color: var(--text-white);
+            padding: .75rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            position: sticky; top: 0; z-index: 200;
+            box-shadow: var(--shadow-md);
+        }
+        .r-logo { display:flex; align-items:center; gap:.5rem; font-weight:700; font-size:1rem; }
+        .r-logo img { height:38px; width:38px; border-radius:4px; object-fit:cover; }
+        .r-nav { display:flex; gap:.25rem; flex-wrap:wrap; flex:1; }
+        .r-nav a {
+            color:rgba(255,255,255,.8); text-decoration:none;
+            padding:.4rem .85rem; border-radius:var(--radius);
+            font-weight:500; font-size:.875rem; transition:var(--tr);
+        }
+        .r-nav a:hover, .r-nav a.active { background:var(--primary-light); color:#fff; }
+        .r-user { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+        .r-user .role { font-size:.7rem; color:var(--primary-light); text-transform:uppercase; letter-spacing:.06em; }
+        .r-user .name { font-size:.875rem; font-weight:600; }
+        .r-actions { display:flex; gap:.5rem; }
+
+        /* ── BUTTONS ─────────────────────────────── */
+        .btn {
+            display:inline-flex; align-items:center; gap:.3rem;
+            padding:.45rem 1rem; border:none; border-radius:var(--radius);
+            font-size:.85rem; font-weight:500; cursor:pointer;
+            text-decoration:none; transition:var(--tr); white-space:nowrap;
+        }
+        .btn:disabled { opacity:.55; cursor:not-allowed; }
+        .btn-primary   { background:var(--primary);   color:#fff; }
+        .btn-primary:hover:not(:disabled) { background:var(--primary-dark); }
+        .btn-secondary { background:var(--secondary); color:#fff; }
+        .btn-secondary:hover:not(:disabled) { background:#475569; }
+        .btn-danger    { background:var(--danger);    color:#fff; }
+        .btn-danger:hover:not(:disabled) { background:#b91c1c; }
+        .btn-outline   { background:transparent; border:1.5px solid var(--primary); color:var(--primary); }
+        .btn-outline:hover:not(:disabled) { background:var(--primary); color:#fff; }
+        .btn-sm { padding:.3rem .65rem; font-size:.8rem; }
+        .btn-sm.active { background:var(--primary); color:#fff; }
+
+        /* ── MAIN ─────────────────────────────── */
+        .r-main {
+            max-width:1420px; margin:0 auto;
+            padding:1.5rem; display:flex; flex-direction:column; gap:1.5rem;
+        }
+
+        /* ── SECTIONS ─────────────────────────────── */
+        .section { display:none; }
+        .section.active { display:block; }
+
+        /* ── STAT CARDS ─────────────────────────────── */
+        .stats-grid {
+            display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(175px,1fr));
+            gap:1rem;
+        }
+        .stat-card {
+            background:var(--bg-card); border-radius:var(--radius-lg);
+            padding:1.25rem; box-shadow:var(--shadow); border:1px solid var(--border);
+            transition:var(--tr);
+        }
+        .stat-card:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+        .stat-card.hi {
+            background:linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color:#fff;
+        }
+        .stat-card h3 { font-size:.8rem; font-weight:500; color:var(--text-sub); margin-bottom:.4rem; }
+        .stat-card.hi h3 { color:rgba(255,255,255,.85); }
+        .stat-value { font-size:2rem; font-weight:700; line-height:1; margin-bottom:.25rem; }
+        .stat-sub { font-size:.78rem; color:var(--text-muted); }
+        .stat-card.hi .stat-sub { color:rgba(255,255,255,.75); }
+
+        /* ── KPI ROW ─────────────────────────────── */
+        .kpi-row { display:flex; gap:1rem; flex-wrap:wrap; }
+        .kpi-card {
+            flex:1 1 160px; background:var(--bg-card); border-radius:var(--radius-lg);
+            padding:1rem 1.25rem; box-shadow:var(--shadow); border:1px solid var(--border);
+            text-align:center;
+        }
+        .kpi-label { font-size:.78rem; color:var(--text-sub); margin-bottom:.3rem; }
+        .kpi-value { font-size:1.75rem; font-weight:700; }
+        .kpi-sub { font-size:.78rem; color:var(--text-muted); margin-top:.2rem; }
+        .dyn-up { color:#16a34a; }
+        .dyn-down { color:#dc2626; }
+        .dyn-flat { color:var(--text-sub); }
+
+        /* ── SECTION HEADER ─────────────────────────────── */
+        .sec-header {
+            display:flex; justify-content:space-between; align-items:center;
+            flex-wrap:wrap; gap:.75rem;
+            margin-bottom:1rem; padding-bottom:.75rem;
+            border-bottom:1px solid var(--border);
+        }
+        .sec-header h2 { font-size:1.15rem; font-weight:700; color:var(--text-main); }
+
+        /* ── FILTERS ─────────────────────────────── */
+        .filters { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+        .filters select,
+        .filters input {
+            padding:.42rem .75rem; border:1.5px solid var(--border);
+            border-radius:var(--radius); font-size:.85rem;
+            background:var(--bg-card); color:var(--text-main); min-width:140px;
+            transition:var(--tr);
+        }
+        .filters select:focus,
+        .filters input:focus {
+            outline:none; border-color:var(--primary-light);
+            box-shadow:0 0 0 3px rgba(59,130,246,.12);
+        }
+
+        /* ── TABLES ─────────────────────────────── */
+        .table-wrap {
+            background:var(--bg-card); border-radius:var(--radius-lg);
+            box-shadow:var(--shadow); overflow:hidden; border:1px solid var(--border);
+        }
+        .data-table { width:100%; border-collapse:collapse; font-size:.875rem; }
+        .data-table thead { background:var(--bg-header); color:#fff; }
+        .data-table th, .data-table td {
+            padding:.75rem 1rem; text-align:left; border-bottom:1px solid var(--border);
+        }
+        .data-table th { font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; font-weight:600; }
+        .data-table tbody tr:hover { background:rgba(59,130,246,.04); }
+        .data-table tbody tr:last-child td { border-bottom:none; }
+        .empty-row td { text-align:center; color:var(--text-muted); padding:2rem; }
+        .loading-row td { text-align:center; color:var(--text-sub); padding:2rem; }
+
+        /* ── RISK BADGES ─────────────────────────────── */
+        .risk {
+            display:inline-flex; align-items:center; gap:.3rem;
+            padding:.25rem .6rem; border-radius:999px; font-size:.78rem; font-weight:600;
+        }
+        .risk-low      { background:#dcfce7; color:#166534; }
+        .risk-medium   { background:#fef9c3; color:#854d0e; }
+        .risk-high     { background:#ffedd5; color:#7c2d12; }
+        .risk-critical { background:#fee2e2; color:#7f1d1d; }
+
+        /* ── ALERTS ─────────────────────────────── */
+        .alerts-grid {
+            display:grid;
+            grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+            gap:1rem;
+        }
+        .alert-card {
+            background:var(--bg-card); border-radius:var(--radius-lg);
+            padding:1.25rem; border-left:4px solid var(--border); box-shadow:var(--shadow);
+        }
+        .alert-card.error   { border-left-color:#ef4444; background:#fff5f5; }
+        .alert-card.warning { border-left-color:#f97316; background:#fffbeb; }
+        .alert-card.success { border-left-color:#22c55e; background:#f0fdf4; }
+        .alert-card h4 { font-size:.9rem; font-weight:700; margin-bottom:.6rem; display:flex; align-items:center; gap:.4rem; }
+        .alert-card ul { list-style:none; font-size:.85rem; color:var(--text-sub); }
+        .alert-card li { padding:.3rem 0; border-bottom:1px dashed var(--border); }
+        .alert-card li:last-child { border-bottom:none; }
+
+        /* ── TOP CARDS ─────────────────────────────── */
+        .top-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1rem; }
+        .top-card {
+            background:var(--bg-card); border-radius:var(--radius-lg);
+            padding:1.25rem; box-shadow:var(--shadow); border:1px solid var(--border);
+        }
+        .top-card.best  { border-top:3px solid #22c55e; }
+        .top-card.worst { border-top:3px solid #ef4444; }
+        .top-card h3 { font-size:1rem; font-weight:700; margin-bottom:.25rem; }
+        .top-card .subtitle { font-size:.78rem; color:var(--text-muted); margin-bottom:.75rem; }
+        .top-card ul { list-style:none; }
+        .top-card li {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:.4rem 0; border-bottom:1px solid var(--border); font-size:.875rem;
+        }
+        .top-card li:last-child { border-bottom:none; }
+        .top-rank { font-weight:700; width:1.5rem; }
+        .top-name { flex:1; margin-left:.4rem; }
+        .top-val  { font-weight:700; font-size:.82rem; color:var(--primary); }
+
+        /* ── PAGINATION ─────────────────────────────── */
+        .pagination { display:flex; gap:.35rem; flex-wrap:wrap; margin-top:1rem; }
+        .pagination .btn { min-width:2rem; justify-content:center; }
+
+        /* ── FILTER PILLS ─────────────────────────────── */
+        .pill-group { display:flex; gap:.4rem; flex-wrap:wrap; margin-bottom:.75rem; }
+        .pill {
+            padding:.28rem .75rem; border-radius:999px;
+            font-size:.8rem; font-weight:500; cursor:pointer;
+            background:#e2e8f0; color:var(--text-sub); border:none; transition:var(--tr);
+        }
+        .pill:hover { background:#cbd5e1; }
+        .pill.active { background:var(--primary); color:#fff; }
+
+        /* ── MODAL ─────────────────────────────── */
+        .modal {
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,.5); z-index:500;
+            align-items:center; justify-content:center; padding:1rem;
+        }
+        .modal.open { display:flex; }
+        .modal-box {
+            background:var(--bg-card); border-radius:var(--radius-lg);
+            box-shadow:0 20px 60px rgba(0,0,0,.25);
+            width:100%; max-width:700px; max-height:90vh;
+            display:flex; flex-direction:column; overflow:hidden;
+        }
+        .modal-head {
+            background:var(--bg-header); color:#fff;
+            padding:1rem 1.25rem; display:flex; justify-content:space-between; align-items:center;
+        }
+        .modal-head h3 { font-size:1rem; font-weight:700; }
+        .close-btn {
+            background:none; border:none; color:#fff; font-size:1.5rem;
+            cursor:pointer; line-height:1; padding:0 .25rem;
+        }
+        .modal-body { padding:1.25rem; overflow-y:auto; flex:1; }
+        .modal-foot { padding:.75rem 1.25rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:.5rem; }
+
+        /* ── PROFILE INFO ─────────────────────────────── */
+        .profile-info { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1rem; }
+        .profile-info h3 { font-size:1.1rem; font-weight:700; margin-bottom:.5rem; }
+        .profile-info p { display:flex; gap:.75rem; font-size:.875rem; }
+        .profile-info p strong { min-width:130px; color:var(--text-sub); }
+
+        /* ── SETTINGS ROW ─────────────────────────────── */
+        .settings-row {
+            background:var(--bg-card); border-radius:var(--radius-lg);
+            padding:1rem 1.25rem; display:flex; align-items:center; gap:1rem;
+            flex-wrap:wrap; box-shadow:var(--shadow); border:1px solid var(--border);
+        }
+        .settings-row label { font-size:.85rem; font-weight:600; color:var(--text-sub); }
+        .settings-row input[type="number"] {
+            width:80px; padding:.35rem .65rem; border:1.5px solid var(--border);
+            border-radius:var(--radius); font-size:.875rem;
+        }
+
+        /* ── SCROLLBAR ─────────────────────────────── */
+        ::-webkit-scrollbar { width:7px; height:7px; }
+        ::-webkit-scrollbar-track { background:var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background:#94a3b8; border-radius:999px; }
+
+        @media(max-width:768px) {
+            .r-main { padding:1rem; }
+            .stats-grid { grid-template-columns:repeat(2,1fr); }
+            .table-wrap { overflow-x:auto; }
+            .data-table { min-width:700px; }
+        }
+        @media(max-width:480px) {
+            .stats-grid { grid-template-columns:1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="r-header">
+    <div class="r-logo">
+        <img src="/static/logo.jpg" alt="Логотип">
+        <span>🎓 Мех-мат</span>
+    </div>
+    <nav class="r-nav">
+        <a href="#" class="active" onclick="showSection('dashboard',this)">📊 Асосӣ</a>
+        <a href="#" onclick="showSection('faculties',this)">🏛 Факултетҳо</a>
+        <a href="#" onclick="showSection('weekly',this)">📈 ТОП 5 / Огоҳиҳо</a>
+        <a href="#" onclick="showSection('students',this)">👨‍🎓 Донишҷӯён</a>
+        <a href="#" onclick="showSection('staff',this)">👨‍🏫 Кормандон</a>
+        <a href="#" onclick="showSection('profile',this)">👤 Профил</a>
+    </nav>
+    <div class="r-user">
+        <span class="role">Ректор</span>
+        <span class="name">{{ user.full_name if user else "Ректор" }}</span>
+    </div>
+    <div class="r-actions">
+        <a href="/rector/change-password" class="btn btn-secondary btn-sm">🔑 Парол</a>
+        <a href="/logout" class="btn btn-danger btn-sm">🚪 Чиқиш</a>
+    </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="r-main">
+
+    <!-- ══ LPW Settings (global) ══ -->
+    <div class="settings-row" id="lpw-row">
+        <label>📅 Дарсҳо дар ҳафта (LPW):</label>
+        <input type="number" id="lpw-input" value="25" min="1" max="100">
+        <button class="btn btn-primary btn-sm" onclick="reloadAll()">🔄 Навсозӣ</button>
+        <span style="font-size:.8rem;color:var(--text-muted)">Ин параметр барои ҳисобкунии NB% истифода мешавад</span>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SECTION: DASHBOARD
+    ════════════════════════════════════════ -->
+    <div class="section active" id="sec-dashboard">
+        <!-- 4.1 Stats -->
+        <div class="stats-grid" id="stats-grid">
+            <div class="stat-card"><h3>🏛 Факултетҳо</h3><div class="stat-value" id="s-fac">—</div><div class="stat-sub">фаъол: <span id="s-fac-active">—</span></div></div>
+            <div class="stat-card"><h3>📚 Гурӯҳҳо</h3><div class="stat-value" id="s-grp">—</div><div class="stat-sub">фаъол: <span id="s-grp-active">—</span></div></div>
+            <div class="stat-card"><h3>👨‍🎓 Донишҷӯён</h3><div class="stat-value" id="s-stu">—</div></div>
+            <div class="stat-card"><h3>👨‍🏫 Кормандон</h3><div class="stat-value" id="s-staff">—</div></div>
+            <!-- 4.2 + 4.3 -->
+            <div class="stat-card hi"><h3>📊 NB% (ҳафтаи ҷорӣ)</h3><div class="stat-value" id="s-nb">—</div><div class="stat-sub" id="s-dyn">—</div></div>
+            <div class="stat-card"><h3>✅ Attendance% (ҳафтаи ҷорӣ)</h3><div class="stat-value" id="s-att">—</div><div class="stat-sub" id="s-att-prev">—</div></div>
+        </div>
+
+        <!-- KPI week range -->
+        <div style="font-size:.8rem;color:var(--text-muted);margin-top:.25rem" id="week-range"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SECTION: FACULTIES (5, 5.1, 6)
+    ════════════════════════════════════════ -->
+    <div class="section" id="sec-faculties">
+        <div class="sec-header">
+            <h2>🏛 Факултетҳо</h2>
+            <div class="filters">
+                <select id="f-risk" onchange="loadFaculties()">
+                    <option value="">Ҳама Risk</option>
+                    <option value="low">🟢 Муътадил</option>
+                    <option value="medium">🟡 Огоҳӣ</option>
+                    <option value="high">🟠 Баланд</option>
+                    <option value="critical">🔴 Танқидӣ</option>
+                </select>
+                <select id="f-att" onchange="loadFaculties()">
+                    <option value="">Ҳама Attendance</option>
+                    <option value="90-100">90–100%</option>
+                    <option value="80-89">80–89%</option>
+                    <option value="70-79">70–79%</option>
+                    <option value="0-69">&lt;70%</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Факултет</th>
+                        <th>Декан</th>
+                        <th>Замдекан</th>
+                        <th>Гурӯҳҳо</th>
+                        <th>Донишҷӯён</th>
+                        <th>Кормандон</th>
+                        <th>Att%</th>
+                        <th>NB%</th>
+                        <th>Risk</th>
+                        <th>👁</th>
+                    </tr>
+                </thead>
+                <tbody id="fac-tbody"><tr class="loading-row"><td colspan="10">Бор шудан...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SECTION: WEEKLY — TOP5 + ALERTS (8, 9)
+    ════════════════════════════════════════ -->
+    <div class="section" id="sec-weekly">
+        <div class="sec-header">
+            <h2>📈 ТОП 5 факултетҳо + Огоҳиномаҳо</h2>
+            <div style="font-size:.8rem;color:var(--text-muted)" id="weekly-range"></div>
+        </div>
+
+        <!-- 9. Smart Alerts -->
+        <div class="alerts-grid" id="alerts-grid" style="margin-bottom:1.5rem">
+            <div class="alert-card error"><h4>🚨 Факултетҳои хавфнок</h4><ul id="al-danger"><li>Бор шудан...</li></ul></div>
+            <div class="alert-card warning"><h4>⚠ Пастшавии якбора</h4><ul id="al-drop"><li>Бор шудан...</li></ul></div>
+            <div class="alert-card success"><h4>🏆 Faculty of the week</h4><div id="al-best">Бор шудан...</div></div>
+        </div>
+
+        <!-- 8. TOP 5 -->
+        <div class="top-grid" id="top-grid">
+            <div class="top-card best">
+                <h3>🏆 ТОП 5 — беҳтарин</h3>
+                <p class="subtitle">Камтарин NB % (≥50 донишҷӯ)</p>
+                <ul id="top-best"></ul>
+            </div>
+            <div class="top-card worst">
+                <h3>⚠️ ТОП 5 — бадтарин</h3>
+                <p class="subtitle">Зиёдтарин NB % (≥50 донишҷӯ)</p>
+                <ul id="top-worst"></ul>
+            </div>
+        </div>
+
+        <!-- All faculty stats table -->
+        <div class="sec-header" style="margin-top:1.5rem">
+            <h2>📋 Ҳама факултетҳо (ҳафтавӣ)</h2>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Факултет</th>
+                        <th>Донишҷӯён</th>
+                        <th>NB% (ҷорӣ)</th>
+                        <th>NB% (гузашта)</th>
+                        <th>Att% (ҷорӣ)</th>
+                        <th>Att% (гузашта)</th>
+                        <th>Risk</th>
+                    </tr>
+                </thead>
+                <tbody id="weekly-tbody"><tr class="loading-row"><td colspan="7">Бор шудан...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SECTION: STUDENTS (14)
+    ════════════════════════════════════════ -->
+    <div class="section" id="sec-students">
+        <div class="sec-header">
+            <h2>👨‍🎓 Реестри донишҷӯён</h2>
+            <span id="stu-total" style="font-size:.85rem;color:var(--text-sub)"></span>
+        </div>
+
+        <!-- 14.1 Filter pills -->
+        <div style="background:var(--bg-card);border-radius:var(--radius-lg);padding:1rem;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:1rem">
+            <div style="font-size:.82rem;color:var(--text-sub);margin-bottom:.5rem;font-weight:600">🏛 Факултет:</div>
+            <div class="pill-group" id="pills-faculty"></div>
+            <div style="font-size:.82rem;color:var(--text-sub);margin:.6rem 0 .4rem;font-weight:600">📚 Курс:</div>
+            <div class="pill-group" id="pills-course"></div>
+            <div style="font-size:.82rem;color:var(--text-sub);margin:.6rem 0 .4rem;font-weight:600">🕐 Навбат:</div>
+            <div class="pill-group" id="pills-shift"></div>
+            <div style="font-size:.82rem;color:var(--text-sub);margin:.6rem 0 .4rem;font-weight:600">📍 Ҷои таваллуд:</div>
+            <div class="pill-group" id="pills-bp"></div>
+            <button class="btn btn-outline btn-sm" onclick="resetStudentFilters()" style="margin-top:.5rem">✕ Тозакунӣ</button>
+        </div>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>ФИО</th>
+                        <th>Код</th>
+                        <th>Гурӯҳ</th>
+                        <th>Курс</th>
+                        <th>Факултет</th>
+                        <th>Навбат</th>
+                        <th>Ҷои таваллуд</th>
+                    </tr>
+                </thead>
+                <tbody id="stu-tbody"><tr class="loading-row"><td colspan="8">Бор шудан...</td></tr></tbody>
+            </table>
+        </div>
+        <div class="pagination" id="stu-pagination"></div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SECTION: STAFF (10)
+    ════════════════════════════════════════ -->
+    <div class="section" id="sec-staff">
+        <div class="sec-header">
+            <h2>👨‍🏫 Кормандон</h2>
+            <div class="filters">
+                <input type="text" id="staff-search" placeholder="Ҷустуҷӯ..." oninput="debounceStaff()">
+                <select id="staff-faculty" onchange="loadStaff()">
+                    <option value="">Ҳама факултетҳо</option>
+                </select>
+                <select id="staff-role" onchange="loadStaff()">
+                    <option value="">Ҳама нақшҳо</option>
+                    <option value="DEAN">Декан</option>
+                    <option value="VICE_DEAN">Замдекан</option>
+                    <option value="CURATOR">Куратор</option>
+                    <option value="RECTOR">Ректор</option>
+                </select>
+            </div>
+        </div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Нақш</th>
+                        <th>Факултет</th>
+                        <th>Телефон</th>
+                        <th>Gmail</th>
+                        <th>👁</th>
+                    </tr>
+                </thead>
+                <tbody id="staff-tbody"><tr class="loading-row"><td colspan="6">Бор шудан...</td></tr></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ════════════════════════════════════════
+         SECTION: PROFILE (3)
+    ════════════════════════════════════════ -->
+    <div class="section" id="sec-profile">
+        <div class="sec-header"><h2>👤 Профили ректор</h2></div>
+        <div style="background:var(--bg-card);border-radius:var(--radius-lg);padding:1.5rem;box-shadow:var(--shadow);border:1px solid var(--border);max-width:600px">
+            <div style="display:grid;gap:.75rem">
+                <div>
+                    <label style="font-size:.82rem;color:var(--text-sub);font-weight:600">Ному насаб</label>
+                    <input type="text" id="p-fullname" class="filters" style="width:100%;margin-top:.3rem">
+                </div>
+                <div>
+                    <label style="font-size:.82rem;color:var(--text-sub);font-weight:600">Соли таваллуд</label>
+                    <input type="number" id="p-birthyear" class="filters" style="width:100%;margin-top:.3rem">
+                </div>
+                <div>
+                    <label style="font-size:.82rem;color:var(--text-sub);font-weight:600">Телефон</label>
+                    <input type="text" id="p-phone" class="filters" style="width:100%;margin-top:.3rem">
+                </div>
+                <div>
+                    <label style="font-size:.82rem;color:var(--text-sub);font-weight:600">Gmail</label>
+                    <input type="email" id="p-gmail" class="filters" style="width:100%;margin-top:.3rem">
+                </div>
+                <div>
+                    <label style="font-size:.82rem;color:var(--text-sub);font-weight:600">Унвони илмӣ</label>
+                    <input type="text" id="p-title" class="filters" style="width:100%;margin-top:.3rem">
+                </div>
+                <div>
+                    <label style="font-size:.82rem;color:var(--text-sub);font-weight:600">Био</label>
+                    <textarea id="p-bio" style="width:100%;padding:.5rem .75rem;border:1.5px solid var(--border);border-radius:var(--radius);font-size:.875rem;resize:vertical;min-height:80px;margin-top:.3rem"></textarea>
+                </div>
+                <div style="display:flex;gap:.5rem">
+                    <button class="btn btn-primary" onclick="saveProfile()">💾 Сабт кардан</button>
+                    <button class="btn btn-outline" onclick="loadProfile()">↺ Бекор кардан</button>
+                </div>
+                <div id="profile-msg" style="font-size:.85rem;margin-top:.25rem"></div>
+            </div>
+        </div>
+        <div style="margin-top:1.5rem;max-width:600px">
+            <a href="/rector/change-password" class="btn btn-secondary">🔑 Иваз кардани парол</a>
+        </div>
+    </div>
+
+</main>
+
+<!-- ═══ MODAL: Faculty Profile ═══ -->
+<div class="modal" id="modal-fac">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3>🏛 Профили факултет</h3>
+            <button class="close-btn" onclick="closeModal('modal-fac')">×</button>
+        </div>
+        <div class="modal-body" id="modal-fac-body"><p style="color:var(--text-muted)">Бор шудан...</p></div>
+        <div class="modal-foot">
+            <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-fac')">Пӯшидан</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ MODAL: Group Profile ═══ -->
+<div class="modal" id="modal-grp">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3>📚 Профили гурӯҳ</h3>
+            <button class="close-btn" onclick="closeModal('modal-grp')">×</button>
+        </div>
+        <div class="modal-body" id="modal-grp-body"><p style="color:var(--text-muted)">Бор шудан...</p></div>
+        <div class="modal-foot">
+            <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-grp')">Пӯшидан</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ MODAL: User Profile ═══ -->
+<div class="modal" id="modal-usr">
+    <div class="modal-box">
+        <div class="modal-head">
+            <h3>👤 Профили корбар</h3>
+            <button class="close-btn" onclick="closeModal('modal-usr')">×</button>
+        </div>
+        <div class="modal-body" id="modal-usr-body"><p style="color:var(--text-muted)">Бор шудан...</p></div>
+        <div class="modal-foot">
+            <button class="btn btn-secondary btn-sm" onclick="closeModal('modal-usr')">Пӯшидан</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+// GLOBALS
+// ════════════════════════════════════════════════════════════
+const BASE = '/rector/api';
+let lpw = 25;
+let _staffDebounce = null;
+
+// Student filters state
+let stuFilters = { faculty_id: null, course_year: null, shift: null, birth_place: null };
+let stuPage = 1;
+
+// ════════════════════════════════════════════════════════════
+// NAVIGATION
+// ════════════════════════════════════════════════════════════
+function showSection(name, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.r-nav a').forEach(a => a.classList.remove('active'));
+    const sec = document.getElementById('sec-' + name);
+    if (sec) sec.classList.add('active');
+    if (el) el.classList.add('active');
+
+    // Lazy load
+    if (name === 'dashboard')  loadDashboard();
+    if (name === 'faculties')  loadFaculties();
+    if (name === 'weekly')     loadWeekly();
+    if (name === 'students')   { stuPage=1; loadStudents(); }
+    if (name === 'staff')      loadStaff();
+    if (name === 'profile')    loadProfile();
+}
+
+function getLpw() {
+    const v = parseInt(document.getElementById('lpw-input').value);
+    return (v && v > 0) ? v : 25;
+}
+
+function reloadAll() {
+    lpw = getLpw();
+    const active = document.querySelector('.r-nav a.active');
+    const name = active ? active.getAttribute('onclick').match(/'(\w+)'/)?.[1] : 'dashboard';
+    showSection(name || 'dashboard', active);
+}
+
+// ════════════════════════════════════════════════════════════
+// 4.1 / 4.2 / 4.3 — DASHBOARD
+// ════════════════════════════════════════════════════════════
+async function loadDashboard() {
+    lpw = getLpw();
+    try {
+        const r = await fetch(`${BASE}/dashboard?lpw=${lpw}`);
+        const d = await r.json();
+
+        set('s-fac',        d.total_faculties ?? '—');
+        set('s-fac-active', d.active_faculties ?? '—');
+        set('s-grp',        d.total_groups ?? '—');
+        set('s-grp-active', d.active_groups ?? '—');
+        set('s-stu',        d.total_students ?? '—');
+        set('s-staff',      d.total_staff ?? '—');
+        set('s-nb',         (d.nb_pct_this_week ?? 0) + '%');
+        set('s-att',        (d.att_pct_this_week ?? 0) + '%');
+        set('s-att-prev',   `Ҳафтаи гузашта: ${d.att_pct_prev_week ?? 0}%`);
+
+        // 4.3 Dynamics
+        const dyn = d.dynamics || {};
+        const cls = dyn.color === 'green' ? 'dyn-up' : dyn.color === 'red' ? 'dyn-down' : 'dyn-flat';
+        const el = document.getElementById('s-dyn');
+        if (el) el.innerHTML = `<span class="${cls}">${dyn.symbol || '—'} ${dyn.label || ''} ${dyn.diff ? '(' + dyn.diff + '%)' : ''}</span>`;
+
+        // Week range
+        if (d.week) {
+            set('week-range', `📅 Ҳафтаи ҷорӣ: ${d.week.from} — ${d.week.to}`);
+        }
+    } catch (e) {
+        console.error('Dashboard error:', e);
+    }
+}
+
+// ════════════════════════════════════════════════════════════
+// 5 / 5.1 / 6 — FACULTIES
+// ════════════════════════════════════════════════════════════
+async function loadFaculties() {
+    lpw = getLpw();
+    const riskCode = document.getElementById('f-risk')?.value || '';
+    const attRange = document.getElementById('f-att')?.value || '';
+
+    let url = `${BASE}/faculties?lpw=${lpw}`;
+    if (riskCode) url += `&risk_code=${riskCode}`;
+    if (attRange) {
+        const [mn, mx] = attRange.split('-').map(Number);
+        url += `&att_min=${mn}&att_max=${mx}`;
+    }
+
+    const tbody = document.getElementById('fac-tbody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="10">Бор шудан...</td></tr>';
+
+    try {
+        const r = await fetch(url);
+        const data = await r.json();
+        if (!data.length) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="10">Маълумот нест</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.map(f => `
+            <tr>
+                <td><strong>${esc(f.name)}</strong><br><small style="color:var(--text-muted)">${esc(f.code)}</small></td>
+                <td>${esc(f.dean?.full_name || '—')}</td>
+                <td>${esc(f.vice_dean?.full_name || '—')}</td>
+                <td>${f.active_groups}/${f.total_groups}</td>
+                <td>${f.total_students}</td>
+                <td>${f.total_staff}</td>
+                <td><strong>${f.att_pct}%</strong></td>
+                <td><strong>${f.nb_pct}%</strong></td>
+                <td>${riskBadge(f.risk)}</td>
+                <td><button class="btn btn-sm btn-primary" onclick="openFaculty(${f.id})">👁</button></td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="10">Хатогӣ</td></tr>';
+    }
+}
+
+// ════════════════════════════════════════════════════════════
+// 8 / 9 — WEEKLY STATS
+// ════════════════════════════════════════════════════════════
+async function loadWeekly() {
+    lpw = getLpw();
+    const url = `${BASE}/weekly-stats?lpw=${lpw}`;
+
+    try {
+        const r = await fetch(url);
+        const d = await r.json();
+
+        // Range
+        if (d.week) set('weekly-range', `📅 ${d.week.from} — ${d.week.to}`);
+
+        // 9 Alerts
+        renderAlertList('al-danger', d.smart_alerts?.filter(a => a.type === 'dangerous'));
+        renderAlertList('al-drop',   d.smart_alerts?.filter(a => a.type === 'sudden_drop'));
+
+        const bestEl = document.getElementById('al-best');
+        if (d.faculty_of_week) {
+            bestEl.innerHTML = `<strong>${esc(d.faculty_of_week.name)}</strong><br>Att: ${d.faculty_of_week.att_pct}% | NB: ${d.faculty_of_week.nb_pct}%`;
+        } else {
+            bestEl.textContent = 'Ҳеҷ чиз нест ✓';
+        }
+
+        // 8 TOP 5
+        renderTop('top-best',  d.top5_best,  false);
+        renderTop('top-worst', d.top5_worst, true);
+
+        // All stats table
+        const tbody = document.getElementById('weekly-tbody');
+        if (!d.all_faculty_stats?.length) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="7">Маълумот нест</td></tr>';
+            return;
+        }
+        tbody.innerHTML = d.all_faculty_stats.map(f => {
+            const nbDiff = f.nb_pct - f.nb_pct_prev;
+            const nbTrend = nbDiff > 0 ? '<span class="dyn-down">▲</span>' : nbDiff < 0 ? '<span class="dyn-up">▼</span>' : '➖';
+            return `<tr>
+                <td><strong>${esc(f.name)}</strong></td>
+                <td>${f.student_count}</td>
+                <td><strong>${f.nb_pct}%</strong> ${nbTrend}</td>
+                <td>${f.nb_pct_prev}%</td>
+                <td><strong>${f.att_pct}%</strong></td>
+                <td>${f.att_pct_prev}%</td>
+                <td>${riskBadge(f.risk)}</td>
+            </tr>`;
+        }).join('');
+
+    } catch (e) {
+        console.error('Weekly error:', e);
+    }
+}
+
+function renderAlertList(elId, items) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!items?.length) { el.innerHTML = '<li>Ҳеҷ чиз нест ✓</li>'; return; }
+    el.innerHTML = items.map(a => `<li>${esc(a.msg)}</li>`).join('');
+}
+
+function renderTop(elId, items, isWorst) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!items?.length) { el.innerHTML = '<li class="empty-row"><td colspan="2">Маълумот нест</td></li>'; return; }
+    el.innerHTML = items.map((f, i) => `
+        <li>
+            <span class="top-rank">${i+1}</span>
+            <span class="top-name">${esc(f.name)}</span>
+            <span class="top-val">${f.nb_pct}% NB</span>
+        </li>
+    `).join('');
+}
+
+// ════════════════════════════════════════════════════════════
+// 14 — STUDENTS
+// ════════════════════════════════════════════════════════════
+async function loadStudents(page) {
+    lpw = getLpw();
+    if (page) stuPage = page;
+
+    let url = `${BASE}/students?page=${stuPage}&limit=50`;
+    if (stuFilters.faculty_id)  url += `&faculty_id=${stuFilters.faculty_id}`;
+    if (stuFilters.course_year) url += `&course_year=${stuFilters.course_year}`;
+    if (stuFilters.shift)       url += `&shift=${stuFilters.shift}`;
+    if (stuFilters.birth_place) url += `&birth_place=${encodeURIComponent(stuFilters.birth_place)}`;
+
+    const tbody = document.getElementById('stu-tbody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="8">Бор шудан...</td></tr>';
+
+    try {
+        const r = await fetch(url);
+        const d = await r.json();
+
+        // Update filter pills (ҳамеша навсозӣ)
+        renderPills('pills-faculty', d.filters?.faculties || [], 'faculty_id', 'id', 'name');
+        renderPills('pills-course',  d.filters?.courses   || [], 'course_year', 'year', v => `${v.year}-курс`);
+        renderPills('pills-shift',   d.filters?.shifts    || [], 'shift', 'shift', 'label');
+        renderPills('pills-bp',      d.filters?.birth_places || [], 'birth_place', 'value', 'value');
+
+        set('stu-total', `Ҷамъ: ${d.total} донишҷӯ`);
+
+        if (!d.items?.length) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Донишҷӯён ёфт нашуданд</td></tr>';
+            renderPagination('stu-pagination', 0, stuPage, loadStudents);
+            return;
+        }
+
+        const offset = (stuPage - 1) * 50;
+        tbody.innerHTML = d.items.map((s, i) => `
+            <tr>
+                <td>${offset + i + 1}</td>
+                <td><strong>${esc(s.full_name)}</strong></td>
+                <td><code>${esc(s.student_code || '—')}</code></td>
+                <td>${esc(s.group_number || '—')}</td>
+                <td>${s.course_year ? s.course_year + '-курс' : '—'}</td>
+                <td>${esc(s.faculty_name || '—')}</td>
+                <td>${s.shift ? s.shift + '-навбат' : '—'}</td>
+                <td>${esc(s.birth_place || '—')}</td>
+            </tr>
+        `).join('');
+
+        renderPagination('stu-pagination', d.pages, stuPage, loadStudents);
+    } catch (e) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="8">Хатогӣ</td></tr>';
+    }
+}
+
+function renderPills(elId, items, filterKey, valueKey, labelKey) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (!items.length) { el.innerHTML = '<span style="font-size:.8rem;color:var(--text-muted)">—</span>'; return; }
+
+    el.innerHTML = items.map(item => {
+        const val   = typeof valueKey === 'function' ? valueKey(item) : item[valueKey];
+        const label = typeof labelKey === 'function' ? labelKey(item) : item[labelKey];
+        const cnt   = item.count !== undefined ? ` (${item.count})` : '';
+        const isActive = stuFilters[filterKey] == val;
+        return `<button class="pill ${isActive ? 'active' : ''}"
+                    onclick="toggleFilter('${filterKey}', ${JSON.stringify(val)})">${esc(String(label))}${cnt}</button>`;
+    }).join('');
+}
+
+function toggleFilter(key, val) {
+    stuFilters[key] = stuFilters[key] == val ? null : val;
+    stuPage = 1;
+    loadStudents();
+}
+
+function resetStudentFilters() {
+    stuFilters = { faculty_id: null, course_year: null, shift: null, birth_place: null };
+    stuPage = 1;
+    loadStudents();
+}
+
+// ════════════════════════════════════════════════════════════
+// 10 — STAFF
+// ════════════════════════════════════════════════════════════
+async function loadStaff() {
+    const search    = document.getElementById('staff-search')?.value || '';
+    const facultyId = document.getElementById('staff-faculty')?.value || '';
+    const role      = document.getElementById('staff-role')?.value   || '';
+
+    let url = `${BASE}/users?`;
+    if (search.trim().length >= 2) url += `search=${encodeURIComponent(search.trim())}&`;
+    if (facultyId) url += `faculty_id=${facultyId}&`;
+    if (role)      url += `role=${role}&`;
+
+    const tbody = document.getElementById('staff-tbody');
+    tbody.innerHTML = '<tr class="loading-row"><td colspan="6">Бор шудан...</td></tr>';
+
+    try {
+        const r = await fetch(url);
+        const data = await r.json();
+        if (!data.length) {
+            tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Кормандон ёфт нашуданд</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.map(u => `
+            <tr>
+                <td><strong>${esc(u.full_name)}</strong></td>
+                <td>${roleLabel(u.role)}</td>
+                <td>${esc(u.faculty_name || '—')}</td>
+                <td>${esc(u.phone || '—')}</td>
+                <td>${esc(u.gmail || '—')}</td>
+                <td><button class="btn btn-sm btn-primary" onclick="openUser(${u.id})">👁</button></td>
+            </tr>
+        `).join('');
+    } catch (e) {
+        tbody.innerHTML = '<tr class="empty-row"><td colspan="6">Хатогӣ</td></tr>';
+    }
+}
+
+function debounceStaff() {
+    clearTimeout(_staffDebounce);
+    _staffDebounce = setTimeout(loadStaff, 350);
+}
+
+// ════════════════════════════════════════════════════════════
+// 3 — PROFILE
+// ════════════════════════════════════════════════════════════
+async function loadProfile() {
+    try {
+        const r = await fetch(`${BASE}/profile`);
+        const d = await r.json();
+        setVal('p-fullname', d.full_name || '');
+        setVal('p-birthyear', d.birth_year || '');
+        setVal('p-phone', d.phone || '');
+        setVal('p-gmail', d.gmail || '');
+        setVal('p-title', d.academic_title || '');
+        setVal('p-bio', d.bio || '');
+        const msg = document.getElementById('profile-msg');
+        if (msg) msg.textContent = '';
+    } catch (e) { console.error('Profile load error:', e); }
+}
+
+async function saveProfile() {
+    const payload = {
+        full_name:       document.getElementById('p-fullname')?.value,
+        birth_year:      parseInt(document.getElementById('p-birthyear')?.value) || null,
+        phone:           document.getElementById('p-phone')?.value,
+        gmail:           document.getElementById('p-gmail')?.value,
+        academic_title:  document.getElementById('p-title')?.value,
+        bio:             document.getElementById('p-bio')?.value,
+    };
+    try {
+        const r = await fetch(`${BASE}/profile`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload),
+        });
+        const msg = document.getElementById('profile-msg');
+        if (r.ok) {
+            if (msg) { msg.style.color = 'var(--success)'; msg.textContent = '✅ Муваффақона сабт шуд'; }
+        } else {
+            if (msg) { msg.style.color = 'var(--danger)'; msg.textContent = '❌ Хатогӣ ҳангоми сабт'; }
+        }
+    } catch (e) {
+        console.error('Profile save error:', e);
+    }
+}
+
+// ════════════════════════════════════════════════════════════
+// MODALS
+// ════════════════════════════════════════════════════════════
+async function openFaculty(fid) {
+    openModal('modal-fac');
+    const body = document.getElementById('modal-fac-body');
+    body.innerHTML = '<p style="color:var(--text-muted)">Бор шудан...</p>';
+    try {
+        const r = await fetch(`${BASE}/faculties/${fid}?lpw=${getLpw()}`);
+        const d = await r.json();
+        body.innerHTML = `
+            <div class="profile-info">
+                <h3>${esc(d.name)} <small style="color:var(--text-muted)">(${esc(d.code)})</small></h3>
+                <p><strong>Декан:</strong> ${esc(d.dean?.full_name || '—')}</p>
+                <p><strong>Замдекан:</strong> ${esc(d.vice_dean?.full_name || '—')}</p>
+                <p><strong>Гурӯҳҳо:</strong> ${d.total_groups}</p>
+                <p><strong>Донишҷӯён:</strong> ${d.total_students}</p>
+                <p><strong>Att%:</strong> ${d.att_pct}%</p>
+                <p><strong>NB%:</strong> ${d.nb_pct}%</p>
+                <p><strong>Risk:</strong> ${riskBadge(d.risk)}</p>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openFacultyGroups(${fid})">📚 Гурӯҳҳо</button>
+        `;
+    } catch {
+        body.innerHTML = '<p style="color:var(--danger)">Хатогӣ</p>';
+    }
+}
+
+async function openFacultyGroups(fid) {
+    const body = document.getElementById('modal-fac-body');
+    body.innerHTML = '<p style="color:var(--text-muted)">Бор шудан...</p>';
+    try {
+        const r = await fetch(`${BASE}/faculties/${fid}/groups?lpw=${getLpw()}`);
+        const data = await r.json();
+        if (!data.length) { body.innerHTML = '<p style="color:var(--text-muted)">Гурӯҳҳо нест</p>'; return; }
+        body.innerHTML = `
+            <h4 style="margin-bottom:.75rem">Гурӯҳҳои факултет</h4>
+            <div style="overflow-y:auto;max-height:420px">
+            <table class="data-table">
+                <thead><tr><th>Гурӯҳ</th><th>Курс</th><th>Навбат</th><th>Куратор</th><th>Донишҷӯён</th><th>Att%</th><th>NB%</th><th>👁</th></tr></thead>
+                <tbody>
+                    ${data.map(g => `
+                        <tr>
+                            <td><strong>${esc(g.number)}</strong></td>
+                            <td>${g.course_year || '—'}</td>
+                            <td>${esc(g.shift_name)}</td>
+                            <td>${esc(g.curator?.full_name || '—')}</td>
+                            <td>${g.student_count}</td>
+                            <td>${g.att_pct}%</td>
+                            <td>${g.nb_pct}%</td>
+                            <td><button class="btn btn-sm btn-outline" onclick="openGroup(${g.id})">👁</button></td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+            </div>
+            <button class="btn btn-secondary btn-sm" style="margin-top:.75rem" onclick="openFaculty(${fid})">← Бозгашт</button>
+        `;
+    } catch {
+        body.innerHTML = '<p style="color:var(--danger)">Хатогӣ</p>';
+    }
+}
+
+async function openGroup(gid) {
+    openModal('modal-grp');
+    const body = document.getElementById('modal-grp-body');
+    body.innerHTML = '<p style="color:var(--text-muted)">Бор шудан...</p>';
+    try {
+        const r = await fetch(`${BASE}/groups/${gid}?lpw=${getLpw()}`);
+        const d = await r.json();
+        body.innerHTML = `
+            <div class="profile-info">
+                <h3>Гурӯҳ ${esc(d.number)} <small style="color:var(--text-muted)">(${esc(d.shift_name)})</small></h3>
+                <p><strong>Курс:</strong> ${d.course_year || '—'}</p>
+                <p><strong>Куратор:</strong> ${esc(d.curator?.full_name || '—')}</p>
+                <p><strong>Донишҷӯён:</strong> ${d.student_count}</p>
+                <p><strong>Att%:</strong> ${d.att_pct}%</p>
+                <p><strong>NB%:</strong> ${d.nb_pct}%</p>
+            </div>
+            <h4 style="margin:.75rem 0 .4rem">ФИО донишҷӯён (read-only):</h4>
+            <div style="max-height:300px;overflow-y:auto">
+            <table class="data-table">
+                <thead><tr><th>#</th><th>ФИО</th><th>Код</th></tr></thead>
+                <tbody>
+                    ${(d.students || []).map((s, i) => `
+                        <tr><td>${i+1}</td><td>${esc(s.full_name)}</td><td>${esc(s.student_code || '—')}</td></tr>
+                    `).join('') || '<tr class="empty-row"><td colspan="3">Донишҷӯён нест</td></tr>'}
+                </tbody>
+            </table>
+            </div>
+        `;
+    } catch {
+        body.innerHTML = '<p style="color:var(--danger)">Хатогӣ</p>';
+    }
+}
+
+async function openUser(uid) {
+    openModal('modal-usr');
+    const body = document.getElementById('modal-usr-body');
+    body.innerHTML = '<p style="color:var(--text-muted)">Бор шудан...</p>';
+    try {
+        const r = await fetch(`${BASE}/users/${uid}`);
+        const d = await r.json();
+        body.innerHTML = `
+            <div class="profile-info">
+                <h3>${esc(d.full_name)}</h3>
+                <p><strong>Нақш:</strong> ${roleLabel(d.role)}</p>
+                <p><strong>Факултет:</strong> ${esc(d.faculty_name || '—')}</p>
+                <p><strong>Телефон:</strong> ${esc(d.phone || '—')}</p>
+                <p><strong>Gmail:</strong> ${esc(d.gmail || '—')}</p>
+                <p><strong>Соли таваллуд:</strong> ${d.birth_year || '—'}</p>
+                <p><strong>Унвони илмӣ:</strong> ${esc(d.academic_title || '—')}</p>
+                <p><strong>Био:</strong> ${esc(d.bio || '—')}</p>
+            </div>
+        `;
+    } catch {
+        body.innerHTML = '<p style="color:var(--danger)">Хатогӣ</p>';
+    }
+}
+
+function openModal(id) {
+    document.getElementById(id).classList.add('open');
+}
+function closeModal(id) {
+    document.getElementById(id).classList.remove('open');
+}
+
+// ════════════════════════════════════════════════════════════
+// PAGINATION
+// ════════════════════════════════════════════════════════════
+function renderPagination(elId, pages, current, fn) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    if (pages <= 1) { el.innerHTML = ''; return; }
+    let html = '';
+    for (let i = 1; i <= pages; i++) {
+        html += `<button class="btn btn-sm ${i === current ? 'active' : ''}" onclick="${fn.name}(${i})">${i}</button>`;
+    }
+    el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════════════
+// UTILS
+// ════════════════════════════════════════════════════════════
+function esc(s) {
+    if (s === null || s === undefined) return '';
+    return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function set(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+}
+function setVal(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.value = val;
+}
+function riskBadge(risk) {
+    if (!risk) return '—';
+    return `<span class="risk risk-${risk.code}">${risk.emoji} ${risk.label}</span>`;
+}
+function roleLabel(role) {
+    const map = {DEAN:'Декан', VICE_DEAN:'Замдекан', CURATOR:'Куратор', RECTOR:'Ректор'};
+    return map[role] || role || '—';
+}
+
+// Close modal on backdrop click
+document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal')) closeModal(e.target.id);
+});
+
+// ════════════════════════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', async () => {
+    // Load faculty options for staff filter
+    try {
+        const r = await fetch(`${BASE}/faculties?lpw=25`);
+        const data = await r.json();
+        const opts = data.map(f => `<option value="${f.id}">${esc(f.name)}</option>`).join('');
+        const el = document.getElementById('staff-faculty');
+        if (el) el.innerHTML += opts;
+    } catch {}
+
+    // Load initial section
+    loadDashboard();
+});
+</script>
+</body>
+</html>

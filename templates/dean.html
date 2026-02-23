@@ -1,0 +1,2274 @@
+<!DOCTYPE html>
+<html lang="tj">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панели Декан - Системаи Идоракунӣ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar { transition: all 0.3s; }
+        .fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .modal { display: none; }
+        .modal.active { display: flex; }
+        .loading { opacity: 0.5; pointer-events: none; position: relative; }
+        .loading::after { content: ''; position: absolute; top: 50%; left: 50%; width: 24px; height: 24px; margin: -12px 0 0 -12px; border: 3px solid #3b82f6; border-radius: 50%; border-top-color: transparent; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast { position: fixed; animation: slideIn 0.3s ease-out; }
+        .nav-item.active { background-color: rgb(51 65 85); border-left: 4px solid rgb(59 130 246); }
+        .chart-btn.active { background-color: #3b82f6; color: white; }
+        .bulk-checkbox { transform: scale(1.1); }
+        .section { display: none; }
+        .section.active-section { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <aside class="sidebar w-64 bg-slate-800 text-white flex-shrink-0 flex flex-col">
+            <div class="p-4 border-b border-slate-700">
+                <h1 class="text-xl font-bold"><i class="fas fa-university mr-2"></i>Системаи идоракунӣ</h1>
+                <p class="text-sm text-gray-400">Панели декан</p>
+            </div>
+            
+            <nav class="mt-4 flex-1 overflow-y-auto">
+                <div class="px-4 py-2 text-xs text-gray-400 uppercase font-semibold">Асосӣ</div>
+                <a href="#" onclick="showSection('dashboard', this)" class="nav-item active block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-tachometer-alt w-6"></i> Умумӣ
+                </a>
+                <a href="#" onclick="showSection('analytics', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-chart-line w-6"></i> Аналитика
+                </a>
+                
+                <div class="px-4 py-2 mt-4 text-xs text-gray-400 uppercase font-semibold">Идоракунӣ</div>
+                <a href="#" onclick="showSection('weekly', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-calendar-week w-6"></i> Ҳафтавӣ
+                </a>
+                <a href="#" onclick="showSection('curators', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-chalkboard-teacher w-6"></i> Кураторон
+                </a>
+                <a href="#" onclick="showSection('groups', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-users w-6"></i> Гурӯҳҳо
+                </a>
+                <a href="#" onclick="showSection('students', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-user-graduate w-6"></i> Донишҷӯён
+                </a>
+                <a href="#" onclick="showSection('at-risk', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-exclamation-triangle w-6"></i> Хавфнок (NB)
+                </a>
+                <a href="#" onclick="showSection('registry', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-list-alt w-6"></i> Реестри донишҷӯён
+                </a>
+                
+                <div class="px-4 py-2 mt-4 text-xs text-gray-400 uppercase font-semibold">Система</div>
+                <a href="#" onclick="showSection('audit-log', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-history w-6"></i> Аудит лог
+                </a>
+                <a href="#" onclick="showSection('settings', this)" class="nav-item block px-4 py-3 hover:bg-slate-700 transition">
+                    <i class="fas fa-cog w-6"></i> Танзимот
+                </a>
+            </nav>
+            
+            <!-- User block at bottom -->
+            <div class="p-4 border-t border-slate-700">
+                <div class="flex items-center mb-3">
+                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center font-bold text-lg cursor-pointer hover:bg-blue-600 transition" onclick="showSection('profile', null)" title="Профил">
+                        {{ user.full_name[0].upper() if user.full_name else 'D' }}
+                    </div>
+                    <div class="ml-3 flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ user.full_name or 'Декан' }}</p>
+                        <p class="text-xs text-gray-400">Декан</p>
+                    </div>
+                    <button onclick="showSection('profile', null)" class="text-gray-400 hover:text-white transition ml-1" title="Профил">
+                        <i class="fas fa-user-circle"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="showSection('change-password', null)" class="text-center py-2 bg-slate-700 hover:bg-slate-600 rounded transition text-xs text-gray-300">
+                        <i class="fas fa-key mr-1"></i>Парол
+                    </button>
+                    <a href="/logout" class="block text-center py-2 bg-red-600 hover:bg-red-700 rounded transition text-xs">
+                        <i class="fas fa-sign-out-alt mr-1"></i>Баромадан
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 overflow-y-auto bg-gray-100">
+            <!-- Header -->
+            <header class="bg-white shadow-sm border-b px-6 py-4 sticky top-0 z-10">
+                <div class="flex justify-between items-center">
+                    <h2 id="page-title" class="text-2xl font-bold text-gray-800">Умумӣ</h2>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600"><i class="fas fa-building mr-2"></i>{{ faculty.name if faculty else 'Факултет' }}</span>
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium" id="current-year">{{ now().year if now else '2026' }}</span>
+                        <button onclick="refreshCurrentSection()" class="p-2 text-gray-500 hover:text-blue-600 transition" title="Навсозӣ">
+                            <i class="fas fa-sync-alt" id="refresh-icon"></i>
+                        </button>
+                        <button onclick="showSection('profile', null)" class="p-2 text-gray-500 hover:text-blue-600 transition" title="Профил">
+                            <i class="fas fa-user-circle text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-6">
+
+                <!-- ===== DASHBOARD SECTION ===== -->
+                <section id="dashboard" class="section active-section fade-in">
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+                        <div class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Донишҷӯён</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-1" id="kpi-students">—</p>
+                                </div>
+                                <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-graduate text-blue-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Кураторҳо</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-1" id="kpi-curators">—</p>
+                                </div>
+                                <div class="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-chalkboard-teacher text-green-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Гурӯҳҳо</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-1" id="kpi-groups">—</p>
+                                </div>
+                                <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-purple-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">&gt; ҳадди NB</p>
+                                    <p class="text-3xl font-bold text-red-600 mt-1" id="kpi-high-absence">—</p>
+                                </div>
+                                <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5 hover:shadow-md transition">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-500 text-sm font-medium">Иштирок имрӯз</p>
+                                    <p class="text-3xl font-bold text-gray-800 mt-1" id="kpi-attendance">—</p>
+                                </div>
+                                <div class="w-14 h-14 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-chart-pie text-yellow-600 text-2xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shift Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h4 class="font-bold text-gray-700 mb-3"><i class="fas fa-sun mr-2 text-yellow-500"></i>Навбати 1</h4>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-2xl font-bold text-gray-800" id="shift-1-pct">0%</p>
+                                    <p class="text-sm text-gray-500">Иштирок</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600" id="shift-1-students">0 донишҷӯ</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 bg-gray-200 rounded-full h-2">
+                                <div id="shift-1-bar" class="bg-yellow-500 h-2 rounded-full transition-all duration-500" style="width:0%"></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-4">
+                            <h4 class="font-bold text-gray-700 mb-3"><i class="fas fa-moon mr-2 text-blue-500"></i>Навбати 2</h4>
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-2xl font-bold text-gray-800" id="shift-2-pct">0%</p>
+                                    <p class="text-sm text-gray-500">Иштирок</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-sm text-gray-600" id="shift-2-students">0 донишҷӯ</p>
+                                </div>
+                            </div>
+                            <div class="mt-2 bg-gray-200 rounded-full h-2">
+                                <div id="shift-2-bar" class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width:0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Alerts Panel -->
+                    <div class="bg-white rounded-lg shadow mb-6">
+                        <div class="px-5 py-4 border-b flex justify-between items-center">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-bell mr-2 text-yellow-500"></i>Огоҳиҳо (<span id="alert-count">0</span>)</h3>
+                            <button onclick="loadAlerts()" class="text-sm text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-sync-alt mr-1"></i>Навсозӣ
+                            </button>
+                        </div>
+                        <div id="alerts-container" class="p-5 space-y-3 max-h-96 overflow-y-auto">
+                            <p class="text-gray-500 text-center py-8"><i class="fas fa-spinner fa-spin text-2xl"></i></p>
+                        </div>
+                    </div>
+
+                    <!-- Charts -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-chart-line mr-2 text-blue-500"></i>Иштирок</h3>
+                            <div class="flex space-x-2 mb-4">
+                                <button onclick="updateChart('daily', event)" class="chart-btn active px-4 py-2 bg-blue-500 text-white rounded text-sm font-medium hover:bg-blue-600 transition">Рӯз</button>
+                                <button onclick="updateChart('weekly', event)" class="chart-btn px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm font-medium hover:bg-gray-300 transition">Ҳафта</button>
+                                <button onclick="updateChart('monthly', event)" class="chart-btn px-4 py-2 bg-gray-200 text-gray-700 rounded text-sm font-medium hover:bg-gray-300 transition">Моҳ</button>
+                            </div>
+                            <div class="h-64">
+                                <canvas id="attendanceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-graduation-cap mr-2 text-purple-500"></i>Омор бо курсҳо</h3>
+                            <div id="course-stats" class="space-y-3">
+                                <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top 5 Groups -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-trophy mr-2 text-yellow-500"></i>🏆 ТОП 5 — беҳтарин гурӯҳ</h3>
+                            <div id="best-groups" class="space-y-2">
+                                <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>⚠️ ТОП 5 — бадтарин гурӯҳ</h3>
+                            <div id="worst-groups" class="space-y-2">
+                                <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top 5 Students -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-star mr-2 text-yellow-500"></i>⭐ ТОП 5 — беҳтарин донишҷӯ</h3>
+                            <div id="best-students" class="space-y-2">
+                                <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-arrow-down mr-2 text-red-500"></i>📉 ТОП 5 — бадтарин донишҷӯ</h3>
+                            <div id="worst-students" class="space-y-2">
+                                <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== ANALYTICS SECTION ===== -->
+                <section id="analytics" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow p-6 mb-6">
+                        <h3 class="font-bold text-gray-800 text-xl mb-6"><i class="fas fa-chart-bar mr-2 text-blue-500"></i>Аналитикаи муфассал</h3>
+                        <div id="analytics-content" class="text-center py-12 text-gray-500">
+                            <i class="fas fa-spinner fa-spin text-3xl mb-3"></i>
+                            <p>Бор шудан...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== CURATORS SECTION ===== -->
+                <section id="curators" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-5 py-4 border-b flex justify-between items-center">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-chalkboard-teacher mr-2 text-blue-500"></i>👨‍🏫 Рӯйхати кураторон</h3>
+                            <button onclick="openModal('curator-modal')" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">
+                                <i class="fas fa-plus mr-2"></i>Куратори нав
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">#</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Номи пурра</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Username</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Телефон</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Гурӯҳ</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Амалиётҳо</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="curators-table" class="divide-y divide-gray-200">
+                                    <tr><td colspan="7" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== GROUPS SECTION ===== -->
+                <section id="groups" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow mb-4">
+                        <div class="px-5 py-4 border-b flex justify-between items-center flex-wrap gap-3">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-users mr-2 text-purple-500"></i>📋 Рӯйхати гурӯҳҳо</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="openModal('group-modal')" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">
+                                    <i class="fas fa-plus mr-2"></i>Гурӯҳи нав
+                                </button>
+                                <button onclick="exportData('students')" class="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium shadow">
+                                    <i class="fas fa-file-csv mr-2"></i>CSV
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Filters -->
+                        <div class="px-5 py-4 bg-gray-50 border-b flex flex-wrap gap-3 items-center">
+                            <select id="filter-course" onchange="loadGroups()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Ҳама курсҳо</option>
+                                <option value="1">1-курс</option>
+                                <option value="2">2-курс</option>
+                                <option value="3">3-курс</option>
+                                <option value="4">4-курс</option>
+                            </select>
+                            <select id="filter-shift" onchange="loadGroups()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Ҳама навбат</option>
+                                <option value="1">1-навбат</option>
+                                <option value="2">2-навбат</option>
+                            </select>
+                            <div class="flex-1"></div>
+                            <div class="flex items-center space-x-2 bg-white px-3 py-2 rounded-lg border">
+                                <input type="checkbox" id="select-all-groups" onchange="toggleBulkSelectAll('group')" class="w-4 h-4 text-blue-600 rounded">
+                                <label for="select-all-groups" class="text-sm text-gray-700 font-medium"><span id="bulk-count-groups">0</span> интихоб</label>
+                            </div>
+                            <button onclick="openBulkCuratorModal()" class="px-4 py-2 bg-purple-500 text-white rounded-lg text-sm font-medium hover:bg-purple-600 transition">
+                                <i class="fas fa-user-tie mr-1"></i>Куратор таъин
+                            </button>
+                            <button onclick="bulkDeleteGroups()" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition">
+                                <i class="fas fa-trash mr-1"></i>Нест
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-5 py-3"><input type="checkbox" id="select-all-groups-header" onchange="toggleBulkSelectAll('group')" class="w-4 h-4 bulk-checkbox"></th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">#</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Гурӯҳ</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Курс</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Навбат</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Куратор</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Донишҷӯён</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">NB</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Иштирок</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Амалиётҳо</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="groups-table" class="divide-y divide-gray-200">
+                                    <tr><td colspan="10" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== STUDENTS SECTION ===== -->
+                <section id="students" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-5 py-4 border-b flex justify-between items-center flex-wrap gap-3">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-user-graduate mr-2 text-green-500"></i>👥 Рӯйхати донишҷӯён</h3>
+                            <div class="flex space-x-2">
+                                <button onclick="openModal('import-modal')" class="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium shadow">
+                                    <i class="fas fa-upload mr-2"></i>Импорт
+                                </button>
+                                <button onclick="exportData('students')" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">
+                                    <i class="fas fa-file-csv mr-2"></i>Экспорт
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Filters -->
+                        <div class="px-5 py-4 bg-gray-50 border-b flex flex-wrap gap-3 items-center">
+                            <select id="student-filter-group" onchange="loadStudents()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Ҳама гурӯҳ</option>
+                            </select>
+                            <select id="student-filter-course" onchange="loadStudents()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Ҳама курс</option>
+                                <option value="1">1-курс</option>
+                                <option value="2">2-курс</option>
+                                <option value="3">3-курс</option>
+                                <option value="4">4-курс</option>
+                            </select>
+                            <input type="text" id="student-search" placeholder="Ҷустуҷӯ (Ном, Код)..." onkeyup="debounceSearch()" class="px-4 py-2 border border-gray-300 rounded-lg flex-1 focus:ring-2 focus:ring-blue-500">
+                            <div class="flex items-center space-x-2 bg-white px-3 py-2 rounded-lg border">
+                                <input type="checkbox" id="select-all-students" onchange="toggleBulkSelectAll('student')" class="w-4 h-4 text-blue-600 rounded">
+                                <label for="select-all-students" class="text-sm text-gray-700 font-medium"><span id="bulk-count-students">0</span> интихоб</label>
+                            </div>
+                            <button onclick="bulkNBAction('justify')" class="px-4 py-2 bg-blue-500 text-white rounded-lg text-sm font-medium hover:bg-blue-600 transition">
+                                <i class="fas fa-check mr-1"></i>Justify NB
+                            </button>
+                            <button onclick="bulkDeleteStudents()" class="px-4 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition">
+                                <i class="fas fa-trash mr-1"></i>Нест
+                            </button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-5 py-3"><input type="checkbox" id="select-all-students-header" onchange="toggleBulkSelectAll('student')" class="w-4 h-4 bulk-checkbox"></th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">#</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Ном ва насаб</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Код</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Гурӯҳ</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Курс</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Минтақа</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">NB</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Амалиётҳо</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="students-table" class="divide-y divide-gray-200">
+                                    <tr><td colspan="9" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- Pagination -->
+                        <div class="px-5 py-4 border-t flex justify-between items-center">
+                            <div class="text-sm text-gray-600">Ҳамагӣ: <span id="total-students" class="font-bold">0</span> донишҷӯ</div>
+                            <div id="pagination-controls" class="flex space-x-2"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== AT-RISK SECTION ===== -->
+                <section id="at-risk" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-5 py-4 border-b flex justify-between items-center">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>🚨 Донишҷӯёни хавфнок</h3>
+                                <p class="text-sm text-gray-500 mt-1">Донишҷӯёне, ки NB аз ҳадди муқарраршуда зиёд аст.</p>
+                            </div>
+                            <button onclick="exportData('nb')" class="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium shadow">
+                                <i class="fas fa-file-csv mr-2"></i>Экспорт NB
+                            </button>
+                        </div>
+                        <div class="px-5 py-4 bg-gray-50 border-b flex gap-3">
+                            <select id="at-risk-filter-group" onchange="loadAtRiskStudents()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Ҳама гурӯҳ</option>
+                            </select>
+                            <select id="at-risk-filter-course" onchange="loadAtRiskStudents()" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <option value="">Ҳама курс</option>
+                                <option value="1">1-курс</option>
+                                <option value="2">2-курс</option>
+                                <option value="3">3-курс</option>
+                                <option value="4">4-курс</option>
+                            </select>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">#</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Ном ва насаб</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Код</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Гурӯҳ</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Курс</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">NB</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Телефони волидайн</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Амалиётҳо</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="at-risk-table" class="divide-y divide-gray-200">
+                                    <tr><td colspan="8" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== AUDIT LOG SECTION ===== -->
+                <section id="audit-log" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-5 py-4 border-b flex justify-between items-center">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-history mr-2 text-gray-500"></i>📋 Аудит лог</h3>
+                            <div class="flex gap-2">
+                                <select id="audit-filter-action" onchange="loadAuditLog()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                                    <option value="">Ҳама амалҳо</option>
+                                    <option value="CREATE">Эҷод</option>
+                                    <option value="UPDATE">Навсозӣ</option>
+                                    <option value="DELETE">Нест</option>
+                                </select>
+                                <input type="date" id="audit-filter-date" onchange="loadAuditLog()" class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                            </div>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Вақт</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Корбар</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Амал</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Ҷадвал</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Тавсиф</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="audit-log-table" class="divide-y divide-gray-200">
+                                    <tr><td colspan="5" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== SETTINGS SECTION ===== -->
+                <section id="settings" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow max-w-3xl">
+                        <div class="px-5 py-4 border-b">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-cog mr-2 text-gray-500"></i>⚙️ Танзимоти система</h3>
+                        </div>
+                        <div class="p-6 space-y-5">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">NB_LIMIT (ҳадди хавф)</label>
+                                <input type="number" id="setting-nb-limit" value="35" min="1" max="100" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <p class="text-xs text-gray-500 mt-1">Донишҷӯёне, ки аз ин ҳадд зиёд ғоиб шаванд, хавфнок ҳисоб мешаванд.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">ALERT_CONSECUTIVE_DAYS (рӯз)</label>
+                                <input type="number" id="setting-alert-days" value="5" min="1" max="30" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <p class="text-xs text-gray-500 mt-1">Шумораи рӯзҳои пай дар пай барои огоҳӣ.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">ATTENDANCE_THRESHOLD (%)</label>
+                                <input type="number" id="setting-attendance-threshold" value="70" min="0" max="100" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                                <p class="text-xs text-gray-500 mt-1">Гурӯҳҳое, ки иштирокашон аз ин фоиз кам аст, огоҳӣ мегиранд.</p>
+                            </div>
+                            <div class="pt-4 border-t">
+                                <button onclick="saveSettings()" class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">
+                                    <i class="fas fa-save mr-2"></i>Сабт кардан
+                                </button>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <p class="text-sm text-blue-700"><i class="fas fa-info-circle mr-2"></i>Тағйирот ба ҳамаи корбарони факултет таъсир мерасонад.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== PROFILE SECTION ===== -->
+                <section id="profile" class="section fade-in">
+                    <div class="max-w-2xl">
+                        <div class="bg-white rounded-lg shadow overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-600 to-blue-800 px-6 py-8">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-20 h-20 rounded-full bg-white bg-opacity-20 flex items-center justify-center text-white text-3xl font-bold">
+                                        {{ user.full_name[0].upper() if user.full_name else 'D' }}
+                                    </div>
+                                    <div>
+                                        <h2 class="text-2xl font-bold text-white">{{ user.full_name or 'Декан' }}</h2>
+                                        <p class="text-blue-200">Декан • {{ faculty.name if faculty else 'Факултет' }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Username</p>
+                                        <p class="font-semibold text-gray-800">{{ user.username }}</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Email</p>
+                                        <p class="font-semibold text-gray-800">{{ user.email or '—' }}</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Телефон</p>
+                                        <p class="font-semibold text-gray-800">{{ user.phone or '—' }}</p>
+                                    </div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <p class="text-xs text-gray-500 font-medium uppercase mb-1">Факултет</p>
+                                        <p class="font-semibold text-gray-800">{{ faculty.name if faculty else '—' }}</p>
+                                    </div>
+                                </div>
+                                <div class="pt-4 border-t flex space-x-3">
+                                    <button onclick="openModal('edit-profile-modal')" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">
+                                        <i class="fas fa-edit mr-2"></i>Вироиши профил
+                                    </button>
+                                    <button onclick="showSection('change-password', null)" class="px-5 py-2.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition font-medium shadow">
+                                        <i class="fas fa-key mr-2"></i>Иваз кардани парол
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== CHANGE PASSWORD SECTION ===== -->
+                <section id="change-password" class="section fade-in">
+                    <div class="max-w-md">
+                        <div class="bg-white rounded-lg shadow">
+                            <div class="px-6 py-4 border-b">
+                                <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-key mr-2 text-yellow-500"></i>Иваз кардани парол</h3>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div id="cp-error" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm"></div>
+                                <div id="cp-success" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg text-sm"></div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Пароли ҳозира <span class="text-red-500">*</span></label>
+                                    <input type="password" id="cp-current" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Пароли ҳозира">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Пароли нав <span class="text-red-500">*</span></label>
+                                    <input type="password" id="cp-new" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Пароли нав (ҳадди ақал 8 аломат)">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Тасдиқи паролиnav <span class="text-red-500">*</span></label>
+                                    <input type="password" id="cp-confirm" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Паролро дубора ворид кунед">
+                                </div>
+                                <div class="pt-2">
+                                    <button onclick="changePassword()" class="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">
+                                        <i class="fas fa-save mr-2"></i>Сабт кардан
+                                    </button>
+                                </div>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                                    <p class="text-xs text-yellow-700"><i class="fas fa-info-circle mr-1"></i>Парол бояд: ҳадди ақал 8 аломат, як ҳарфи калон, як рақам дошта бошад.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== WEEKLY SECTION ===== -->
+                <section id="weekly" class="section fade-in">
+                    <!-- Settings row -->
+                    <div class="bg-white rounded-lg shadow p-4 mb-4 flex items-center gap-4 flex-wrap">
+                        <label class="text-sm font-medium text-gray-700">Дарсҳо/ҳафта:</label>
+                        <input type="number" id="weekly-lpw" value="25" min="1" max="100" class="px-3 py-2 border border-gray-300 rounded-lg w-24 focus:ring-2 focus:ring-blue-500">
+                        <button onclick="loadWeeklyStats()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition text-sm font-medium">
+                            <i class="fas fa-sync-alt mr-1"></i>Навсозӣ
+                        </button>
+                        <span id="weekly-week-label" class="text-sm text-gray-500 ml-2"></span>
+                    </div>
+
+                    <!-- 4.2 + 4.3 Attendance overview -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <p class="text-sm text-gray-500 font-medium">Иштирок (ин ҳафта)</p>
+                            <p class="text-4xl font-bold text-blue-600 mt-1" id="weekly-att-this">—</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <p class="text-sm text-gray-500 font-medium">Иштирок (ҳафтаи пеш)</p>
+                            <p class="text-4xl font-bold text-gray-600 mt-1" id="weekly-att-prev">—</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <p class="text-sm text-gray-500 font-medium">Динамика</p>
+                            <p class="text-4xl font-bold mt-1" id="weekly-dynamics">—</p>
+                        </div>
+                    </div>
+
+                    <!-- 9 Smart Alerts -->
+                    <div class="bg-white rounded-lg shadow mb-6">
+                        <div class="px-5 py-4 border-b">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-bell mr-2 text-orange-500"></i>Smart Alerts</h3>
+                        </div>
+                        <div id="weekly-alerts" class="p-5 space-y-3 max-h-80 overflow-y-auto">
+                            <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                        </div>
+                    </div>
+
+                    <!-- 8 TOP 5 -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-trophy mr-2 text-yellow-500"></i>🏆 ТОП 5 — беҳтарин гурӯҳ (ин ҳафта)</h3>
+                            <div id="weekly-best-groups" class="space-y-2">
+                                <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-lg shadow p-5">
+                            <h3 class="font-bold text-gray-800 mb-4 text-lg"><i class="fas fa-exclamation-triangle mr-2 text-red-500"></i>⚠️ ТОП 5 — бадтарин гурӯҳ (ин ҳафта)</h3>
+                            <div id="weekly-worst-groups" class="space-y-2">
+                                <div class="text-center py-8 text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5.1 Group Risk Table -->
+                    <div class="bg-white rounded-lg shadow">
+                        <div class="px-5 py-4 border-b">
+                            <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>5.1 Risk Level — ҳама гурӯҳҳо</h3>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Гурӯҳ</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Донишҷӯён</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">NB% (ин ҳафта)</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">NB% (пеш)</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Иштирок%</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Risk</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="weekly-group-table" class="divide-y divide-gray-200">
+                                    <tr><td colspan="6" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ===== REGISTRY SECTION ===== -->
+                <section id="registry" class="section fade-in">
+                    <div class="bg-white rounded-lg shadow mb-4">
+                        <div class="px-5 py-4 border-b flex justify-between items-center flex-wrap gap-3">
+                            <div>
+                                <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-list-alt mr-2 text-indigo-500"></i>📋 Реестри стратегии донишҷӯён</h3>
+                                <p class="text-sm text-gray-500 mt-1">Ҳамагӣ: <span id="registry-total" class="font-bold text-gray-800">—</span> донишҷӯ</p>
+                            </div>
+                            <button onclick="exportData('students')" class="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium shadow">
+                                <i class="fas fa-file-csv mr-2"></i>Экспорт CSV
+                            </button>
+                        </div>
+                        <!-- Filter counts pills -->
+                        <div class="px-5 py-4 bg-gray-50 border-b">
+                            <div class="flex flex-wrap gap-3 items-start">
+                                <!-- Course filters -->
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Курс</p>
+                                    <div id="registry-course-filters" class="flex flex-wrap gap-2"></div>
+                                </div>
+                                <!-- Shift filters -->
+                                <div class="ml-4">
+                                    <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Навбат</p>
+                                    <div id="registry-shift-filters" class="flex flex-wrap gap-2"></div>
+                                </div>
+                                <!-- Birth place filters -->
+                                <div class="ml-4 flex-1">
+                                    <p class="text-xs text-gray-500 uppercase font-semibold mb-2">Ҷои таваллуд / Минтақа</p>
+                                    <div id="registry-bp-filters" class="flex flex-wrap gap-2 max-h-24 overflow-y-auto"></div>
+                                </div>
+                                <!-- Reset -->
+                                <div class="ml-2 flex items-end pb-0.5">
+                                    <button onclick="resetRegistryFilters()" class="px-3 py-1.5 bg-gray-200 text-gray-700 rounded-lg text-sm hover:bg-gray-300 transition">
+                                        <i class="fas fa-times mr-1"></i>Тоза
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Table -->
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">#</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Ном ва насаб</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Код</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Гурӯҳ</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Курс</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Навбат</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Ҷои таваллуд</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Телефон волидайн</th>
+                                        <th class="px-5 py-3 text-left text-xs font-semibold text-gray-500 uppercase">NB</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="registry-table" class="divide-y divide-gray-200">
+                                    <tr><td colspan="9" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-spinner fa-spin text-2xl"></i></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div><!-- /p-6 -->
+        </main>
+    </div>
+
+    <!-- ==================== MODALS ==================== -->
+
+    <!-- Curator Modal (Create) -->
+    <div id="curator-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="px-6 py-4 border-b flex justify-between items-center sticky top-0 bg-white">
+                <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-chalkboard-teacher mr-2 text-blue-500"></i>Куратори нав</h3>
+                <button onclick="closeModal('curator-modal')" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="curator-form" onsubmit="createCurator(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Номи пурра <span class="text-red-500">*</span></label>
+                    <input type="text" name="full_name" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Username <span class="text-red-500">*</span></label>
+                    <input type="text" name="username" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                    <input type="text" name="phone" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal('curator-modal')" class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Бекор</button>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">Эҷод</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Curator Modal -->
+    <div id="edit-curator-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
+            <div class="px-6 py-4 border-b flex justify-between items-center sticky top-0 bg-white">
+                <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-edit mr-2 text-green-500"></i>Вироиши куратор</h3>
+                <button onclick="closeModal('edit-curator-modal')" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="edit-curator-form" onsubmit="saveCuratorEdit(event)" class="p-6 space-y-4">
+                <input type="hidden" id="edit-curator-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Номи пурра <span class="text-red-500">*</span></label>
+                    <input type="text" id="edit-curator-full-name" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="edit-curator-email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                    <input type="text" id="edit-curator-phone" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal('edit-curator-modal')" class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Бекор</button>
+                    <button type="submit" class="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium shadow">Сабт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-user-edit mr-2 text-blue-500"></i>Вироиши профил</h3>
+                <button onclick="closeModal('edit-profile-modal')" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="edit-profile-form" onsubmit="saveProfile(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Номи пурра <span class="text-red-500">*</span></label>
+                    <input type="text" id="profile-full-name" value="{{ user.full_name or '' }}" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" id="profile-email" value="{{ user.email or '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Телефон</label>
+                    <input type="text" id="profile-phone" value="{{ user.phone or '' }}" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal('edit-profile-modal')" class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Бекор</button>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">Сабт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Group Modal -->
+    <div id="group-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-users mr-2 text-purple-500"></i>Гурӯҳи нав</h3>
+                <button onclick="closeModal('group-modal')" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="group-form" onsubmit="createGroup(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Рақами гурӯҳ <span class="text-red-500">*</span></label>
+                    <input type="text" name="number" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Курс <span class="text-red-500">*</span></label>
+                    <select name="course_id" required id="group-course-select" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Интихоб...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Навбат <span class="text-red-500">*</span></label>
+                    <select name="shift" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Интихоб...</option>
+                        <option value="1">1-навбат</option>
+                        <option value="2">2-навбат</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Куратор</label>
+                    <select name="curator_id" id="group-curator-select" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Холӣ</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal('group-modal')" class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Бекор</button>
+                    <button type="submit" class="px-5 py-2.5 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition font-medium shadow">Эҷод</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Group Modal -->
+    <div id="edit-group-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-edit mr-2 text-green-500"></i>Вироиши гурӯҳ</h3>
+                <button onclick="closeModal('edit-group-modal')" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="edit-group-form" onsubmit="saveGroupEdit(event)" class="p-6 space-y-4">
+                <input type="hidden" id="edit-group-id">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Рақами гурӯҳ <span class="text-red-500">*</span></label>
+                    <input type="text" id="edit-group-number" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Навбат <span class="text-red-500">*</span></label>
+                    <select id="edit-group-shift" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="1">1-навбат</option>
+                        <option value="2">2-навбат</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Куратор</label>
+                    <select id="edit-group-curator" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Холӣ</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal('edit-group-modal')" class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Бекор</button>
+                    <button type="submit" class="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium shadow">Сабт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-upload mr-2 text-green-500"></i>Импорт донишҷӯён</h3>
+                <button onclick="closeModal('import-modal')" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="import-form" onsubmit="importStudents(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Гурӯҳ</label>
+                    <select name="group_id" id="import-group-select" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Интихоб кунед...</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Файли Excel/CSV</label>
+                    <input type="file" name="file" accept=".xlsx,.xls,.csv" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                    <p class="text-xs text-gray-500 mt-1">Форматҳо: .xlsx, .xls, .csv</p>
+                </div>
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                    <p class="text-xs text-blue-700"><i class="fas fa-info-circle mr-1"></i>Сутунҳо: full_name, student_code, region, birth_year, parent_phone</p>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal('import-modal')" class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Бекор</button>
+                    <button type="submit" class="px-5 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition font-medium shadow">Импорт</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk Curator Modal -->
+    <div id="bulk-curator-modal" class="modal fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4">
+            <div class="px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-lg font-bold text-gray-800"><i class="fas fa-user-tie mr-2 text-purple-500"></i>Таъини куратор</h3>
+                <button onclick="closeModal('bulk-curator-modal')" class="text-gray-400 hover:text-gray-600 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <form id="bulk-curator-form" onsubmit="bulkAssignCurator(event)" class="p-6 space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Интихоби куратор</label>
+                    <select name="curator_id" required id="bulk-curator-select" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+                        <option value="">Интихоб кунед...</option>
+                    </select>
+                </div>
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p class="text-xs text-yellow-700"><i class="fas fa-exclamation-triangle mr-1"></i><span id="bulk-groups-count">0</span> гурӯҳ тағйир хоҳад ёфт</p>
+                </div>
+                <div class="flex justify-end space-x-3 pt-4 border-t">
+                    <button type="button" onclick="closeModal('bulk-curator-modal')" class="px-5 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition font-medium">Бекор</button>
+                    <button type="submit" class="px-5 py-2.5 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition font-medium shadow">Таъин кардан</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-[9999] space-y-2 pointer-events-none"></div>
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+    <script>
+        // ============================================
+        // GLOBAL STATE
+        // ============================================
+        let attendanceChart = null;
+        let currentChartMode = 'daily';
+        let currentSection = 'dashboard';
+        let statsData = null;
+        let searchTimeout = null;
+        let currentPage = 1;
+        const pageSize = 50;
+        let allCurators = [];
+
+        // ============================================
+        // UTILITY
+        // ============================================
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500',
+                error: 'bg-red-500',
+                warning: 'bg-yellow-500',
+                info: 'bg-blue-500'
+            };
+            const icons = {
+                success: 'check-circle',
+                error: 'exclamation-circle',
+                warning: 'exclamation-triangle',
+                info: 'info-circle'
+            };
+            toast.className = `pointer-events-auto px-5 py-3 rounded-lg shadow-lg text-white text-sm ${colors[type] || colors.info} flex items-center space-x-2`;
+            toast.style.animation = 'slideIn 0.3s ease-out';
+            toast.innerHTML = `<i class="fas fa-${icons[type] || 'info-circle'}"></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transition = 'opacity 0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        function setLoading(elementId, isLoading) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            isLoading ? el.classList.add('loading') : el.classList.remove('loading');
+        }
+
+        async function apiCall(url, options = {}) {
+            const defaultHeaders = {};
+            if (!(options.body instanceof FormData)) {
+                defaultHeaders['Content-Type'] = 'application/json';
+            }
+            const response = await fetch(url, {
+                credentials: 'same-origin',
+                ...options,
+                headers: { ...defaultHeaders, ...(options.headers || {}) }
+            });
+            if (response.status === 401 || response.status === 403) {
+                window.location.href = '/login';
+                throw new Error('Сессия тамом шуд');
+            }
+            if (!response.ok) {
+                let errMsg = 'Хатогӣ рух дод';
+                try { const err = await response.json(); errMsg = err.detail || errMsg; } catch(e) {}
+                throw new Error(errMsg);
+            }
+            return response.json();
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '—';
+            try {
+                const d = new Date(dateString);
+                return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+            } catch(e) { return dateString; }
+        }
+
+        function debounceSearch() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => { currentPage = 1; loadStudents(); }, 500);
+        }
+
+        // ============================================
+        // NAVIGATION - FIX: pass element explicitly
+        // ============================================
+        function showSection(sectionId, el) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => {
+                s.classList.remove('active-section');
+            });
+            // Remove active from all nav items
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.classList.add('active-section', 'fade-in');
+            }
+
+            // Find the nav item to activate
+            if (el) {
+                const navItem = el.closest ? el.closest('.nav-item') : null;
+                if (navItem) navItem.classList.add('active');
+            }
+
+            const titles = {
+                'dashboard': 'Умумӣ',
+                'analytics': 'Аналитика',
+                'weekly': 'Ҳафтавӣ — Омор ва огоҳиҳо',
+                'curators': 'Кураторон',
+                'groups': 'Гурӯҳҳо',
+                'students': 'Донишҷӯён',
+                'at-risk': 'Донишҷӯёни хавфнок',
+                'registry': 'Реестри стратегии донишҷӯён',
+                'audit-log': 'Аудит лог',
+                'settings': 'Танзимот',
+                'profile': 'Профили ман',
+                'change-password': 'Иваз кардани парол'
+            };
+            const titleEl = document.getElementById('page-title');
+            if (titleEl) titleEl.textContent = titles[sectionId] || '';
+
+            currentSection = sectionId;
+            loadSectionData(sectionId);
+
+            // Prevent default anchor scroll
+            return false;
+        }
+
+        function refreshCurrentSection() {
+            const icon = document.getElementById('refresh-icon');
+            if (icon) {
+                icon.classList.add('fa-spin');
+                setTimeout(() => icon.classList.remove('fa-spin'), 1000);
+            }
+            loadSectionData(currentSection);
+        }
+
+        function loadSectionData(sectionId) {
+            switch(sectionId) {
+                case 'dashboard': loadDashboard(); break;
+                case 'analytics': loadAnalytics(); break;
+                case 'weekly': loadWeeklyStats(); break;
+                case 'curators': loadCurators(); break;
+                case 'groups': loadGroups(); loadCuratorOptionsForGroups(); break;
+                case 'students': loadStudents(); loadStudentFilters(); break;
+                case 'at-risk': loadAtRiskStudents(); loadAtRiskFilters(); break;
+                case 'registry': loadRegistry(); break;
+                case 'audit-log': loadAuditLog(); break;
+                case 'settings': loadSettings(); break;
+                case 'profile': break; // Static Jinja2 data
+                case 'change-password': 
+                    document.getElementById('cp-current').value = '';
+                    document.getElementById('cp-new').value = '';
+                    document.getElementById('cp-confirm').value = '';
+                    document.getElementById('cp-error').classList.add('hidden');
+                    document.getElementById('cp-success').classList.add('hidden');
+                    break;
+            }
+        }
+
+        // ============================================
+        // MODAL HELPERS
+        // ============================================
+        function openModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) m.classList.add('active');
+        }
+        function closeModal(modalId) {
+            const m = document.getElementById(modalId);
+            if (m) m.classList.remove('active');
+        }
+
+        // Close modal on outside click
+        window.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // ============================================
+        // DASHBOARD
+        // ============================================
+        async function loadDashboard() {
+            try {
+                setLoading('dashboard', true);
+                const data = await apiCall('/dean/api/stats/overview');
+                statsData = data;
+
+                document.getElementById('kpi-students').textContent = data.total_students ?? 0;
+                document.getElementById('kpi-curators').textContent = data.total_curators ?? 0;
+                document.getElementById('kpi-groups').textContent = data.total_groups ?? 0;
+                document.getElementById('kpi-high-absence').textContent = data.high_absence_count ?? 0;
+                document.getElementById('kpi-attendance').textContent = `${data.att_today_pct ?? 0}%`;
+
+                if (data.shift_stats) {
+                    const s1 = data.shift_stats.find(s => s.shift === 1) || {pct:0, students:0};
+                    const s2 = data.shift_stats.find(s => s.shift === 2) || {pct:0, students:0};
+                    document.getElementById('shift-1-pct').textContent = `${s1.pct}%`;
+                    document.getElementById('shift-1-students').textContent = `${s1.students} донишҷӯ`;
+                    document.getElementById('shift-1-bar').style.width = `${Math.min(s1.pct, 100)}%`;
+                    document.getElementById('shift-2-pct').textContent = `${s2.pct}%`;
+                    document.getElementById('shift-2-students').textContent = `${s2.students} донишҷӯ`;
+                    document.getElementById('shift-2-bar').style.width = `${Math.min(s2.pct, 100)}%`;
+                }
+
+                if (data.course_stats) {
+                    const html = data.course_stats.map(c => `
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                                <span class="font-bold text-gray-800">${c.year}-курс</span>
+                                <span class="text-sm text-gray-500 ml-2">${c.groups} гурӯҳ</span>
+                            </div>
+                            <span class="text-lg font-bold text-blue-600">${c.students}</span>
+                        </div>`).join('');
+                    document.getElementById('course-stats').innerHTML = html || '<p class="text-center text-gray-500 py-4">Маълумот нест</p>';
+                }
+
+                updateChart('daily', null);
+                loadAlerts();
+                loadTopStats();
+            } catch (error) {
+                showToast('Хатогӣ: ' + error.message, 'error');
+            } finally {
+                setLoading('dashboard', false);
+            }
+        }
+
+        async function loadAlerts() {
+            try {
+                const data = await apiCall('/dean/api/alerts');
+                document.getElementById('alert-count').textContent = data.count || 0;
+                if (!data.alerts || data.alerts.length === 0) {
+                    document.getElementById('alerts-container').innerHTML = `<p class="text-gray-500 text-center py-8"><i class="fas fa-check-circle text-green-500 text-2xl mb-2 block"></i>Огоҳиҳо нест</p>`;
+                    return;
+                }
+                const html = data.alerts.map(a => `
+                    <div class="flex items-start space-x-3 p-3 rounded-lg ${a.level === 'error' ? 'bg-red-50 border border-red-200' : 'bg-yellow-50 border border-yellow-200'}">
+                        <i class="fas fa-${a.level === 'error' ? 'exclamation-circle text-red-500' : 'exclamation-triangle text-yellow-500'} text-xl mt-0.5"></i>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium ${a.level === 'error' ? 'text-red-800' : 'text-yellow-800'}">${a.msg}</p>
+                            <p class="text-xs ${a.level === 'error' ? 'text-red-600' : 'text-yellow-600'} mt-1">${a.time || ''}</p>
+                        </div>
+                    </div>`).join('');
+                document.getElementById('alerts-container').innerHTML = html;
+            } catch (e) { console.error('Alerts error:', e); }
+        }
+
+        async function loadTopStats() {
+            try {
+                const data = await apiCall('/dean/api/analytics/top');
+                const renderGroup = (g, i, cls) => `
+                    <div class="flex items-center justify-between p-3 ${cls} rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 flex items-center justify-center bg-white bg-opacity-60 rounded-full font-bold text-sm">${i+1}</span>
+                            <div>
+                                <p class="font-medium text-gray-800 text-sm">Гурӯҳ ${g.number}</p>
+                                <p class="text-xs text-gray-500">${g.course}-курс</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-sm">
+                            <p class="font-bold">${g.pct}%</p>
+                            <p class="text-xs text-gray-500">NB: ${g.avg_nb}</p>
+                        </div>
+                    </div>`;
+
+                document.getElementById('best-groups').innerHTML = (data.best_groups || []).map((g,i) => renderGroup(g,i,'bg-green-50 border border-green-200')).join('') || '<p class="text-center text-gray-500 py-4">Маълумот нест</p>';
+                document.getElementById('worst-groups').innerHTML = (data.worst_groups || []).map((g,i) => renderGroup(g,i,'bg-red-50 border border-red-200')).join('') || '<p class="text-center text-gray-500 py-4">Маълумот нест</p>';
+
+                const renderStu = (s, i, clsBadge) => `
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg border">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 flex items-center justify-center ${clsBadge} text-white rounded-full font-bold text-sm">${i+1}</span>
+                            <div>
+                                <p class="font-medium text-gray-800 text-sm">${s.name}</p>
+                                <p class="text-xs text-gray-500">Гурӯҳ ${s.group}</p>
+                            </div>
+                        </div>
+                        <span class="font-bold text-sm">NB: ${s.absences}</span>
+                    </div>`;
+
+                document.getElementById('best-students').innerHTML = (data.best_students || []).map((s,i) => renderStu(s,i,'bg-blue-500')).join('') || '<p class="text-center text-gray-500 py-4">Маълумот нест</p>';
+                document.getElementById('worst-students').innerHTML = (data.worst_students || []).map((s,i) => renderStu(s,i,'bg-orange-500')).join('') || '<p class="text-center text-gray-500 py-4">Маълумот нест</p>';
+            } catch(e) { console.error('Top stats error:', e); }
+        }
+
+        function updateChart(mode, evt) {
+            if (!statsData || !statsData.time_series) return;
+            currentChartMode = mode;
+
+            document.querySelectorAll('.chart-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-500', 'text-white');
+                btn.classList.add('bg-gray-200', 'text-gray-700');
+            });
+            if (evt && evt.target) {
+                evt.target.classList.add('active', 'bg-blue-500', 'text-white');
+                evt.target.classList.remove('bg-gray-200', 'text-gray-700');
+            } else {
+                // Default: activate first button
+                const firstBtn = document.querySelector('.chart-btn');
+                if (firstBtn) { firstBtn.classList.add('active', 'bg-blue-500', 'text-white'); firstBtn.classList.remove('bg-gray-200','text-gray-700'); }
+            }
+
+            const ctx = document.getElementById('attendanceChart');
+            if (!ctx) return;
+            const seriesData = (statsData.time_series[mode] || []).slice().reverse();
+            const labels = seriesData.map(d => mode === 'daily' ? (d.date||'').slice(5) : mode === 'weekly' ? 'W'+(d.week||'').slice(5) : (d.month||'').slice(5));
+            const values = seriesData.map(d => d.pct);
+
+            if (attendanceChart) attendanceChart.destroy();
+            attendanceChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Иштирок (%)',
+                        data: values,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }
+                    }
+                }
+            });
+        }
+
+        // ============================================
+        // ANALYTICS
+        // ============================================
+        async function loadAnalytics() {
+            const el = document.getElementById('analytics-content');
+            try {
+                const data = await apiCall('/dean/api/analytics/top');
+                el.innerHTML = `
+                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold text-blue-600">${data.best_groups ? data.best_groups.length : 0}</p>
+                            <p class="text-sm text-gray-600 mt-1">Беҳтарин гурӯҳ</p>
+                        </div>
+                        <div class="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                            <p class="text-2xl font-bold text-red-600">${data.worst_groups ? data.worst_groups.length : 0}</p>
+                            <p class="text-sm text-gray-600 mt-1">Бадтарин гурӯҳ</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-500 text-sm text-center mt-4">Барои маълумоти бештар ба бахшҳои дигар гузаред.</p>`;
+            } catch(e) {
+                el.innerHTML = '<p class="text-red-500 text-center py-8">Хатогӣ ҳангоми бор шудан</p>';
+            }
+        }
+
+        // ============================================
+        // CURATORS
+        // ============================================
+        async function loadCurators() {
+            try {
+                setLoading('curators', true);
+                const data = await apiCall('/dean/api/curators');
+                allCurators = data || [];
+
+                if (!data || data.length === 0) {
+                    document.getElementById('curators-table').innerHTML = '<tr><td colspan="7" class="px-5 py-12 text-center text-gray-500">Кураторон нест</td></tr>';
+                    return;
+                }
+
+                const html = data.map((c, i) => `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3 text-gray-600">${i+1}</td>
+                        <td class="px-5 py-3 font-medium text-gray-800">${escHtml(c.full_name)}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(c.username)}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(c.email || '—')}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(c.phone || '—')}</td>
+                        <td class="px-5 py-3">${c.group_number ? `<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">${escHtml(c.group_number)}</span>` : '—'}</td>
+                        <td class="px-5 py-3 flex items-center space-x-2">
+                            <button onclick="viewCurator(${c.id})" class="text-blue-600 hover:text-blue-800" title="Дидан"><i class="fas fa-eye"></i></button>
+                            <button onclick="editCurator(${c.id})" class="text-green-600 hover:text-green-800" title="Вироиш"><i class="fas fa-edit"></i></button>
+                            <button onclick="resetPassword(${c.id})" class="text-yellow-600 hover:text-yellow-800" title="Reset парол"><i class="fas fa-key"></i></button>
+                            <button onclick="deleteCurator(${c.id})" class="text-red-600 hover:text-red-800" title="Нест кардан"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+
+                document.getElementById('curators-table').innerHTML = html;
+                loadCuratorOptions(data);
+            } catch(e) {
+                showToast('Хатогӣ: ' + e.message, 'error');
+            } finally {
+                setLoading('curators', false);
+            }
+        }
+
+        function loadCuratorOptions(curators) {
+            const ids = ['group-curator-select', 'bulk-curator-select', 'edit-group-curator'];
+            ids.forEach(id => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const opts = (curators || []).map(c => `<option value="${c.id}">${escHtml(c.full_name)}</option>`).join('');
+                sel.innerHTML = '<option value="">— Холӣ —</option>' + opts;
+            });
+        }
+
+        async function loadCuratorOptionsForGroups() {
+            if (allCurators.length > 0) {
+                loadCuratorOptions(allCurators);
+            } else {
+                try {
+                    const data = await apiCall('/dean/api/curators');
+                    allCurators = data || [];
+                    loadCuratorOptions(allCurators);
+                } catch(e) {}
+            }
+        }
+
+        async function createCurator(e) {
+            e.preventDefault();
+            const form = e.target;
+            try {
+                const data = await apiCall('/dean/api/curators', { method: 'POST', body: new FormData(form), headers: {} });
+                showToast(`Куратор эҷод шуд. Пароли муваққатӣ: ${data.temp_password}`, 'success');
+                closeModal('curator-modal');
+                form.reset();
+                loadCurators();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function editCurator(id) {
+            try {
+                const data = await apiCall(`/dean/api/curators/${id}/profile`);
+                document.getElementById('edit-curator-id').value = id;
+                document.getElementById('edit-curator-full-name').value = data.full_name || '';
+                document.getElementById('edit-curator-email').value = data.email || '';
+                document.getElementById('edit-curator-phone').value = data.phone || '';
+                openModal('edit-curator-modal');
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function saveCuratorEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-curator-id').value;
+            const body = JSON.stringify({
+                full_name: document.getElementById('edit-curator-full-name').value,
+                email: document.getElementById('edit-curator-email').value,
+                phone: document.getElementById('edit-curator-phone').value,
+            });
+            try {
+                await apiCall(`/dean/api/curators/${id}`, { method: 'PATCH', body });
+                showToast('Куратор навсозӣ шуд', 'success');
+                closeModal('edit-curator-modal');
+                loadCurators();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function viewCurator(id) {
+            try {
+                const data = await apiCall(`/dean/api/curators/${id}/profile`);
+                const groupsList = (data.groups || []).map(g =>
+                    `<li class="py-1.5 border-b text-sm text-gray-700">Гурӯҳ ${g.number} (${g.course}-курс, ${g.students} донишҷӯ)</li>`
+                ).join('');
+                const html = `
+                    <div class="modal active fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="if(event.target===this)this.remove()">
+                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+                            <div class="px-6 py-4 border-b flex justify-between items-center sticky top-0 bg-white">
+                                <h3 class="text-lg font-bold text-gray-800">Профили куратор</h3>
+                                <button onclick="this.closest('.modal').remove()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><p class="text-xs text-gray-500 uppercase">Номи пурра</p><p class="font-medium">${escHtml(data.full_name)}</p></div>
+                                    <div><p class="text-xs text-gray-500 uppercase">Username</p><p class="font-medium">${escHtml(data.username)}</p></div>
+                                    <div><p class="text-xs text-gray-500 uppercase">Email</p><p class="font-medium">${escHtml(data.email||'—')}</p></div>
+                                    <div><p class="text-xs text-gray-500 uppercase">Телефон</p><p class="font-medium">${escHtml(data.phone||'—')}</p></div>
+                                </div>
+                                <div class="border-t pt-4">
+                                    <div class="grid grid-cols-4 gap-3">
+                                        <div class="bg-blue-50 p-3 rounded-lg text-center"><p class="text-xl font-bold text-blue-600">${data.total_groups||0}</p><p class="text-xs text-gray-600">Гурӯҳҳо</p></div>
+                                        <div class="bg-green-50 p-3 rounded-lg text-center"><p class="text-xl font-bold text-green-600">${data.total_students||0}</p><p class="text-xs text-gray-600">Донишҷӯён</p></div>
+                                        <div class="bg-purple-50 p-3 rounded-lg text-center"><p class="text-xl font-bold text-purple-600">${data.attendance_pct||0}%</p><p class="text-xs text-gray-600">Иштирок</p></div>
+                                        <div class="bg-red-50 p-3 rounded-lg text-center"><p class="text-xl font-bold text-red-600">${data.high_absence_count||0}</p><p class="text-xs text-gray-600">Хавфнок</p></div>
+                                    </div>
+                                </div>
+                                <div class="border-t pt-4">
+                                    <h4 class="font-bold text-gray-800 mb-2">Гурӯҳҳо</h4>
+                                    <ul>${groupsList || '<li class="text-gray-500 text-sm">Гурӯҳе нест</li>'}</ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                document.body.insertAdjacentHTML('beforeend', html);
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function deleteCurator(id) {
+            if (!confirm('Куратори интихобшударо нест кунем?')) return;
+            try {
+                await apiCall(`/dean/api/curators/${id}`, { method: 'DELETE' });
+                showToast('Куратор нест карда шуд', 'success');
+                loadCurators();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function resetPassword(id) {
+            if (!confirm('Паролро барқарор созем?')) return;
+            try {
+                const data = await apiCall(`/dean/api/curators/${id}/reset-password`, { method: 'POST' });
+                // Use modal-like alert for password display
+                showToast(`Пароли нав: ${data.temp_password} (Нусхабардорӣ кунед!)`, 'warning');
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        // ============================================
+        // GROUPS
+        // ============================================
+        async function loadGroups() {
+            try {
+                setLoading('groups', true);
+                const courseId = document.getElementById('filter-course').value;
+                const shift = document.getElementById('filter-shift').value;
+                let url = '/dean/api/groups?';
+                if (courseId) url += `course_id=${courseId}&`;
+                if (shift) url += `shift=${shift}&`;
+
+                const data = await apiCall(url);
+
+                if (!data || data.length === 0) {
+                    document.getElementById('groups-table').innerHTML = '<tr><td colspan="10" class="px-5 py-12 text-center text-gray-500">Гурӯҳҳо нест</td></tr>';
+                    return;
+                }
+
+                const html = data.map((g, i) => `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3"><input type="checkbox" class="group-checkbox" value="${g.id}" onchange="updateBulkCount('group')"></td>
+                        <td class="px-5 py-3 text-gray-600">${i+1}</td>
+                        <td class="px-5 py-3 font-medium text-gray-800">${escHtml(g.number)}</td>
+                        <td class="px-5 py-3 text-gray-600">${g.course_year || '—'}</td>
+                        <td class="px-5 py-3"><span class="px-2 py-1 ${g.shift===1 ? 'bg-yellow-100 text-yellow-800' : 'bg-blue-100 text-blue-800'} rounded text-sm">${g.shift}-навбат</span></td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(g.curator || '—')}</td>
+                        <td class="px-5 py-3 text-gray-600">${g.total_students}</td>
+                        <td class="px-5 py-3"><span class="px-2 py-1 ${g.total_absent > 100 ? 'bg-red-100 text-red-800' : 'bg-gray-100 text-gray-800'} rounded text-sm">${g.total_absent}</span></td>
+                        <td class="px-5 py-3"><span class="px-2 py-1 ${g.attendance_pct >= 80 ? 'bg-green-100 text-green-800' : g.attendance_pct >= 60 ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'} rounded text-sm">${g.attendance_pct}%</span></td>
+                        <td class="px-5 py-3 flex items-center space-x-2">
+                            <button onclick="viewGroup(${g.id})" class="text-blue-600 hover:text-blue-800" title="Дидан"><i class="fas fa-eye"></i></button>
+                            <button onclick="editGroup(${g.id})" class="text-green-600 hover:text-green-800" title="Вироиш"><i class="fas fa-edit"></i></button>
+                            <button onclick="deleteGroup(${g.id})" class="text-red-600 hover:text-red-800" title="Нест"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+
+                document.getElementById('groups-table').innerHTML = html;
+
+                // Fill import group select
+                const importSel = document.getElementById('import-group-select');
+                if (importSel) {
+                    importSel.innerHTML = '<option value="">— Интихоб кунед —</option>' + data.map(g => `<option value="${g.id}">Гурӯҳ ${escHtml(g.number)}</option>`).join('');
+                }
+
+                // Fill student filter group select
+                const stuGroupSel = document.getElementById('student-filter-group');
+                if (stuGroupSel && !stuGroupSel.dataset.loaded) {
+                    stuGroupSel.innerHTML = '<option value="">Ҳама гурӯҳ</option>' + data.map(g => `<option value="${g.id}">Гурӯҳ ${escHtml(g.number)}</option>`).join('');
+                }
+                const atRiskGroupSel = document.getElementById('at-risk-filter-group');
+                if (atRiskGroupSel) {
+                    atRiskGroupSel.innerHTML = '<option value="">Ҳама гурӯҳ</option>' + data.map(g => `<option value="${g.id}">Гурӯҳ ${escHtml(g.number)}</option>`).join('');
+                }
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+            finally { setLoading('groups', false); }
+        }
+
+        async function createGroup(e) {
+            e.preventDefault();
+            const form = e.target;
+            try {
+                await apiCall('/dean/api/groups', { method: 'POST', body: new FormData(form), headers: {} });
+                showToast('Гурӯҳ эҷод шуд', 'success');
+                closeModal('group-modal');
+                form.reset();
+                loadGroups();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function editGroup(id) {
+            try {
+                const data = await apiCall(`/dean/api/groups/${id}/profile`);
+                document.getElementById('edit-group-id').value = id;
+                document.getElementById('edit-group-number').value = data.number || '';
+                document.getElementById('edit-group-shift').value = data.shift || 1;
+                // Load curators into edit-group-curator
+                if (allCurators.length === 0) {
+                    const curators = await apiCall('/dean/api/curators');
+                    allCurators = curators || [];
+                }
+                loadCuratorOptions(allCurators);
+                if (data.curator_id) {
+                    document.getElementById('edit-group-curator').value = data.curator_id;
+                }
+                openModal('edit-group-modal');
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function saveGroupEdit(e) {
+            e.preventDefault();
+            const id = document.getElementById('edit-group-id').value;
+            const body = JSON.stringify({
+                number: document.getElementById('edit-group-number').value,
+                shift: parseInt(document.getElementById('edit-group-shift').value),
+                curator_id: document.getElementById('edit-group-curator').value || null,
+            });
+            try {
+                await apiCall(`/dean/api/groups/${id}`, { method: 'PATCH', body });
+                showToast('Гурӯҳ навсозӣ шуд', 'success');
+                closeModal('edit-group-modal');
+                loadGroups();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function viewGroup(id) {
+            try {
+                const data = await apiCall(`/dean/api/groups/${id}/profile`);
+                const stuHtml = (data.students || []).map((s, i) =>
+                    `<tr class="border-b text-sm"><td class="py-1.5 px-3">${i+1}</td><td class="py-1.5 px-3">${escHtml(s.name)}</td><td class="py-1.5 px-3">${s.code}</td><td class="py-1.5 px-3"><span class="px-2 py-0.5 bg-gray-100 rounded">${s.nb}</span></td></tr>`
+                ).join('');
+                const html = `
+                    <div class="modal active fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="if(event.target===this)this.remove()">
+                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+                            <div class="px-6 py-4 border-b flex justify-between items-center sticky top-0 bg-white">
+                                <h3 class="text-lg font-bold text-gray-800">Гурӯҳ ${escHtml(data.number)}</h3>
+                                <button onclick="this.closest('.modal').remove()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div class="grid grid-cols-4 gap-4">
+                                    <div class="bg-blue-50 p-3 rounded-lg text-center"><p class="text-2xl font-bold text-blue-600">${data.total_students}</p><p class="text-xs text-gray-600">Донишҷӯён</p></div>
+                                    <div class="bg-green-50 p-3 rounded-lg text-center"><p class="text-2xl font-bold text-green-600">${data.attendance_pct}%</p><p class="text-xs text-gray-600">Иштирок</p></div>
+                                    <div class="bg-yellow-50 p-3 rounded-lg text-center"><p class="text-2xl font-bold text-yellow-600">${data.avg_nb}</p><p class="text-xs text-gray-600">Миёна NB</p></div>
+                                    <div class="bg-purple-50 p-3 rounded-lg text-center"><p class="text-2xl font-bold text-purple-600">${data.course}</p><p class="text-xs text-gray-600">Курс</p></div>
+                                </div>
+                                <div class="border-t pt-4 text-sm text-gray-600 grid grid-cols-2 gap-2">
+                                    <p><strong>Куратор:</strong> ${escHtml(data.curator||'—')}</p>
+                                    <p><strong>Навбат:</strong> ${data.shift}</p>
+                                </div>
+                                <div class="border-t pt-4">
+                                    <h4 class="font-bold text-gray-800 mb-3">Рӯйхати донишҷӯён</h4>
+                                    <div class="overflow-x-auto">
+                                        <table class="w-full text-sm"><thead class="bg-gray-50"><tr><th class="py-2 px-3 text-left">#</th><th class="py-2 px-3 text-left">Ном</th><th class="py-2 px-3 text-left">Код</th><th class="py-2 px-3 text-left">NB</th></tr></thead>
+                                        <tbody>${stuHtml||'<tr><td colspan="4" class="text-center py-4 text-gray-500">Донишҷӯён нест</td></tr>'}</tbody></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>`;
+                document.body.insertAdjacentHTML('beforeend', html);
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function deleteGroup(id) {
+            if (!confirm('Гурӯҳро нест кунем?')) return;
+            try {
+                await apiCall(`/dean/api/groups/${id}`, { method: 'DELETE' });
+                showToast('Гурӯҳ нест карда шуд', 'success');
+                loadGroups();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        function toggleBulkSelectAll(type) {
+            const masterCb = document.getElementById(`select-all-${type}s`) || document.getElementById(`select-all-${type}s-header`);
+            const checked = masterCb ? masterCb.checked : false;
+            document.querySelectorAll(`.${type}-checkbox`).forEach(cb => { cb.checked = checked; });
+            updateBulkCount(type);
+        }
+
+        function updateBulkCount(type) {
+            const count = document.querySelectorAll(`.${type}-checkbox:checked`).length;
+            const el = document.getElementById(`bulk-count-${type}s`);
+            if (el) el.textContent = count;
+        }
+
+        function openBulkCuratorModal() {
+            const selected = document.querySelectorAll('.group-checkbox:checked');
+            if (selected.length === 0) { showToast('Лутфан гурӯҳҳоро интихоб кунед', 'warning'); return; }
+            document.getElementById('bulk-groups-count').textContent = selected.length;
+            openModal('bulk-curator-modal');
+        }
+
+        async function bulkAssignCurator(e) {
+            e.preventDefault();
+            const curatorId = document.getElementById('bulk-curator-select').value;
+            const groupIds = Array.from(document.querySelectorAll('.group-checkbox:checked')).map(cb => parseInt(cb.value));
+            if (!curatorId || groupIds.length === 0) { showToast('Маълумоти нокифоя', 'error'); return; }
+            try {
+                await apiCall('/dean/api/groups/bulk-curators', { method: 'POST', body: JSON.stringify({ curator_id: parseInt(curatorId), group_ids: groupIds }) });
+                showToast(`Куратор ба ${groupIds.length} гурӯҳ таъин карда шуд`, 'success');
+                closeModal('bulk-curator-modal');
+                loadGroups();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function bulkDeleteGroups() {
+            const ids = Array.from(document.querySelectorAll('.group-checkbox:checked')).map(cb => parseInt(cb.value));
+            if (ids.length === 0) { showToast('Лутфан гурӯҳҳоро интихоб кунед', 'warning'); return; }
+            if (!confirm(`${ids.length} гурӯҳро нест мекунед?`)) return;
+            try {
+                await apiCall('/dean/api/groups/bulk-delete', { method: 'POST', body: JSON.stringify({ group_ids: ids }) });
+                showToast(`${ids.length} гурӯҳ нест карда шуд`, 'success');
+                loadGroups();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        // ============================================
+        // STUDENTS
+        // ============================================
+        async function loadStudents() {
+            try {
+                setLoading('students', true);
+                const groupId = document.getElementById('student-filter-group').value;
+                const courseId = document.getElementById('student-filter-course').value;
+                const search = document.getElementById('student-search').value;
+                let url = `/dean/api/students?page=${currentPage}&page_size=${pageSize}`;
+                if (groupId) url += `&group_id=${groupId}`;
+                if (courseId) url += `&course_id=${courseId}`;
+                if (search) url += `&search=${encodeURIComponent(search)}`;
+                const data = await apiCall(url);
+                document.getElementById('total-students').textContent = data.total || 0;
+
+                if (!data.students || data.students.length === 0) {
+                    document.getElementById('students-table').innerHTML = '<tr><td colspan="9" class="px-5 py-12 text-center text-gray-500">Донишҷӯён нест</td></tr>';
+                    document.getElementById('pagination-controls').innerHTML = '';
+                    return;
+                }
+
+                const nbLimit = data.nb_limit || 35;
+                const html = data.students.map((s, i) => `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3"><input type="checkbox" class="student-checkbox" value="${s.id}" onchange="updateBulkCount('student')"></td>
+                        <td class="px-5 py-3 text-gray-600">${(currentPage-1)*pageSize+i+1}</td>
+                        <td class="px-5 py-3 font-medium text-gray-800">${escHtml(s.full_name)}</td>
+                        <td class="px-5 py-3 text-gray-600">${s.student_code||'—'}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(s.group_number||'—')}</td>
+                        <td class="px-5 py-3 text-gray-600">${s.course_year||'—'}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(s.region||'—')}</td>
+                        <td class="px-5 py-3">
+                            <span class="px-2 py-1 ${s.total_absences >= nbLimit ? 'bg-red-100 text-red-800' : s.total_absences >= nbLimit*0.7 ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'} rounded text-sm font-medium">${s.total_absences}</span>
+                        </td>
+                        <td class="px-5 py-3 flex items-center space-x-2">
+                            <button onclick="viewStudent(${s.id})" class="text-blue-600 hover:text-blue-800" title="Дидан"><i class="fas fa-eye"></i></button>
+                            <button onclick="deleteStudent(${s.id})" class="text-red-600 hover:text-red-800" title="Нест"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+
+                document.getElementById('students-table').innerHTML = html;
+                renderPagination(data.pages, currentPage);
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+            finally { setLoading('students', false); }
+        }
+
+        function renderPagination(totalPages, current) {
+            if (!totalPages || totalPages <= 1) { document.getElementById('pagination-controls').innerHTML = ''; return; }
+            let html = '';
+            if (current > 1) html += `<button onclick="goToPage(${current-1})" class="px-3 py-1 border rounded hover:bg-gray-50"><i class="fas fa-chevron-left"></i></button>`;
+            for (let i = Math.max(1, current-2); i <= Math.min(totalPages, current+2); i++) {
+                html += `<button onclick="goToPage(${i})" class="px-3 py-1 border rounded ${i===current ? 'bg-blue-500 text-white border-blue-500' : 'hover:bg-gray-50'}">${i}</button>`;
+            }
+            if (current < totalPages) html += `<button onclick="goToPage(${current+1})" class="px-3 py-1 border rounded hover:bg-gray-50"><i class="fas fa-chevron-right"></i></button>`;
+            document.getElementById('pagination-controls').innerHTML = html;
+        }
+
+        function goToPage(page) { currentPage = page; loadStudents(); }
+
+        async function loadStudentFilters() {
+            try {
+                const groups = await apiCall('/dean/api/groups');
+                const sel = document.getElementById('student-filter-group');
+                if (sel) {
+                    sel.innerHTML = '<option value="">Ҳама гурӯҳ</option>' + (groups||[]).map(g => `<option value="${g.id}">Гурӯҳ ${escHtml(g.number)}</option>`).join('');
+                    sel.dataset.loaded = '1';
+                }
+            } catch(e) {}
+        }
+
+        async function viewStudent(id) {
+            try {
+                const data = await apiCall(`/dean/api/students/${id}/profile`);
+                const attHtml = (data.recent_attendance||[]).map(a =>
+                    `<tr class="border-b text-sm"><td class="py-1.5 px-3">${a.date||''}</td><td class="py-1.5 px-3">${escHtml(a.subject||'')}</td><td class="py-1.5 px-3"><span class="px-2 py-0.5 rounded ${a.status==='present'?'bg-green-100 text-green-800':'bg-red-100 text-red-800'}">${a.status==='present'?'Иштирок':'Ғоиб'}</span></td></tr>`
+                ).join('');
+                const html = `
+                    <div class="modal active fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" onclick="if(event.target===this)this.remove()">
+                        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+                            <div class="px-6 py-4 border-b flex justify-between items-center sticky top-0 bg-white">
+                                <h3 class="text-lg font-bold text-gray-800">${escHtml(data.full_name)}</h3>
+                                <button onclick="this.closest('.modal').remove()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times text-xl"></i></button>
+                            </div>
+                            <div class="p-6 space-y-4">
+                                <div class="grid grid-cols-2 gap-3 text-sm">
+                                    <div><p class="text-xs text-gray-500 uppercase">Код</p><p class="font-medium">${data.student_code||'—'}</p></div>
+                                    <div><p class="text-xs text-gray-500 uppercase">Гурӯҳ</p><p class="font-medium">${escHtml(data.group_number||'—')}</p></div>
+                                    <div><p class="text-xs text-gray-500 uppercase">Минтақа</p><p class="font-medium">${escHtml(data.region||'—')}</p></div>
+                                    <div><p class="text-xs text-gray-500 uppercase">Телефони волидайн</p><p class="font-medium">${data.parent_phone ? `<a href="tel:${data.parent_phone}" class="text-blue-600">${data.parent_phone}</a>` : '—'}</p></div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-red-50 p-3 rounded-lg text-center"><p class="text-2xl font-bold text-red-600">${data.total_absences||0}</p><p class="text-xs text-gray-600">Ҳамагӣ NB</p></div>
+                                    <div class="bg-blue-50 p-3 rounded-lg text-center"><p class="text-2xl font-bold text-blue-600">${data.nb_status||'ACTIVE'}</p><p class="text-xs text-gray-600">Статуси NB</p></div>
+                                </div>
+                                ${attHtml ? `<div class="border-t pt-4"><h4 class="font-bold text-gray-800 mb-2 text-sm">Охирин дарсҳо</h4><div class="overflow-x-auto"><table class="w-full text-sm"><thead class="bg-gray-50"><tr><th class="py-1.5 px-3 text-left">Сана</th><th class="py-1.5 px-3 text-left">Фан</th><th class="py-1.5 px-3 text-left">Статус</th></tr></thead><tbody>${attHtml}</tbody></table></div></div>` : ''}
+                            </div>
+                        </div>
+                    </div>`;
+                document.body.insertAdjacentHTML('beforeend', html);
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function deleteStudent(id) {
+            if (!confirm('Донишҷӯро нест кунем?')) return;
+            try {
+                await apiCall(`/dean/api/students/${id}`, { method: 'DELETE' });
+                showToast('Донишҷӯ нест карда шуд', 'success');
+                loadStudents();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function importStudents(e) {
+            e.preventDefault();
+            const form = e.target;
+            const groupId = document.getElementById('import-group-select').value;
+            if (!groupId) { showToast('Лутфан гурӯҳро интихоб кунед', 'warning'); return; }
+            try {
+                showToast('Импорт дар ҷараён...', 'info');
+                const fd = new FormData(form);
+                const data = await apiCall(`/dean/api/students/import?group_id=${groupId}`, { method: 'POST', body: fd, headers: {} });
+                showToast(`Импорт тамом шуд: ${data.created} эҷод, ${data.skipped} гузашт`, 'success');
+                closeModal('import-modal');
+                form.reset();
+                loadStudents();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function bulkDeleteStudents() {
+            const ids = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => parseInt(cb.value));
+            if (ids.length === 0) { showToast('Лутфан донишҷӯёнро интихоб кунед', 'warning'); return; }
+            if (!confirm(`${ids.length} донишҷӯро нест мекунед?`)) return;
+            try {
+                await apiCall('/dean/api/students/bulk-delete', { method: 'POST', body: JSON.stringify({ student_ids: ids }) });
+                showToast(`${ids.length} донишҷӯ нест карда шуд`, 'success');
+                loadStudents();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        async function bulkNBAction(action) {
+            const ids = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(cb => parseInt(cb.value));
+            if (ids.length === 0) { showToast('Лутфан донишҷӯёнро интихоб кунед', 'warning'); return; }
+            try {
+                await apiCall('/dean/api/students/nb/bulk-action', { method: 'POST', body: JSON.stringify({ student_ids: ids, action }) });
+                showToast('NB навсозӣ карда шуд', 'success');
+                loadStudents();
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        // ============================================
+        // AT-RISK
+        // ============================================
+        async function loadAtRiskStudents() {
+            try {
+                setLoading('at-risk', true);
+                const groupId = document.getElementById('at-risk-filter-group').value;
+                const courseId = document.getElementById('at-risk-filter-course').value;
+                let url = '/dean/api/students/at-risk?';
+                if (groupId) url += `group_id=${groupId}&`;
+                if (courseId) url += `course_id=${courseId}&`;
+                const data = await apiCall(url);
+
+                if (!data || data.length === 0) {
+                    document.getElementById('at-risk-table').innerHTML = '<tr><td colspan="8" class="px-5 py-12 text-center text-gray-500"><i class="fas fa-check-circle text-green-500 text-2xl mr-2"></i>Донишҷӯёни хавфнок нест</td></tr>';
+                    return;
+                }
+
+                const html = data.map((s, i) => `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3 text-gray-600">${i+1}</td>
+                        <td class="px-5 py-3 font-medium text-gray-800">${escHtml(s.full_name)}</td>
+                        <td class="px-5 py-3 text-gray-600">${s.student_code||'—'}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(s.group_number||'—')}</td>
+                        <td class="px-5 py-3 text-gray-600">${s.course_year||'—'}</td>
+                        <td class="px-5 py-3"><span class="px-3 py-1 bg-red-100 text-red-800 rounded font-bold">${s.total_absences}</span></td>
+                        <td class="px-5 py-3 text-gray-600">${s.parent_phone ? `<a href="tel:${s.parent_phone}" class="text-blue-600 hover:underline">${s.parent_phone}</a>` : '—'}</td>
+                        <td class="px-5 py-3 flex items-center space-x-2">
+                            <button onclick="viewStudent(${s.id})" class="text-blue-600 hover:text-blue-800" title="Дидан"><i class="fas fa-eye"></i></button>
+                            ${s.parent_phone ? `<a href="tel:${s.parent_phone}" class="text-green-600 hover:text-green-800" title="Занг задан"><i class="fas fa-phone"></i></a>` : ''}
+                        </td>
+                    </tr>`).join('');
+                document.getElementById('at-risk-table').innerHTML = html;
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+            finally { setLoading('at-risk', false); }
+        }
+
+        async function loadAtRiskFilters() {
+            // Groups already loaded by loadGroups via shared logic
+        }
+
+        // ============================================
+        // AUDIT LOG
+        // ============================================
+        async function loadAuditLog() {
+            try {
+                setLoading('audit-log', true);
+                const action = document.getElementById('audit-filter-action').value;
+                const date = document.getElementById('audit-filter-date').value;
+                let url = '/dean/api/audit-log?';
+                if (action) url += `action=${action}&`;
+                if (date) url += `date=${date}&`;
+                const data = await apiCall(url);
+
+                if (!data || data.length === 0) {
+                    document.getElementById('audit-log-table').innerHTML = '<tr><td colspan="5" class="px-5 py-12 text-center text-gray-500">Сабтҳо нест</td></tr>';
+                    return;
+                }
+
+                const html = data.map(log => `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3 text-sm text-gray-600">${formatDate(log.created_at)}</td>
+                        <td class="px-5 py-3 text-sm text-gray-800">${escHtml(log.user_name||'—')}</td>
+                        <td class="px-5 py-3"><span class="px-2 py-1 text-xs rounded ${log.action==='CREATE' ? 'bg-green-100 text-green-800' : log.action==='UPDATE' ? 'bg-blue-100 text-blue-800' : 'bg-red-100 text-red-800'}">${log.action}</span></td>
+                        <td class="px-5 py-3 text-sm text-gray-600">${log.target_table||'—'}</td>
+                        <td class="px-5 py-3 text-sm text-gray-600">${escHtml(log.description||'—')}</td>
+                    </tr>`).join('');
+                document.getElementById('audit-log-table').innerHTML = html;
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+            finally { setLoading('audit-log', false); }
+        }
+
+        // ============================================
+        // SETTINGS
+        // ============================================
+        async function loadSettings() {
+            try {
+                const data = await apiCall('/dean/api/settings');
+                document.getElementById('setting-nb-limit').value = data.NB_LIMIT || 35;
+                document.getElementById('setting-alert-days').value = data.ALERT_CONSECUTIVE_DAYS || 5;
+                document.getElementById('setting-attendance-threshold').value = data.ATTENDANCE_THRESHOLD || 70;
+            } catch(e) { console.error('Load settings error:', e); }
+        }
+
+        async function saveSettings() {
+            try {
+                await apiCall('/dean/api/settings', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        NB_LIMIT: parseInt(document.getElementById('setting-nb-limit').value),
+                        ALERT_CONSECUTIVE_DAYS: parseInt(document.getElementById('setting-alert-days').value),
+                        ATTENDANCE_THRESHOLD: parseInt(document.getElementById('setting-attendance-threshold').value)
+                    })
+                });
+                showToast('Танзимот сабт карда шуд', 'success');
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        // ============================================
+        // PROFILE - Edit
+        // ============================================
+        async function saveProfile(e) {
+            e.preventDefault();
+            const body = JSON.stringify({
+                full_name: document.getElementById('profile-full-name').value,
+                email: document.getElementById('profile-email').value,
+                phone: document.getElementById('profile-phone').value,
+            });
+            try {
+                await apiCall('/dean/api/profile', { method: 'PATCH', body });
+                showToast('Профил навсозӣ шуд. Саҳифаро бозфреш кунед.', 'success');
+                closeModal('edit-profile-modal');
+                // Update displayed name without page reload
+                const fn = document.getElementById('profile-full-name').value;
+                document.querySelectorAll('.profile-name-display').forEach(el => el.textContent = fn);
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        // ============================================
+        // CHANGE PASSWORD
+        // ============================================
+        async function changePassword() {
+            const currentPw = document.getElementById('cp-current').value;
+            const newPw = document.getElementById('cp-new').value;
+            const confirmPw = document.getElementById('cp-confirm').value;
+            const errEl = document.getElementById('cp-error');
+            const sucEl = document.getElementById('cp-success');
+            errEl.classList.add('hidden');
+            sucEl.classList.add('hidden');
+
+            if (!currentPw || !newPw || !confirmPw) {
+                errEl.textContent = 'Ҳамаи майдонҳоро пур кунед';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (newPw !== confirmPw) {
+                errEl.textContent = 'Паролҳои нав мувофиқ нестанд';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            if (newPw.length < 8) {
+                errEl.textContent = 'Парол бояд ҳадди ақал 8 аломат дошта бошад';
+                errEl.classList.remove('hidden');
+                return;
+            }
+            try {
+                await apiCall('/dean/api/change-password', {
+                    method: 'POST',
+                    body: JSON.stringify({ current_password: currentPw, new_password: newPw })
+                });
+                sucEl.textContent = 'Парол бомуваффақият иваз карда шуд! Дубора ворид шавед.';
+                sucEl.classList.remove('hidden');
+                document.getElementById('cp-current').value = '';
+                document.getElementById('cp-new').value = '';
+                document.getElementById('cp-confirm').value = '';
+                setTimeout(() => { window.location.href = '/logout'; }, 2000);
+            } catch(e) {
+                errEl.textContent = e.message || 'Хатогӣ рух дод';
+                errEl.classList.remove('hidden');
+            }
+        }
+
+        // ============================================
+        // WEEKLY STATS (4.2, 4.3, 5.1, 8, 9)
+        // ============================================
+        async function loadWeeklyStats() {
+            const lpw = parseInt(document.getElementById('weekly-lpw').value) || 25;
+            try {
+                const data = await apiCall(`/dean/api/weekly-stats?total_lessons_per_week=${lpw}`);
+
+                // 4.2 + 4.3
+                document.getElementById('weekly-att-this').textContent = data.att_pct_this_week + '%';
+                document.getElementById('weekly-att-prev').textContent = data.att_pct_prev_week + '%';
+                const dynEl = document.getElementById('weekly-dynamics');
+                const sym = data.dynamics_symbol;
+                const diff = data.dynamics_diff;
+                const dynColor = sym === '▲' ? 'text-green-600' : sym === '▼' ? 'text-red-600' : 'text-gray-500';
+                dynEl.innerHTML = `<span class="${dynColor}">${sym} ${Math.abs(diff)}%</span>`;
+                document.getElementById('weekly-week-label').textContent =
+                    `${data.week.from} — ${data.week.to}`;
+
+                // 9 Smart Alerts
+                const alertsEl = document.getElementById('weekly-alerts');
+                let alertHtml = '';
+                if (data.group_of_week) {
+                    const g = data.group_of_week;
+                    alertHtml += `<div class="flex items-start space-x-3 p-3 rounded-lg bg-green-50 border border-green-200">
+                        <span class="text-2xl">🏆</span>
+                        <div>
+                            <p class="font-bold text-green-800">Гурӯҳи ҳафта: Гурӯҳ ${escHtml(g.number)}</p>
+                            <p class="text-sm text-green-700">Иштирок: ${g.att_pct}% | NB%: ${g.nb_pct}% | Risk: 🟢</p>
+                        </div>
+                    </div>`;
+                }
+                if (data.smart_alerts && data.smart_alerts.length > 0) {
+                    data.smart_alerts.forEach(a => {
+                        const cls = a.level === 'error' ? 'bg-red-50 border-red-200 text-red-800' : 'bg-yellow-50 border-yellow-200 text-yellow-800';
+                        alertHtml += `<div class="flex items-start space-x-3 p-3 rounded-lg border ${cls}">
+                            <span class="text-xl">${a.emoji}</span>
+                            <p class="text-sm font-medium">${escHtml(a.msg)}</p>
+                        </div>`;
+                    });
+                }
+                if (!alertHtml) alertHtml = '<p class="text-center text-gray-500 py-8"><i class="fas fa-check-circle text-green-500 text-2xl mb-2 block"></i>Огоҳиҳо нест</p>';
+                alertsEl.innerHTML = alertHtml;
+
+                // 8 TOP 5
+                const riskColors = { green: 'bg-green-50 border-green-200', yellow: 'bg-yellow-50 border-yellow-200', orange: 'bg-orange-50 border-orange-200', red: 'bg-red-50 border-red-200' };
+                const renderWeekGroup = (g, i, baseClass) => `
+                    <div class="flex items-center justify-between p-3 ${baseClass} rounded-lg border">
+                        <div class="flex items-center space-x-3">
+                            <span class="w-7 h-7 flex items-center justify-center bg-white bg-opacity-60 rounded-full font-bold text-sm">${i+1}</span>
+                            <div>
+                                <p class="font-medium text-gray-800 text-sm">Гурӯҳ ${escHtml(g.number)}</p>
+                                <p class="text-xs text-gray-500">${g.total_students} донишҷӯ | ${g.risk.emoji} ${escHtml(g.risk.label)}</p>
+                            </div>
+                        </div>
+                        <div class="text-right text-sm">
+                            <p class="font-bold">NB: ${g.nb_pct}%</p>
+                            <p class="text-xs text-gray-500">Иштирок: ${g.att_pct}%</p>
+                        </div>
+                    </div>`;
+
+                document.getElementById('weekly-best-groups').innerHTML =
+                    (data.top5_best || []).length
+                    ? (data.top5_best || []).map((g,i) => renderWeekGroup(g, i, 'bg-green-50')).join('')
+                    : '<p class="text-center text-gray-500 py-4">Маълумот нест</p>';
+
+                document.getElementById('weekly-worst-groups').innerHTML =
+                    (data.top5_worst || []).length
+                    ? (data.top5_worst || []).map((g,i) => renderWeekGroup(g, i, 'bg-red-50')).join('')
+                    : '<p class="text-center text-gray-500 py-4">Маълумот нест</p>';
+
+                // 5.1 Risk table
+                const riskBadges = {
+                    green:  'bg-green-100 text-green-800',
+                    yellow: 'bg-yellow-100 text-yellow-800',
+                    orange: 'bg-orange-100 text-orange-800',
+                    red:    'bg-red-100 text-red-800',
+                };
+                const tableHtml = (data.group_stats || []).map(g => {
+                    const diff = g.nb_pct_prev > 0 ? (g.nb_pct - g.nb_pct_prev).toFixed(1) : '—';
+                    const diffSpan = diff !== '—'
+                        ? `<span class="${parseFloat(diff) > 0 ? 'text-red-600' : 'text-green-600'}">${parseFloat(diff) > 0 ? '▲' : '▼'} ${Math.abs(diff)}%</span>`
+                        : '—';
+                    return `<tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3 font-medium text-gray-800">${escHtml(g.number)}</td>
+                        <td class="px-5 py-3 text-gray-600">${g.total_students}</td>
+                        <td class="px-5 py-3 font-bold text-gray-800">${g.nb_pct}%</td>
+                        <td class="px-5 py-3 text-gray-500">${g.nb_pct_prev}% ${diff !== '—' ? diffSpan : ''}</td>
+                        <td class="px-5 py-3 text-gray-600">${g.att_pct}%</td>
+                        <td class="px-5 py-3"><span class="px-2 py-1 rounded text-sm font-medium ${riskBadges[g.risk.color] || ''}">${g.risk.emoji} ${escHtml(g.risk.label)}</span></td>
+                    </tr>`;
+                }).join('');
+                document.getElementById('weekly-group-table').innerHTML =
+                    tableHtml || '<tr><td colspan="6" class="px-5 py-8 text-center text-gray-500">Гурӯҳҳо нест</td></tr>';
+
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        // ============================================
+        // REGISTRY (14)
+        // ============================================
+        let registryFilters = { course_id: null, shift: null, birth_place: null };
+
+        async function loadRegistry() {
+            try {
+                let url = '/dean/api/students/registry?';
+                if (registryFilters.course_id) url += `course_id=${registryFilters.course_id}&`;
+                if (registryFilters.shift) url += `shift=${registryFilters.shift}&`;
+                if (registryFilters.birth_place) url += `birth_place=${encodeURIComponent(registryFilters.birth_place)}&`;
+
+                const data = await apiCall(url);
+                document.getElementById('registry-total').textContent = data.total || 0;
+
+                // Render filter pills
+                renderRegistryFilterPills(data.filters);
+
+                // Render table
+                if (!data.students || data.students.length === 0) {
+                    document.getElementById('registry-table').innerHTML = '<tr><td colspan="9" class="px-5 py-12 text-center text-gray-500">Донишҷӯён нест</td></tr>';
+                    return;
+                }
+                const html = data.students.map((s, i) => `
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-5 py-3 text-gray-600">${i+1}</td>
+                        <td class="px-5 py-3 font-medium text-gray-800">${escHtml(s.full_name)}</td>
+                        <td class="px-5 py-3 text-gray-500 text-sm">${escHtml(s.student_code||'—')}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(s.group_number||'—')}</td>
+                        <td class="px-5 py-3 text-gray-600">${s.course_year||'—'}</td>
+                        <td class="px-5 py-3"><span class="px-2 py-1 ${s.shift===1?'bg-yellow-100 text-yellow-800':'bg-blue-100 text-blue-800'} rounded text-sm">${s.shift||'—'}-навбат</span></td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(s.birth_place||'—')}</td>
+                        <td class="px-5 py-3 text-gray-600">${escHtml(s.parent_phone||'—')}</td>
+                        <td class="px-5 py-3"><span class="px-2 py-1 ${s.total_absences>=35?'bg-red-100 text-red-800':s.total_absences>=20?'bg-yellow-100 text-yellow-800':'bg-green-100 text-green-800'} rounded text-sm">${s.total_absences}</span></td>
+                    </tr>`).join('');
+                document.getElementById('registry-table').innerHTML = html;
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        function renderRegistryFilterPills(filters) {
+            if (!filters) return;
+            // Courses
+            const coursesEl = document.getElementById('registry-course-filters');
+            if (coursesEl) {
+                coursesEl.innerHTML = (filters.courses || []).map(c => {
+                    const active = registryFilters.course_id == c.id;
+                    return `<button onclick="setRegistryFilter('course_id', ${c.id})"
+                        class="px-3 py-1 rounded-full text-sm font-medium transition border ${active ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}">
+                        ${c.year}-курс <span class="ml-1 opacity-70">(${c.count})</span>
+                    </button>`;
+                }).join('');
+            }
+            // Shifts
+            const shiftsEl = document.getElementById('registry-shift-filters');
+            if (shiftsEl) {
+                shiftsEl.innerHTML = (filters.shifts || []).map(s => {
+                    const active = registryFilters.shift == s.shift;
+                    return `<button onclick="setRegistryFilter('shift', ${s.shift})"
+                        class="px-3 py-1 rounded-full text-sm font-medium transition border ${active ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}">
+                        ${escHtml(s.label)} <span class="ml-1 opacity-70">(${s.count})</span>
+                    </button>`;
+                }).join('');
+            }
+            // Birth places
+            const bpEl = document.getElementById('registry-bp-filters');
+            if (bpEl) {
+                bpEl.innerHTML = (filters.birth_places || []).map(bp => {
+                    const active = registryFilters.birth_place === bp.value;
+                    return `<button onclick="setRegistryFilter('birth_place', ${JSON.stringify(bp.value)})"
+                        class="px-3 py-1 rounded-full text-sm font-medium transition border ${active ? 'bg-indigo-500 text-white border-indigo-500' : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'}">
+                        ${escHtml(bp.value)} <span class="ml-1 opacity-70">(${bp.count})</span>
+                    </button>`;
+                }).join('');
+            }
+        }
+
+        function setRegistryFilter(key, value) {
+            if (registryFilters[key] == value) {
+                registryFilters[key] = null; // toggle off
+            } else {
+                registryFilters[key] = value;
+            }
+            loadRegistry();
+        }
+
+        function resetRegistryFilters() {
+            registryFilters = { course_id: null, shift: null, birth_place: null };
+            loadRegistry();
+        }
+
+        // ============================================
+        // EXPORT
+        // ============================================
+        async function exportData(type) {
+            try {
+                showToast('Экспорт дар ҷараён...', 'info');
+                const response = await fetch(`/dean/api/export/${type}`, { credentials: 'same-origin' });
+                if (!response.ok) throw new Error('Хатогӣ дар экспорт');
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${type}_${new Date().toISOString().slice(0,10)}.csv`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(url);
+                showToast('Файл зеркашӣ шуд', 'success');
+            } catch(e) { showToast('Хатогӣ: ' + e.message, 'error'); }
+        }
+
+        // ============================================
+        // XSS PROTECTION
+        // ============================================
+        function escHtml(str) {
+            if (str == null) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+            // Set current year in header
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+        });
+    </script>
+</body>
+</html>

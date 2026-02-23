@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="tg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Куратор — Системаи Идоракунии Донишгоҳ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:#0f1117;--surface:#1a1d27;--surface2:#212435;--border:#2e3147;
+            --accent:#4f7cff;--accent2:#7c5cff;--danger:#ff4d6d;--warning:#ffb347;
+            --success:#3dd68c;--text:#e8eaf6;--text-muted:#8892b0;--sidebar-w:280px;
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+        .sidebar{width:var(--sidebar-w);background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:100}
+        .sidebar-logo{padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+        .logo-icon{width:36px;height:36px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+        .brand{font-size:13px;font-weight:600;line-height:1.3}
+        .brand span{display:block;color:var(--text-muted);font-weight:400;font-size:11px}
+        .sidebar-user{padding:14px 20px;border-bottom:1px solid var(--border)}
+        .user-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;margin-bottom:6px}
+        .uname{font-size:13px;font-weight:600}
+        .role-badge{display:inline-block;font-size:10px;background:rgba(79,124,255,.15);color:var(--accent);padding:2px 8px;border-radius:20px;margin-top:2px}
+        .group-badge{display:inline-block;font-size:10px;background:rgba(61,214,140,.12);color:var(--success);padding:2px 8px;border-radius:20px;margin-top:2px;margin-left:3px}
+        .sidebar-nav{flex:1;padding:10px;overflow-y:auto}
+        .nav-item{list-style:none;margin-bottom:2px}
+        .nav-link{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;color:var(--text-muted);font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;text-decoration:none;border:none;background:none;width:100%}
+        .nav-link:hover,.nav-link.active{background:rgba(79,124,255,.12);color:var(--accent)}
+        .nav-link i{width:18px;font-size:14px}
+        .nav-label{font-size:10px;color:var(--text-muted);padding:10px 12px 4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+        .sidebar-bottom{padding:10px;border-top:1px solid var(--border)}
+        .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+        .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+        .topbar-title{font-size:15px;font-weight:600}
+        .content{padding:24px;flex:1}
+        .section{display:none}
+        .section.active{display:block}
+        .stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+        .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+        .stat-value{font-size:26px;font-weight:700;font-family:'IBM Plex Mono',monospace;margin-bottom:3px}
+        .stat-label{font-size:12px;color:var(--text-muted)}
+        .c-accent{color:var(--accent)}.c-danger{color:var(--danger)}.c-success{color:var(--success)}.c-warning{color:var(--warning)}
+        .b-danger{border-color:rgba(255,77,109,.3)}.b-accent{border-color:rgba(79,124,255,.3)}
+        /* Journal */
+        .journal-header{background:var(--surface);border:1px solid var(--border);border-radius:12px 12px 0 0;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+        .journal-wrap{overflow-x:auto;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px}
+        .jtable{width:100%;border-collapse:collapse;min-width:680px}
+        .jtable th{background:var(--surface2);padding:9px 10px;font-size:11px;font-weight:600;color:var(--text-muted);text-align:center;border-bottom:1px solid var(--border);white-space:nowrap}
+        .jtable th.name-th{text-align:left;min-width:190px}
+        .jtable th.today-th{background:rgba(79,124,255,.1);color:var(--accent)}
+        .jtable td{padding:0;border-bottom:1px solid var(--border);vertical-align:middle}
+        .jtable tr:last-child td{border-bottom:none}
+        .jtable tr:hover td{background:rgba(255,255,255,.02)}
+        .name-cell{padding:8px 14px;display:flex;align-items:center;gap:8px;font-size:13px}
+        .nb-cell{text-align:center;position:relative}
+        .nb-cell.today-col{background:rgba(79,124,255,.04)}
+        .nb-inp{width:48px;height:34px;text-align:center;background:transparent;border:none;font-size:14px;font-weight:700;font-family:'IBM Plex Mono',monospace;color:var(--text);cursor:pointer;border-radius:6px;transition:background .15s}
+        .nb-inp:hover,.nb-inp:focus{background:rgba(79,124,255,.15);outline:none}
+        .nb-inp.v0{color:var(--success)}.nb-inp.v1,.nb-inp.v2{color:var(--warning)}.nb-inp.v3,.nb-inp.v4,.nb-inp.v5{color:var(--danger)}.nb-inp.vnull{color:var(--text-muted)}
+        .nb-inp.saving{opacity:.4}.nb-inp.saved{background:rgba(61,214,140,.15)!important}.nb-inp.errflash{background:rgba(255,77,109,.2)!important}
+        .tot-cell{padding:8px;text-align:center;font-size:13px;font-weight:700;font-family:'IBM Plex Mono',monospace}
+        .nb-badge{font-size:10px;padding:2px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace}
+        .nb-badge.ok{color:var(--success);background:rgba(61,214,140,.1)}
+        .nb-badge.warn{color:var(--warning);background:rgba(255,179,71,.1)}
+        .nb-badge.bad{color:var(--danger);background:rgba(255,77,109,.1)}
+        .comment-btn{position:absolute;top:2px;right:2px;width:15px;height:15px;background:rgba(255,179,71,.2);border:none;border-radius:3px;color:var(--warning);font-size:8px;cursor:pointer;display:none;align-items:center;justify-content:center;padding:0}
+        .nb-cell:hover .comment-btn{display:flex}
+        .has-cmt .comment-btn{display:flex}
+        .cdot{width:5px;height:5px;background:var(--warning);border-radius:50%;position:absolute;top:5px;right:5px}
+        /* Panel */
+        .panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+        .panel-head{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+        .panel-head h6{font-size:14px;font-weight:600;margin:0}
+        .panel-body{padding:18px}
+        /* Btns */
+        .btn-sm-accent{background:var(--accent);color:#fff;border:none;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .2s}
+        .btn-sm-accent:hover{opacity:.85}
+        .btn-ghost{background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:7px 14px;border-radius:7px;font-size:12px;cursor:pointer;transition:all .2s}
+        .btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+        .input-dark{background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:8px 12px;border-radius:8px;font-size:13px;outline:none;font-family:inherit}
+        .input-dark:focus{border-color:var(--accent)}
+        .input-dark::placeholder{color:var(--text-muted)}
+        /* Students */
+        .srow{display:flex;align-items:center;gap:12px;padding:11px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s}
+        .srow:hover{background:rgba(255,255,255,.03)}
+        .srow:last-child{border-bottom:none}
+        .savatar{width:36px;height:36px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+        .sdetails{flex:1;min-width:0}
+        .sname{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .smeta{font-size:11px;color:var(--text-muted);margin-top:2px}
+        .snb{font-size:13px;font-family:'IBM Plex Mono',monospace;font-weight:700}
+        /* Modal */
+        .modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;align-items:center;justify-content:center}
+        .modal-ov.show{display:flex}
+        .modal-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:26px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto}
+        .modal-title{font-size:15px;font-weight:700;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center}
+        .modal-close{background:none;border:none;color:var(--text-muted);font-size:18px;cursor:pointer}
+        .fgroup{margin-bottom:12px}
+        .fgroup label{display:block;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.4px}
+        .fgroup .input-dark{width:100%}
+        .frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+        /* Toast */
+        .toast-cnt{position:fixed;bottom:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:7px}
+        .toast{background:var(--surface2);border:1px solid var(--border);border-radius:9px;padding:10px 16px;font-size:13px;display:flex;align-items:center;gap:8px;animation:tIn .25s ease}
+        @keyframes tIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:none}}
+        .toast.succ{border-color:rgba(61,214,140,.3)}
+        .toast.err{border-color:rgba(255,77,109,.3)}
+        /* NB Chart */
+        .bar-chart{display:flex;align-items:flex-end;gap:6px;height:72px}
+        .bar{flex:1;border-radius:4px 4px 0 0;min-height:3px}
+        .bar-lbls{display:flex;gap:6px;margin-top:4px}
+        .bar-lbl{flex:1;text-align:center;font-size:10px;color:var(--text-muted)}
+        /* Supervisor */
+        .sup-card{background:var(--surface2);border-radius:10px;padding:13px 16px;display:flex;align-items:center;gap:12px;margin-bottom:9px}
+        .sup-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+        .sup-role{font-size:10px;color:var(--text-muted);text-transform:uppercase;font-weight:700;letter-spacing:.5px}
+        .sup-name{font-size:13px;font-weight:600;margin-top:1px}
+        .sup-meta{font-size:11px;color:var(--text-muted);margin-top:1px}
+        /* Loading */
+        .loading{display:flex;align-items:center;justify-content:center;padding:60px}
+        .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .empty{text-align:center;padding:50px 20px;color:var(--text-muted)}
+        .empty i{font-size:36px;display:block;margin-bottom:10px;opacity:.3}
+        ::-webkit-scrollbar{width:5px;height:5px}
+        ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo">
+        <div class="logo-icon">🎓</div>
+        <div class="brand">Куратор<span>Системаи идоракунӣ</span></div>
+    </div>
+    <div class="sidebar-user">
+        <div class="user-avatar" id="sAvatar">К</div>
+        <div class="uname" id="sName">{{ user.full_name }}</div>
+        <span class="role-badge">Куратор</span>
+        <span class="group-badge" id="sGroup" style="display:none"></span>
+    </div>
+    <nav class="sidebar-nav">
+        <ul style="padding:0;list-style:none">
+            <li class="nav-item"><button class="nav-link active" onclick="show('journal')"><i class="fas fa-table"></i>Журнали ҳафта</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="show('students')"><i class="fas fa-users"></i>Донишҷӯён</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="show('nbstats')"><i class="fas fa-chart-bar"></i>Омори НБ</button></li>
+            <div class="nav-label">Иттилоот</div>
+            <li class="nav-item"><button class="nav-link" onclick="show('supers')"><i class="fas fa-id-badge"></i>Роҳбарон</button></li>
+            <li class="nav-item"><button class="nav-link" onclick="show('profile')"><i class="fas fa-user-circle"></i>Профили ман</button></li>
+        </ul>
+    </nav>
+    <div class="sidebar-bottom">
+        <a href="/logout" class="nav-link" style="color:var(--danger)"><i class="fas fa-sign-out-alt"></i>Хуруҷ</a>
+    </div>
+</aside>
+
+<div class="main">
+    <header class="topbar">
+        <div class="topbar-title" id="ttitle">📋 Журнали ҳафтаина</div>
+        <div>
+            <button class="btn-ghost" onclick="show('profile')" style="font-size:12px">
+                <i class="fas fa-user me-1"></i>{{ user.full_name }}
+            </button>
+        </div>
+    </header>
+    <div class="content">
+
+    {% if error %}
+    <div style="text-align:center;padding:80px 20px">
+        <i class="fas fa-exclamation-triangle" style="font-size:48px;color:var(--warning);display:block;margin-bottom:16px"></i>
+        <p style="color:var(--text-muted);font-size:15px">{{ error }}</p>
+        <p style="color:var(--text-muted);font-size:13px;margin-top:8px">Ба Декан муроҷиат кунед</p>
+    </div>
+    {% else %}
+
+    <!-- JOURNAL -->
+    <div class="section active" id="sec-journal">
+        <div id="jloading" class="loading"><div class="spinner"></div></div>
+        <div id="jcontent" style="display:none">
+            <div class="journal-header">
+                <div>
+                    <div style="font-size:15px;font-weight:700" id="jtitle">Журнали ҳафтаина</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="jmeta"></div>
+                </div>
+                <div style="display:flex;gap:8px;align-items:center">
+                    <span style="background:rgba(79,124,255,.15);color:var(--accent);padding:4px 12px;border-radius:6px;font-size:12px;font-weight:600" id="wbadge">Ин ҳафта</span>
+                    <button class="btn-sm-accent" onclick="saveToday()"><i class="fas fa-save me-1"></i>Сабт (имрӯз)</button>
+                </div>
+            </div>
+            <div class="journal-wrap">
+                <table class="jtable">
+                    <thead id="jhead"></thead>
+                    <tbody id="jbody"></tbody>
+                </table>
+            </div>
+            <div style="margin-top:10px;font-size:11px;color:var(--text-muted)">
+                <i class="fas fa-info-circle me-1"></i>0 = ҳозир | 1-5 = соатҳои ғайб | холӣ = қайд нашуд. Клик → рақам → Enter
+            </div>
+        </div>
+    </div>
+
+    <!-- STUDENTS -->
+    <div class="section" id="sec-students">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+            <h5 style="font-size:16px;font-weight:700;margin:0">Донишҷӯёни гурӯҳ</h5>
+            <button class="btn-sm-accent" onclick="openStudModal(null)"><i class="fas fa-plus me-1"></i>Донишҷӯи нав</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+            <input type="text" class="input-dark" id="ssearch" placeholder="Ҷустуҷӯ аз рӯи ФИО..." oninput="filterStuds()" style="flex:1">
+            <input type="text" class="input-dark" id="sbplace" placeholder="Ҷои таваллуд..." oninput="filterStuds()" style="width:170px">
+        </div>
+        <div class="panel"><div id="sbody"></div></div>
+    </div>
+
+    <!-- NB STATS -->
+    <div class="section" id="sec-nbstats">
+        <h5 style="font-size:16px;font-weight:700;margin-bottom:18px">Омори НБ</h5>
+        <div class="stats-grid" id="nbcards"></div>
+        <div class="panel" style="margin-bottom:18px">
+            <div class="panel-head"><h6>Тақсимоти НБ</h6></div>
+            <div class="panel-body"><div id="nbchart"></div></div>
+        </div>
+        <div class="panel">
+            <div class="panel-head"><h6 style="color:var(--danger)"><i class="fas fa-exclamation-triangle me-1"></i>Зиёда аз <span id="nblim">35</span> соат</h6></div>
+            <div id="hrlist"></div>
+        </div>
+    </div>
+
+    <!-- SUPERVISORS -->
+    <div class="section" id="sec-supers">
+        <h5 style="font-size:16px;font-weight:700;margin-bottom:18px">Роҳбарон</h5>
+        <div id="suplist"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="section" id="sec-profile">
+        <h5 style="font-size:16px;font-weight:700;margin-bottom:18px">Профили ман</h5>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:760px">
+            <div class="panel">
+                <div class="panel-head"><h6>Маълумот</h6></div>
+                <div class="panel-body">
+                    <form onsubmit="saveProf(event)">
+                        <div class="fgroup"><label>Ному насаб</label><input class="input-dark" id="pname" required></div>
+                        <div class="fgroup"><label>Телефон</label><input class="input-dark" id="pphone"></div>
+                        <div class="fgroup"><label>Gmail</label><input type="email" class="input-dark" id="pemail"></div>
+                        <div class="fgroup"><label>Кафедра</label><input class="input-dark" id="pdept"></div>
+                        <div class="fgroup"><label>Соли таваллуд</label><input type="number" class="input-dark" id="pbirth" min="1950" max="2005"></div>
+                        <button type="submit" class="btn-sm-accent" style="width:100%">Сабт кардан</button>
+                    </form>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-head"><h6>Иваз кардани парол</h6></div>
+                <div class="panel-body">
+                    <form action="/curator/change-password" method="post">
+                        <div class="fgroup">
+                            <label>Пароли нав (6 рақам)</label>
+                            <input type="password" class="input-dark" name="new_password" maxlength="6" pattern="\d{6}" required style="width:100%;letter-spacing:8px;font-size:22px;font-family:'IBM Plex Mono',monospace">
+                        </div>
+                        <button type="submit" class="btn-sm-accent" style="width:100%">Иваз кардан</button>
+                    </form>
+                    <div style="margin-top:14px;padding:10px;background:rgba(79,124,255,.08);border-radius:8px;font-size:11px;color:var(--text-muted)">
+                        <i class="fas fa-shield-alt me-1"></i>Парол: 6 рақам, ҳамаи якхела набошанд
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+    </div>
+</div>
+
+<!-- STUDENT MODAL -->
+<div class="modal-ov" id="studModal">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span id="studModalTitle">Донишҷӯи нав</span>
+            <button class="modal-close" onclick="closeStudModal()">&times;</button>
+        </div>
+        <form onsubmit="saveStud(event)">
+            <input type="hidden" id="sid">
+            <div class="fgroup"><label>Ному насаб *</label><input class="input-dark" id="sfname" required></div>
+            <div class="frow">
+                <div class="fgroup"><label>Соли таваллуд</label><input type="number" class="input-dark" id="sfby" min="1990" max="2010"></div>
+                <div class="fgroup"><label>Соли шуруъ</label><input type="date" class="input-dark" id="sfss"></div>
+            </div>
+            <div class="frow">
+                <div class="fgroup"><label>Ҷои таваллуд</label><input class="input-dark" id="sfbp"></div>
+                <div class="fgroup"><label>Чои зист</label><input class="input-dark" id="sfreg"></div>
+            </div>
+            <div class="frow">
+                <div class="fgroup"><label>Телефони донишҷӯ</label><input class="input-dark" id="sfph"></div>
+                <div class="fgroup"><label>Телефони волидайн</label><input class="input-dark" id="sfpph"></div>
+            </div>
+            <div class="fgroup" id="sfinbg">
+                <label>НБ-и пешина * (соатҳо)</label>
+                <input type="number" class="input-dark" id="sfinb" value="0" min="0" required>
+                <div style="font-size:11px;color:var(--text-muted);margin-top:3px">Агар донишҷӯ пештар НБ дошта бошад ворид кунед</div>
+            </div>
+            <div style="display:flex;gap:8px">
+                <button type="submit" class="btn-sm-accent" style="flex:1">Сабт</button>
+                <button type="button" class="btn-ghost" onclick="closeStudModal()">Бекор</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- COMMENT MODAL -->
+<div class="modal-ov" id="cmtModal">
+    <div class="modal-box" style="width:360px">
+        <div class="modal-title">
+            <span>Шарҳ гузоштан</span>
+            <button class="modal-close" onclick="closeCmt()">&times;</button>
+        </div>
+        <div id="cmtInfo" style="font-size:12px;color:var(--text-muted);margin-bottom:10px"></div>
+        <div class="fgroup">
+            <label>Шарҳ</label>
+            <textarea class="input-dark" id="cmtText" rows="3" style="width:100%;resize:vertical"></textarea>
+        </div>
+        <div style="display:flex;gap:8px">
+            <button class="btn-sm-accent" style="flex:1" onclick="saveCmt()">Сабт</button>
+            <button class="btn-ghost" onclick="closeCmt()">Бекор</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast-cnt" id="toasts"></div>
+
+<script>
+let journal = null;
+let students = [];
+let cmtData = null;
+
+const titles = {
+    journal:'📋 Журнали ҳафтаина', students:'👥 Донишҷӯён',
+    nbstats:'📊 Омори НБ', supers:'🏛 Роҳбарон', profile:'👤 Профили ман'
+};
+
+function show(name) {
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(l=>l.classList.remove('active'));
+    document.getElementById('sec-'+name).classList.add('active');
+    document.querySelector(`[onclick="show('${name}')"]`).classList.add('active');
+    document.getElementById('ttitle').textContent = titles[name];
+    if(name==='journal' && !journal) loadJournal();
+    if(name==='students') loadStuds();
+    if(name==='nbstats') loadNbStats();
+    if(name==='supers') loadSupers();
+    if(name==='profile') loadProf();
+}
+
+// ── JOURNAL ──
+async function loadJournal() {
+    document.getElementById('jloading').style.display='flex';
+    document.getElementById('jcontent').style.display='none';
+    try {
+        const r = await fetch('/curator/api/journal/week');
+        if(!r.ok) throw new Error(await r.text());
+        journal = await r.json();
+        renderJournal();
+        document.getElementById('jloading').style.display='none';
+        document.getElementById('jcontent').style.display='block';
+    } catch(e) {
+        document.getElementById('jloading').innerHTML=`<div style="color:var(--danger);text-align:center"><i class="fas fa-exclamation-circle" style="font-size:36px;display:block;margin-bottom:10px"></i>${e.message}</div>`;
+    }
+}
+
+function renderJournal() {
+    const {week_days, students, group, week_start, week_end, nb_limit} = journal;
+    document.getElementById('jtitle').textContent = `Гурӯҳ ${group.number} — Журнали ҳафтаина`;
+    const ws=new Date(week_start+'T00:00:00'), we=new Date(week_end+'T00:00:00');
+    const fmtOpts={day:'2-digit',month:'short'};
+    document.getElementById('jmeta').textContent = `${ws.toLocaleDateString('ru',fmtOpts)} — ${we.toLocaleDateString('ru',fmtOpts)} | Курс ${group.course_year||'?'} | Навбат ${group.shift}`;
+    const gb=document.getElementById('sGroup'); gb.textContent=group.number; gb.style.display='inline-block';
+
+    // Head
+    const head=document.getElementById('jhead');
+    head.innerHTML='';
+    const tr=document.createElement('tr');
+    tr.innerHTML='<th class="name-th"># Ном</th>';
+    week_days.forEach(d=>{
+        tr.innerHTML+=`<th class="${d.is_today?'today-th':''}">${d.day_name}<br><small style="font-weight:400;font-family:'IBM Plex Mono',monospace;font-size:10px">${d.date.slice(5)}</small></th>`;
+    });
+    tr.innerHTML+='<th>Ҷамъ НБ</th>';
+    head.appendChild(tr);
+
+    // Body
+    const body=document.getElementById('jbody');
+    body.innerHTML='';
+    students.forEach((s,i)=>{
+        const tr=document.createElement('tr');
+        const nc=s.total_absent_hours>=nb_limit?'bad':s.total_absent_hours>=20?'warn':'ok';
+        let html=`<td><div class="name-cell"><span style="color:var(--text-muted);font-size:11px;font-family:'IBM Plex Mono',monospace;min-width:20px">${i+1}</span><div style="flex:1;min-width:0;font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.full_name}</div><span class="nb-badge ${nc}">${s.total_absent_hours}</span></div></td>`;
+        week_days.forEach(d=>{
+            const dd=s.days[d.date]||{};
+            const v=dd.nb_hours;
+            const hasCmt=dd.comment&&dd.comment.length>0;
+            const vc=v===null?'vnull':`v${v}`;
+            html+=`<td class="nb-cell ${d.is_today?'today-col':''} ${hasCmt?'has-cmt':''}">
+                <input type="number" min="0" max="5" class="nb-inp ${vc}" value="${v!==null?v:''}" placeholder="–"
+                    data-sid="${s.id}" data-date="${d.date}" data-orig="${v!==null?v:''}"
+                    onchange="mark(this)" onfocus="this.select()">
+                <button class="comment-btn" onclick="openCmt(${s.id},'${d.date}')" title="Шарҳ"><i class="fas fa-comment-alt"></i></button>
+                ${hasCmt?'<div class="cdot"></div>':''}
+            </td>`;
+        });
+        const tc=s.total_absent_hours>=nb_limit?'c-danger':s.total_absent_hours>=20?'c-warning':'c-success';
+        html+=`<td class="tot-cell ${tc}" id="tot-${s.id}">${s.total_absent_hours}</td>`;
+        tr.innerHTML=html;
+        body.appendChild(tr);
+    });
+}
+
+async function mark(inp) {
+    const sid=parseInt(inp.dataset.sid), dateStr=inp.dataset.date;
+    let v=inp.value===''?0:parseInt(inp.value);
+    if(isNaN(v)||v<0||v>5){inp.value=inp.dataset.orig;return;}
+    inp.classList.add('saving');
+    try {
+        const r=await fetch('/curator/api/journal/mark',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:sid,date:dateStr,nb_hours:v,comment:''})});
+        const data=await r.json();
+        if(!r.ok) throw new Error(data.detail||'Хатогӣ');
+        inp.className=`nb-inp v${v}`;
+        inp.value=v; inp.dataset.orig=v;
+        const tc=document.getElementById(`tot-${sid}`);
+        if(tc){
+            tc.textContent=data.total_absent_hours;
+            const nl=journal.nb_limit;
+            tc.className=`tot-cell ${data.total_absent_hours>=nl?'c-danger':data.total_absent_hours>=20?'c-warning':'c-success'}`;
+        }
+        if(journal){
+            const st=journal.students.find(s=>s.id===sid);
+            if(st){
+                st.total_absent_hours=data.total_absent_hours;
+                if(!st.days[dateStr])st.days[dateStr]={};
+                st.days[dateStr].nb_hours=v;
+                const nb=inp.closest('tr').querySelector('.nb-badge');
+                if(nb){const h=data.total_absent_hours;nb.className=`nb-badge ${h>=journal.nb_limit?'bad':h>=20?'warn':'ok'}`;nb.textContent=h;}
+            }
+        }
+        inp.classList.remove('saving');
+        inp.classList.add('saved');
+        setTimeout(()=>inp.classList.remove('saved'),700);
+    } catch(e) {
+        inp.value=inp.dataset.orig;
+        inp.className=`nb-inp v${inp.dataset.orig||'null'}`;
+        inp.classList.remove('saving');
+        inp.classList.add('errflash');
+        setTimeout(()=>inp.classList.remove('errflash'),700);
+        toast('err',e.message);
+    }
+}
+
+async function saveToday() {
+    if(!journal)return;
+    const today=journal.today;
+    const inputs=document.querySelectorAll(`input[data-date="${today}"]`);
+    if(!inputs.length){toast('err','Имрӯзи журнал ёфт нашуд');return;}
+    const recs=[];
+    inputs.forEach(inp=>{
+        const v=inp.value===''?0:parseInt(inp.value);
+        recs.push({student_id:parseInt(inp.dataset.sid),nb_hours:isNaN(v)?0:v,comment:''});
+    });
+    try {
+        const r=await fetch('/curator/api/journal/mark-day',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date:today,records:recs})});
+        const d=await r.json();
+        if(!r.ok) throw new Error(d.detail||'Хатогӣ');
+        toast('succ',`${d.updated_count} қайд сабт шуд`);
+        journal=null; loadJournal();
+    } catch(e){toast('err',e.message);}
+}
+
+// COMMENT
+function openCmt(sid, dateStr) {
+    cmtData={sid,date:dateStr};
+    const s=journal?.students.find(x=>x.id===sid);
+    const d=journal?.week_days.find(x=>x.date===dateStr);
+    document.getElementById('cmtInfo').textContent=`${s?.full_name||''} — ${d?.day_full||dateStr}`;
+    document.getElementById('cmtText').value=s?.days[dateStr]?.comment||'';
+    document.getElementById('cmtModal').classList.add('show');
+}
+function closeCmt(){document.getElementById('cmtModal').classList.remove('show');cmtData=null;}
+async function saveCmt() {
+    if(!cmtData)return;
+    const nb=journal?.students.find(s=>s.id===cmtData.sid)?.days[cmtData.date]?.nb_hours??0;
+    const comment=document.getElementById('cmtText').value;
+    try {
+        const r=await fetch('/curator/api/journal/mark',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({student_id:cmtData.sid,date:cmtData.date,nb_hours:nb,comment})});
+        if(!r.ok) throw new Error('Хатогӣ');
+        toast('succ','Шарҳ сабт шуд');
+        closeCmt(); journal=null; loadJournal();
+    } catch(e){toast('err',e.message);}
+}
+
+// STUDENTS
+async function loadStuds(search='',bp='') {
+    document.getElementById('sbody').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+    try {
+        let url='/curator/api/students?';
+        if(search)url+=`search=${encodeURIComponent(search)}&`;
+        if(bp)url+=`birth_place=${encodeURIComponent(bp)}&`;
+        const r=await fetch(url);
+        students=await r.json();
+        renderStuds();
+    } catch(e){document.getElementById('sbody').innerHTML='<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Хатогӣ</p></div>';}
+}
+function filterStuds(){loadStuds(document.getElementById('ssearch').value,document.getElementById('sbplace').value);}
+function renderStuds() {
+    const body=document.getElementById('sbody');
+    if(!students.length){body.innerHTML='<div class="empty"><i class="fas fa-users"></i><p>Донишҷӯ ёфт нашуд</p></div>';return;}
+    body.innerHTML=students.map(s=>`
+        <div class="srow" onclick="openStudModal(${s.id})">
+            <div class="savatar" style="background:${s.is_high_risk?'rgba(255,77,109,.15)':'var(--surface2)'};color:${s.is_high_risk?'var(--danger)':'var(--text)'}">${s.full_name.charAt(0)}</div>
+            <div class="sdetails">
+                <div class="sname">${s.full_name}</div>
+                <div class="smeta">${s.birth_place?`<span>📍 ${s.birth_place}</span>`:''}${s.phone?` <span>📞 ${s.phone}</span>`:''}${s.parent_phone?` <span>👨‍👩 ${s.parent_phone}</span>`:''}</div>
+            </div>
+            <div class="snb" style="color:${s.is_high_risk?'var(--danger)':s.total_absent_hours>=20?'var(--warning)':'var(--success)'}">${s.total_absent_hours} НБ</div>
+        </div>
+    `).join('');
+}
+function openStudModal(id) {
+    const isNew=id===null;
+    document.getElementById('studModalTitle').textContent=isNew?'Донишҷӯи нав':'Таҳрири донишҷӯ';
+    document.getElementById('sid').value=id||'';
+    document.getElementById('sfinbg').style.display=isNew?'block':'none';
+    if(id){
+        fetch(`/curator/api/students/${id}`).then(r=>r.json()).then(s=>{
+            document.getElementById('sfname').value=s.full_name||'';
+            document.getElementById('sfby').value=s.birth_year||'';
+            document.getElementById('sfbp').value=s.birth_place||'';
+            document.getElementById('sfreg').value=s.region||'';
+            document.getElementById('sfph').value=s.phone||'';
+            document.getElementById('sfpph').value=s.parent_phone||'';
+            document.getElementById('sfss').value=s.study_start||'';
+        });
+    } else {
+        ['sfname','sfby','sfbp','sfreg','sfph','sfpph'].forEach(id=>document.getElementById(id).value='');
+        document.getElementById('sfinb').value=0;
+        document.getElementById('sfss').value=new Date().toISOString().split('T')[0];
+    }
+    document.getElementById('studModal').classList.add('show');
+}
+function closeStudModal(){document.getElementById('studModal').classList.remove('show');}
+async function saveStud(e) {
+    e.preventDefault();
+    const id=document.getElementById('sid').value;
+    const isNew=!id;
+    const fd=new FormData();
+    fd.append('full_name',document.getElementById('sfname').value);
+    fd.append('birth_year',document.getElementById('sfby').value||'');
+    fd.append('birth_place',document.getElementById('sfbp').value||'');
+    fd.append('region',document.getElementById('sfreg').value||'');
+    fd.append('phone',document.getElementById('sfph').value||'');
+    fd.append('parent_phone',document.getElementById('sfpph').value||'');
+    fd.append('study_start',document.getElementById('sfss').value||'');
+    if(isNew)fd.append('initial_nb_hours',document.getElementById('sfinb').value||'0');
+    try {
+        const r=await fetch(isNew?'/curator/api/students':`/curator/api/students/${id}`,{method:isNew?'POST':'PUT',body:fd});
+        const d=await r.json();
+        if(!r.ok) throw new Error(d.detail||'Хатогӣ');
+        toast('succ',isNew?'Донишҷӯ илова шуд':'Маълумот навшуд');
+        closeStudModal(); loadStuds(); journal=null;
+        if(document.getElementById('sec-journal').classList.contains('active')) loadJournal();
+    } catch(e){toast('err',e.message);}
+}
+
+// NB STATS
+async function loadNbStats() {
+    try {
+        const r=await fetch('/curator/api/nb-stats');
+        const d=await r.json();
+        document.getElementById('nblim').textContent=d.nb_limit;
+        document.getElementById('nbcards').innerHTML=`
+            <div class="stat-card b-accent"><div class="stat-value c-accent">${d.total_students}</div><div class="stat-label">Ҷамъи донишҷӯён</div></div>
+            <div class="stat-card b-danger"><div class="stat-value c-danger">${d.high_risk.length}</div><div class="stat-label">Зиёда аз ${d.nb_limit} НБ</div></div>
+            <div class="stat-card"><div class="stat-value c-success">${d.ranges['0']}</div><div class="stat-label">Бе НБ</div></div>
+            <div class="stat-card"><div class="stat-value c-warning">${d.ranges['1-10']+d.ranges['11-20']+d.ranges['21-34']}</div><div class="stat-label">НБ дорад (< ${d.nb_limit})</div></div>
+        `;
+        const rkeys=Object.keys(d.ranges), maxv=Math.max(...Object.values(d.ranges),1);
+        const clrs=['#3dd68c','#4f7cff','#ffb347','#ff7f50','#ff4d6d'];
+        document.getElementById('nbchart').innerHTML=`
+            <div class="bar-chart">${rkeys.map((k,i)=>`<div class="bar" style="height:${Math.max(3,d.ranges[k]/maxv*68)}px;background:${clrs[i]};opacity:.85" title="${k}: ${d.ranges[k]}"></div>`).join('')}</div>
+            <div class="bar-lbls">${rkeys.map((k,i)=>`<div class="bar-lbl">${k}<br><strong style="color:${clrs[i]}">${d.ranges[k]}</strong></div>`).join('')}</div>
+        `;
+        const hrlist=document.getElementById('hrlist');
+        if(!d.high_risk.length){
+            hrlist.innerHTML=`<div class="empty" style="padding:28px"><i class="fas fa-check-circle" style="color:var(--success)"></i><p>Ҳеҷ донишҷӯ зиёда аз ${d.nb_limit} НБ надорад</p></div>`;
+        } else {
+            hrlist.innerHTML=d.high_risk.map(s=>`
+                <div class="srow">
+                    <div class="savatar" style="background:rgba(255,77,109,.15);color:var(--danger)">${s.full_name.charAt(0)}</div>
+                    <div class="sdetails"><div class="sname">${s.full_name}</div><div class="smeta">${s.parent_phone?'👨‍👩 '+s.parent_phone:'Телефон нест'}</div></div>
+                    <div style="font-size:16px;font-weight:700;color:var(--danger);font-family:'IBM Plex Mono',monospace">${s.total_absent_hours}</div>
+                </div>
+            `).join('');
+        }
+    } catch(e){toast('err','Хатогии омор');}
+}
+
+// SUPERVISORS
+async function loadSupers() {
+    const list=document.getElementById('suplist');
+    list.innerHTML='<div class="loading"><div class="spinner"></div></div>';
+    try {
+        const r=await fetch('/curator/api/supervisors');
+        const data=await r.json();
+        if(!data.length){list.innerHTML='<div class="empty"><i class="fas fa-users-cog"></i><p>Маълумот нест</p></div>';return;}
+        const rc={'Декан':'#4f7cff','Замдекан':'#7c5cff','Ректор':'#3dd68c'};
+        const ri={'Декан':'fa-user-tie','Замдекан':'fa-user-shield','Ректор':'fa-crown'};
+        list.innerHTML=data.map(s=>`
+            <div class="sup-card">
+                <div class="sup-icon" style="background:${rc[s.role]||'#4f7cff'}22;color:${rc[s.role]||'#4f7cff'}"><i class="fas ${ri[s.role]||'fa-user'}"></i></div>
+                <div>
+                    <div class="sup-role">${s.role}</div>
+                    <div class="sup-name">${s.full_name}</div>
+                    <div class="sup-meta">${s.phone?'📞 '+s.phone:''}${s.email?' · 📧 '+s.email:''}</div>
+                </div>
+            </div>
+        `).join('');
+    } catch(e){list.innerHTML='<div class="empty"><i class="fas fa-exclamation-circle"></i><p>Хатогӣ</p></div>';}
+}
+
+// PROFILE
+async function loadProf() {
+    try {
+        const r=await fetch('/curator/api/profile');
+        const p=await r.json();
+        document.getElementById('pname').value=p.full_name||'';
+        document.getElementById('pphone').value=p.phone||'';
+        document.getElementById('pemail').value=p.email||'';
+        document.getElementById('pdept').value=p.department||'';
+        document.getElementById('pbirth').value=p.birth_year||'';
+        document.getElementById('sName').textContent=p.full_name;
+        document.getElementById('sAvatar').textContent=p.full_name.charAt(0);
+    } catch(e){}
+}
+async function saveProf(e) {
+    e.preventDefault();
+    const fd=new FormData();
+    fd.append('full_name',document.getElementById('pname').value);
+    fd.append('phone',document.getElementById('pphone').value||'');
+    fd.append('email',document.getElementById('pemail').value||'');
+    fd.append('department',document.getElementById('pdept').value||'');
+    fd.append('birth_year',document.getElementById('pbirth').value||'');
+    try {
+        const r=await fetch('/curator/api/profile',{method:'PUT',body:fd});
+        const d=await r.json();
+        if(!r.ok) throw new Error(d.detail||'Хатогӣ');
+        toast('succ','Профил сабт шуд');
+        document.getElementById('sName').textContent=d.full_name;
+        document.getElementById('sAvatar').textContent=d.full_name.charAt(0);
+    } catch(e){toast('err',e.message);}
+}
+
+// TOAST
+function toast(type,msg) {
+    const c=document.getElementById('toasts');
+    const el=document.createElement('div');
+    el.className=`toast ${type}`;
+    el.innerHTML=`<i class="fas fa-${type==='succ'?'check-circle':'exclamation-circle'}" style="color:var(--${type==='succ'?'success':'danger'})"></i>${msg}`;
+    c.appendChild(el);
+    setTimeout(()=>el.remove(),3500);
+}
+
+document.getElementById('studModal').addEventListener('click',function(e){if(e.target===this)closeStudModal();});
+document.getElementById('cmtModal').addEventListener('click',function(e){if(e.target===this)closeCmt();});
+document.addEventListener('DOMContentLoaded',()=>{ loadJournal(); });
+</script>
+</body>
+</html>

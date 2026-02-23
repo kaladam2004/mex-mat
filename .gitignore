@@ -1,0 +1,38 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+.env/
+.venv/
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# Mac
+.DS_Store
+
+# Logs
+*.log
+
+# SQLite database
+*.sqlite3
+
+# Pytest
+.pytest_cache/
+
+# Migrations
+migrations/versions/*.pyc
+
+# mypy
+.mypy_cache/
+
+# Render
+.env.render
