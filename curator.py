@@ -43,10 +43,11 @@ def _log(db: Session, user_id: int, action: str, table: str, target_id: int, des
 
 
 def _get_group(db: Session, curator_id: int) -> Group:
+    """NULL is_active treated as active (backward-compatible with old data)."""
     g = db.query(Group).filter(
         Group.curator_id == curator_id,
-        Group.is_active == True,
         Group.is_deleted == False,
+        Group.is_active != False,   # TRUE and NULL both pass; only FALSE is rejected
     ).first()
     if not g:
         raise HTTPException(403, "Гурӯҳи фаъол таъин нашудааст. Ба Декан муроҷиат кунед.")
@@ -186,7 +187,7 @@ async def list_students(
         "birth_year": s.birth_year, "birth_place": s.birth_place,
         "region": s.region, "parent_phone": s.parent_phone,
         "total_absent_hours": s.total_absent_hours,
-        "is_high_risk": s.total_absent_hours >= nb_limit,
+        "is_high_risk": (s.total_absent_hours or 0) >= nb_limit,
         "study_start": str(s.study_start) if s.study_start else None,
     } for s in students]
 
@@ -212,7 +213,7 @@ async def get_student(
         "birth_year": s.birth_year, "birth_place": s.birth_place,
         "region": s.region, "parent_phone": s.parent_phone,
         "total_absent_hours": s.total_absent_hours,
-        "is_high_risk": s.total_absent_hours >= nb_limit,
+        "is_high_risk": (s.total_absent_hours or 0) >= nb_limit,
         "study_start": str(s.study_start) if s.study_start else None,
         "expected_graduation": str(s.expected_graduation) if s.expected_graduation else None,
     }
@@ -384,7 +385,7 @@ async def get_week_journal(
             "full_name": s.full_name,
             "student_code": s.student_code,
             "total_absent_hours": s.total_absent_hours,
-            "is_high_risk": s.total_absent_hours >= nb_limit,
+            "is_high_risk": (s.total_absent_hours or 0) >= nb_limit,
             "days": days_data,
         })
 
@@ -663,6 +664,8 @@ async def student_attendance_history(
 
 # ─── NB STATS ─────────────────────────────────────────────────────────────────
 
+# Дар curator.py, функсияи nb_stats (~сатр 680-710)
+
 @router.get("/api/nb-stats")
 async def nb_stats(
     current_user: User = Depends(get_current_user),
@@ -672,15 +675,18 @@ async def nb_stats(
         group = _get_group(db, current_user.id)
     except HTTPException:
         raise HTTPException(403)
-
+    
     nb_limit = int(get_system_setting(db, "NB_LIMIT_HIGH", "35"))
     students = db.query(Student).filter(
         Student.group_id == group.id, Student.is_deleted == False
     ).order_by(Student.total_absent_hours.desc()).all()
 
     ranges = {"0": 0, "1-10": 0, "11-20": 0, "21-34": 0, "35+": 0}
+    
     for s in students:
-        h = s.total_absent_hours
+        # ✅ ИСЛОҲ: None-ро ба 0 табдил диҳед
+        h = s.total_absent_hours or 0
+        
         if h == 0:
             ranges["0"] += 1
         elif h <= 10:
@@ -698,16 +704,16 @@ async def nb_stats(
         "ranges": ranges,
         "high_risk": [
             {"id": s.id, "full_name": s.full_name,
-             "total_absent_hours": s.total_absent_hours,
+             "total_absent_hours": s.total_absent_hours or 0,
              "parent_phone": s.parent_phone}
-            for s in students if s.total_absent_hours >= nb_limit
+            for s in students if (s.total_absent_hours or 0) >= nb_limit
         ],
         "all_students": [
-            {"id": s.id, "full_name": s.full_name, "total_absent_hours": s.total_absent_hours}
+            {"id": s.id, "full_name": s.full_name, 
+             "total_absent_hours": s.total_absent_hours or 0}
             for s in students
         ],
     }
-
 
 # ─── PROFILE ──────────────────────────────────────────────────────────────────
 
