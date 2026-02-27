@@ -3,1146 +3,1115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Куратор — Системаи Мех-мат</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Куратор — Мех-мат</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
---primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;--primary-xlight:#eff6ff;
---success:#059669;--success-light:#d1fae5;
---warning:#d97706;--warning-light:#fef3c7;
---danger:#dc2626;--danger-light:#fee2e2;
---purple:#7c3aed;--purple-light:#ede9fe;
---bg:#f0f4ff;--surface:#fff;--surface2:#f8faff;--border:#dde5f7;--border-light:#eef2fb;
---text:#0f172a;--text-2:#334155;--text-3:#64748b;--text-4:#94a3b8;
---sidebar-w:260px;--topbar-h:60px;
---radius:12px;--radius-sm:8px;--radius-lg:16px;
---shadow-sm:0 1px 4px rgba(37,99,235,.08);
---shadow:0 4px 16px rgba(37,99,235,.1);
---tr:all .2s cubic-bezier(.4,0,.2,1);
+--sky:#0ea5e9;--skyd:#0284c7;--skyl:#e0f2fe;--skyxl:#f0f9ff;
+--vio:#7c3aed;--viol:#ede9fe;
+--ok:#10b981;--okl:#d1fae5;
+--warn:#f59e0b;--warnl:#fef3c7;
+--err:#ef4444;--errl:#fee2e2;
+--pink:#ec4899;--pinkl:#fce7f3;
+--bg:#f0f5ff;--surf:#fff;--surf2:#f7f9fe;
+--bd:#e2e8f5;--bd2:#edf0fa;
+--t1:#0f172a;--t2:#334155;--t3:#64748b;--t4:#94a3b8;
+--sw:268px;--th:64px;
+--r:14px;--rs:9px;--rl:18px;
+--sha:0 2px 12px rgba(14,165,233,.07);
+--shb:0 8px 32px rgba(14,165,233,.12);
+--tr:.18s cubic-bezier(.4,0,.2,1);
 }
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden}
-/* ─ SIDEBAR ─ */
-.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1.5px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;transition:transform .3s ease;overflow-y:auto}
-.sl{padding:1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
-.sl-ico{width:40px;height:40px;border-radius:10px;overflow:hidden;flex-shrink:0;border:2px solid var(--border)}
-.sl-ico img{width:100%;height:100%;object-fit:cover}
-.sl-brand{font-size:.85rem;font-weight:800;color:var(--text)}
-.sl-brand span{display:block;font-size:.72rem;font-weight:500;color:var(--text-3);margin-top:1px}
-.su{padding:1rem 1.25rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.su-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
-.su-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#fff;flex-shrink:0}
-.su-name{font-size:.875rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.su-sub{font-size:.72rem;color:var(--text-3);margin-top:.1rem}
-.badge{display:inline-flex;align-items:center;font-size:.7rem;font-weight:600;padding:.2rem .6rem;border-radius:20px}
-.badge-green{background:var(--success-light);color:var(--success)}
-.snav{flex:1;padding:.625rem .75rem}
-.nsec{font-size:.68rem;font-weight:700;color:var(--text-4);text-transform:uppercase;letter-spacing:.08em;padding:.75rem .75rem .35rem}
-.ni{display:flex;align-items:center;gap:.625rem;padding:.65rem .875rem;border-radius:var(--radius-sm);font-size:.83rem;font-weight:600;color:var(--text-3);cursor:pointer;transition:var(--tr);text-decoration:none;border:none;background:none;width:100%;text-align:left;margin-bottom:1px}
-.ni:hover{background:var(--primary-xlight);color:var(--primary)}
-.ni.active{background:var(--primary-light);color:var(--primary);font-weight:700}
-.ni svg{width:15px;height:15px;flex-shrink:0}
-.sfoot{padding:.875rem .75rem;border-top:1px solid var(--border);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
-.fbt{display:flex;align-items:center;justify-content:center;gap:.35rem;padding:.6rem .5rem;border-radius:var(--radius-sm);font-size:.75rem;font-weight:700;font-family:inherit;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-2);text-decoration:none;transition:var(--tr)}
-.fbt:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-xlight)}
-.fbt.dng{color:var(--danger);border-color:var(--danger-light)}.fbt.dng:hover{background:var(--danger-light)}
-.fbt svg{width:13px;height:13px}
-/* ─ OVERLAY ─ */
-.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:150;backdrop-filter:blur(2px)}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;display:flex;overflow-x:hidden}
+
+/* ── SIDEBAR ── */
+.sb{width:var(--sw);min-height:100vh;background:var(--surf);border-right:1.5px solid var(--bd);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;transition:transform .28s ease;overflow-y:auto;overflow-x:hidden}
+.sb-head{padding:1.125rem 1.25rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+.logo-box{width:40px;height:40px;border-radius:10px;overflow:hidden;border:2px solid var(--bd);flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--sky),var(--vio))}
+.logo-box img{width:100%;height:100%;object-fit:cover}
+.logo-box svg{width:22px;height:22px;color:#fff}
+.logo-text strong{display:block;font-size:.9rem;font-weight:900;color:var(--t1);letter-spacing:-.02em}
+.logo-text span{font-size:.7rem;color:var(--t3);font-weight:600}
+
+.sb-user{padding:.875rem 1.25rem;border-bottom:1px solid var(--bd);flex-shrink:0}
+.user-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
+.user-av{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--sky),var(--vio));color:#fff;font-weight:900;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(14,165,233,.3)}
+.user-name{font-size:.875rem;font-weight:800;color:var(--t1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-sub{font-size:.72rem;color:var(--t3);font-weight:600;margin-top:.1rem}
+.role-tag{display:inline-flex;align-items:center;gap:.35rem;font-size:.7rem;font-weight:800;padding:.2rem .65rem;border-radius:20px;background:var(--skyl);color:var(--skyd);letter-spacing:.02em}
+.role-tag svg{width:10px;height:10px}
+.role-tag.closed{background:var(--errl);color:var(--err)}
+
+.sb-nav{flex:1;padding:.625rem .875rem}
+.nav-label{font-size:.65rem;font-weight:900;color:var(--t4);text-transform:uppercase;letter-spacing:.1em;padding:.875rem .5rem .35rem}
+.nav-btn{display:flex;align-items:center;gap:.65rem;padding:.625rem .875rem;border-radius:var(--rs);font-size:.84rem;font-weight:700;color:var(--t3);cursor:pointer;transition:var(--tr);border:none;background:none;width:100%;text-align:left;margin-bottom:2px;position:relative}
+.nav-btn:hover{background:var(--skyxl);color:var(--sky)}
+.nav-btn.on{background:var(--skyl);color:var(--skyd);font-weight:800}
+.nav-btn.on::before{content:'';position:absolute;left:0;top:20%;bottom:20%;width:3px;border-radius:3px;background:var(--sky)}
+.nav-btn svg{width:16px;height:16px;flex-shrink:0}
+.nav-badge{margin-left:auto;font-size:.65rem;font-weight:800;padding:.15rem .5rem;border-radius:20px;background:var(--errl);color:var(--err)}
+
+.sb-foot{padding:.75rem .875rem;border-top:1px solid var(--bd);display:grid;grid-template-columns:1fr 1fr;gap:.5rem;flex-shrink:0}
+.foot-btn{display:flex;align-items:center;justify-content:center;gap:.35rem;padding:.55rem;border-radius:var(--rs);font-size:.74rem;font-weight:800;cursor:pointer;border:1.5px solid var(--bd);background:var(--surf2);color:var(--t2);text-decoration:none;transition:var(--tr)}
+.foot-btn:hover{border-color:var(--sky);color:var(--sky);background:var(--skyxl)}
+.foot-btn.exit{color:var(--err);border-color:rgba(239,68,68,.25)}.foot-btn.exit:hover{background:var(--errl)}
+.foot-btn svg{width:13px;height:13px}
+
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:150;backdrop-filter:blur(3px)}
 .overlay.show{display:block}
-/* ─ MAIN ─ */
-.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin .3s ease}
-.topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1.5px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:.875rem;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
-.mnt{display:none;width:36px;height:36px;border:none;background:var(--bg);border-radius:var(--radius-sm);cursor:pointer;align-items:center;justify-content:center;color:var(--text-2);flex-shrink:0}
-.mnt svg{width:18px;height:18px}
-.tb-title{font-size:.95rem;font-weight:700;color:var(--text);flex:1}
-.tb-right{display:flex;align-items:center;gap:.625rem}
-.tb-info{font-size:.78rem;color:var(--text-3);background:var(--bg);padding:.35rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--border);display:flex;align-items:center;gap:.4rem;white-space:nowrap}
-.tb-info svg{width:12px;height:12px}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin .28s}
+.topbar{height:var(--th);background:var(--surf);border-bottom:1.5px solid var(--bd);display:flex;align-items:center;padding:0 1.5rem;gap:1rem;position:sticky;top:0;z-index:100;box-shadow:var(--sha)}
+.menu-btn{display:none;width:38px;height:38px;border:none;background:var(--bg);border-radius:var(--rs);cursor:pointer;align-items:center;justify-content:center;color:var(--t2);flex-shrink:0;transition:var(--tr)}
+.menu-btn:hover{background:var(--skyl);color:var(--sky)}
+.menu-btn svg{width:18px;height:18px}
+.top-title{font-size:1rem;font-weight:900;color:var(--t1);flex:1;letter-spacing:-.02em}
+.top-right{display:flex;align-items:center;gap:.625rem}
+.top-info{font-size:.76rem;color:var(--t3);background:var(--bg);padding:.3rem .75rem;border-radius:var(--rs);border:1px solid var(--bd);display:flex;align-items:center;gap:.4rem;font-weight:600}
+.top-info svg{width:13px;height:13px;color:var(--sky)}
+.icon-btn{width:34px;height:34px;border:none;background:var(--bg);border-radius:var(--rs);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:var(--tr)}
+.icon-btn:hover{background:var(--skyl);color:var(--sky)}
+.icon-btn svg{width:15px;height:15px}
+
 .content{padding:1.5rem;flex:1}
-.section{display:none}
-.section.active{display:block;animation:fi .2s ease}
-@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-/* ─ PAGE HEADER ─ */
-.ph{margin-bottom:1.25rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.875rem;flex-wrap:wrap}
-.ph h1{font-size:1.2rem;font-weight:800;color:var(--text)}
-.ph p{font-size:.82rem;color:var(--text-3);margin-top:.2rem}
-.ph-a{display:flex;gap:.625rem;flex-wrap:wrap;flex-shrink:0}
-/* ─ BUTTONS ─ */
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.125rem;border:none;border-radius:var(--radius-sm);font-size:.83rem;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--tr)}
+.sec{display:none}.sec.on{display:block;animation:slideUp .22s ease}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ── PAGE HEADER ── */
+.ph{margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.ph h1{font-size:1.25rem;font-weight:900;color:var(--t1);letter-spacing:-.025em;display:flex;align-items:center;gap:.5rem}
+.ph h1 .h-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:var(--skyl);flex-shrink:0}
+.ph h1 .h-icon svg{width:16px;height:16px;color:var(--sky)}
+.ph p{font-size:.8rem;color:var(--t3);margin-top:.2rem;font-weight:600}
+.ph-acts{display:flex;gap:.5rem;flex-wrap:wrap;flex-shrink:0}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.575rem 1rem;border:none;border-radius:var(--rs);font-size:.83rem;font-weight:800;font-family:inherit;cursor:pointer;transition:var(--tr);letter-spacing:.01em;white-space:nowrap}
 .btn svg{width:14px;height:14px;flex-shrink:0}
-.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
-.btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#047857;transform:translateY(-1px)}
-.btn-warning{background:var(--warning);color:#fff}.btn-warning:hover{background:#b45309;transform:translateY(-1px)}
-.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#b91c1c}
-.btn-purple{background:var(--purple);color:#fff}.btn-purple:hover{background:#6d28d9}
-.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text-2)}.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-xlight)}
-.btn-sm{padding:.45rem .875rem;font-size:.78rem}
-.btn-xs{padding:.3rem .625rem;font-size:.72rem}
-.btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important}
-/* ─ KPI CARDS ─ */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.875rem;margin-bottom:1.25rem}
-.kpi{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.125rem;display:flex;align-items:center;justify-content:space-between;gap:.875rem;position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.kpi.blue::before{background:var(--primary)}.kpi.green::before{background:var(--success)}.kpi.warn::before{background:var(--warning)}.kpi.danger::before{background:var(--danger)}.kpi.purple::before{background:var(--purple)}
-.kpi-t p{font-size:.78rem;color:var(--text-3);font-weight:500}
-.kpi-t .kv{font-size:1.875rem;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1;margin-top:.2rem}
-.kpi-i{width:46px;height:46px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.kpi-i svg{width:20px;height:20px}
-.kpi.blue .kpi-i{background:var(--primary-light);color:var(--primary)}
-.kpi.green .kpi-i{background:var(--success-light);color:var(--success)}
-.kpi.warn .kpi-i{background:var(--warning-light);color:var(--warning)}
-.kpi.danger .kpi-i{background:var(--danger-light);color:var(--danger)}
-.kpi.purple .kpi-i{background:var(--purple-light);color:var(--purple)}
-/* ─ PANEL ─ */
-.panel{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.125rem}
-.panel-h{padding:.875rem 1.125rem;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:.875rem;flex-wrap:wrap}
-.panel-h h3{font-size:.9rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:.5rem;margin:0}
-.panel-h h3 svg{width:15px;height:15px;color:var(--primary);flex-shrink:0}
-.panel-b{padding:1.125rem}
-/* ─ WEEK STATUS STRIP ─ */
-.week-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:.5rem;margin-bottom:1.125rem}
-.wday{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.5rem .25rem;text-align:center;transition:var(--tr)}
-.wday.today{border-color:var(--primary);background:var(--primary-xlight)}
-.wday.done{border-color:var(--success);background:var(--success-light)}
-.wday.partial{border-color:var(--warning);background:var(--warning-light)}
-.wday-name{font-size:.65rem;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.05em}
-.wday-date{font-size:.78rem;font-weight:700;color:var(--text);font-family:'JetBrains Mono',monospace;margin:.15rem 0}
-.wday-icon{font-size:.9rem}
-/* ─ MODE TABS ─ */
-.mode-tabs{display:flex;gap:.5rem;margin-bottom:1.125rem;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.3rem}
-.mode-tab{flex:1;padding:.55rem .75rem;border-radius:6px;border:none;font-size:.82rem;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--tr);color:var(--text-3);background:transparent;display:flex;align-items:center;justify-content:center;gap:.375rem}
-.mode-tab.active{background:var(--surface);color:var(--primary);box-shadow:var(--shadow-sm)}
-.mode-tab svg{width:14px;height:14px}
-/* ─ JOURNAL TABLE ─ */
+.btn-sky{background:var(--sky);color:#fff;box-shadow:0 2px 10px rgba(14,165,233,.28)}.btn-sky:hover{background:var(--skyd);transform:translateY(-1px);box-shadow:0 4px 16px rgba(14,165,233,.38)}
+.btn-ok{background:var(--ok);color:#fff;box-shadow:0 2px 8px rgba(16,185,129,.22)}.btn-ok:hover{background:#059669;transform:translateY(-1px)}
+.btn-warn{background:var(--warn);color:#fff}.btn-warn:hover{background:#d97706}
+.btn-err{background:var(--err);color:#fff}.btn-err:hover{background:#dc2626}
+.btn-vio{background:var(--vio);color:#fff}.btn-vio:hover{background:#6d28d9}
+.btn-ghost{background:transparent;border:1.5px solid var(--bd);color:var(--t2)}.btn-ghost:hover{border-color:var(--sky);color:var(--sky);background:var(--skyxl)}
+.btn-sm{padding:.4rem .75rem;font-size:.78rem}
+.btn-xs{padding:.275rem .55rem;font-size:.7rem}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* ── KPI CARDS ── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(158px,1fr));gap:1rem;margin-bottom:1.5rem}
+.kpi-card{background:var(--surf);border:1.5px solid var(--bd);border-radius:var(--r);padding:1.125rem;position:relative;overflow:hidden;transition:var(--tr);cursor:default}
+.kpi-card:hover{box-shadow:var(--shb);transform:translateY(-3px)}
+.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.kc-sky::after{background:var(--sky)}.kc-ok::after{background:var(--ok)}.kc-warn::after{background:var(--warn)}.kc-err::after{background:var(--err)}.kc-vio::after{background:var(--vio)}.kc-pink::after{background:var(--pink)}
+.kpi-inner{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-top:.35rem}
+.kpi-lbl{font-size:.74rem;color:var(--t3);font-weight:700;margin-bottom:.2rem}
+.kpi-num{font-size:2rem;font-weight:900;color:var(--t1);font-family:'JetBrains Mono',monospace;line-height:1;letter-spacing:-.04em}
+.kpi-ico{width:46px;height:46px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kpi-ico svg{width:21px;height:21px}
+.kc-sky .kpi-ico{background:var(--skyl);color:var(--sky)}.kc-ok .kpi-ico{background:var(--okl);color:var(--ok)}.kc-warn .kpi-ico{background:var(--warnl);color:var(--warn)}.kc-err .kpi-ico{background:var(--errl);color:var(--err)}.kc-vio .kpi-ico{background:var(--viol);color:var(--vio)}.kc-pink .kpi-ico{background:var(--pinkl);color:var(--pink)}
+
+/* ── PANELS ── */
+.panel{background:var(--surf);border:1.5px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:1.25rem}
+.p-head{padding:.875rem 1.25rem;border-bottom:1px solid var(--bd2);display:flex;align-items:center;justify-content:space-between;gap:.875rem;flex-wrap:wrap}
+.p-head h3{font-size:.88rem;font-weight:800;color:var(--t1);display:flex;align-items:center;gap:.5rem;margin:0}
+.p-head h3 .h3-ico{width:26px;height:26px;border-radius:7px;background:var(--skyl);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.p-head h3 .h3-ico svg{width:13px;height:13px;color:var(--sky)}
+.p-body{padding:1.25rem}
+
+/* ── WEEK STRIP ── */
+.week-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:.625rem;margin-bottom:1.125rem}
+.wday{border:1.5px solid var(--bd);border-radius:var(--rs);padding:.625rem .25rem;text-align:center;transition:var(--tr);cursor:pointer;background:var(--surf)}
+.wday:hover{border-color:var(--sky);background:var(--skyxl);transform:translateY(-2px)}
+.wday.today{border-color:var(--sky);background:var(--skyl);box-shadow:0 0 0 3px rgba(14,165,233,.1)}
+.wday.done{border-color:var(--ok);background:var(--okl)}
+.wday.partial{border-color:var(--warn);background:var(--warnl)}
+.wday.saturday{border-color:var(--vio);background:var(--viol)}
+.wd-name{font-size:.62rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.07em}
+.wd-date{font-size:.78rem;font-weight:800;font-family:'JetBrains Mono',monospace;color:var(--t1);margin:.15rem 0}
+.wd-ic{font-size:.95rem;line-height:1}
+
+/* ── MODE TABS ── */
+.mode-tabs{display:flex;gap:.4rem;margin-bottom:1rem;background:var(--surf2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:.3rem}
+.m-tab{flex:1;padding:.5rem .875rem;border-radius:7px;border:none;font-size:.82rem;font-weight:800;font-family:inherit;cursor:pointer;transition:var(--tr);color:var(--t3);background:transparent;display:flex;align-items:center;justify-content:center;gap:.375rem}
+.m-tab.on{background:var(--surf);color:var(--sky);box-shadow:var(--sha);font-weight:900}
+.m-tab svg{width:14px;height:14px}
+.m-tab:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── JOURNAL TABLE ── */
 .jt-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.jt{width:100%;border-collapse:collapse}
-.jt th{padding:.625rem .5rem;font-size:.68rem;font-weight:700;color:var(--text-3);text-align:center;border-bottom:1.5px solid var(--border);background:var(--surface2);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-.jt th.name-col{text-align:left;padding-left:.875rem;min-width:180px}
-.jt td{padding:.45rem .35rem;border-bottom:1px solid var(--border-light);font-size:.8rem;vertical-align:middle;text-align:center}
-.jt td.name-col{text-align:left;padding-left:.875rem}
-.jt tr:last-child td{border-bottom:none}
-.jt tr:hover td{background:var(--primary-xlight)}
-.jt th.today-col{background:var(--primary-xlight);color:var(--primary)}
-.jt td.today-col{background:var(--primary-xlight)}
-.jt th.disabled-col{color:var(--text-4)}
-.jt td.disabled-col input{opacity:.45;cursor:not-allowed}
-.jcell{width:44px;height:34px;border:1.5px solid var(--border);border-radius:6px;text-align:center;font-size:.85rem;font-weight:600;font-family:'JetBrains Mono',monospace;transition:var(--tr);background:var(--bg);color:var(--text-2)}
-.jcell:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 3px rgba(37,99,235,.1);background:#fff}
-.jcell.present{background:var(--success-light);border-color:rgba(5,150,105,.4);color:var(--success)}
-.jcell.absent{background:var(--danger-light);border-color:rgba(220,38,38,.4);color:var(--danger)}
-.jcell.has-comment{box-shadow:0 0 0 2px var(--warning)}
-/* ─ TABLE GENERAL ─ */
+table.jt{width:100%;border-collapse:collapse}
+.jt th{padding:.625rem .45rem;font-size:.67rem;font-weight:900;color:var(--t3);text-align:center;border-bottom:2px solid var(--bd);background:var(--surf2);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.jt th.nt{text-align:left;padding-left:1rem;min-width:195px}
+.jt td{padding:.45rem .3rem;border-bottom:1px solid var(--bd2);font-size:.8rem;vertical-align:middle;text-align:center}
+.jt td.nt{text-align:left;padding-left:1rem}
+.jt tr:hover td{background:var(--skyxl)}
+.jt th.tc,.jt td.tc{background:rgba(14,165,233,.06)}
+.jt th.dcol{color:var(--t4)}
+.jt td.dcol input{opacity:.4;cursor:not-allowed;pointer-events:none}
+.jcell{width:46px;height:34px;border:1.5px solid var(--bd);border-radius:7px;text-align:center;font-size:.85rem;font-weight:700;font-family:'JetBrains Mono',monospace;transition:var(--tr);background:var(--bg);color:var(--t2);outline:none}
+.jcell:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.14);background:#fff}
+.jcell.p{background:var(--okl);border-color:rgba(16,185,129,.45);color:var(--ok)}
+.jcell.a{background:var(--errl);border-color:rgba(239,68,68,.45);color:var(--err)}
+.jcell.hc{box-shadow:0 0 0 2px var(--warn)}
+.cmt-dot{width:22px;height:22px;border:1.5px solid var(--bd);border-radius:6px;background:var(--surf2);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--t4);transition:var(--tr)}
+.cmt-dot:hover{background:var(--warnl);color:var(--warn);border-color:var(--warn)}
+.cmt-dot svg{width:10px;height:10px}
+.cmt-dot.filled{background:var(--warnl);color:var(--warn);border-color:var(--warn)}
+
+/* ── DATA TABLE ── */
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.tbl{width:100%;border-collapse:collapse;min-width:520px}
-.tbl thead{background:var(--surface2)}
-.tbl th{padding:.625rem .875rem;font-size:.72rem;font-weight:700;color:var(--text-3);text-align:left;border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-.tbl td{padding:.75rem .875rem;border-bottom:1px solid var(--border-light);font-size:.83rem}
+table.tbl{width:100%;border-collapse:collapse;min-width:460px}
+.tbl thead{background:var(--surf2)}
+.tbl th{padding:.6rem 1rem;font-size:.69rem;font-weight:900;color:var(--t3);text-align:left;border-bottom:2px solid var(--bd);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.tbl td{padding:.7rem 1rem;border-bottom:1px solid var(--bd2);font-size:.83rem;font-weight:600}
 .tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:var(--primary-xlight)}
-.tbl td.mono{font-family:'JetBrains Mono',monospace;font-size:.8rem}
-/* ─ CHIPS ─ */
-.chip{display:inline-flex;align-items:center;gap:.25rem;font-size:.72rem;font-weight:600;padding:.2rem .625rem;border-radius:20px}
-.chip-green{background:var(--success-light);color:var(--success)}
-.chip-red{background:var(--danger-light);color:var(--danger)}
-.chip-warn{background:var(--warning-light);color:var(--warning)}
-.chip-blue{background:var(--primary-light);color:var(--primary)}
-.chip-purple{background:var(--purple-light);color:var(--purple)}
-/* ─ FILTERS ─ */
-.finp{padding:.65rem .875rem;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.83rem;color:var(--text);font-family:inherit;outline:none;transition:border-color .2s}
-.finp:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.finp::placeholder{color:var(--text-4)}
-.search-inp{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:.75rem center;padding-left:2.5rem}
-/* ─ MODAL ─ */
-.modal-ov{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:9999;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
-.modal-ov.show{display:flex}
-.modal-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
-.modal-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
-.modal-title h3{font-size:1rem;font-weight:800;color:var(--text)}
-.mcl{width:30px;height:30px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);transition:var(--tr)}
-.mcl:hover{background:var(--danger-light);color:var(--danger)}.mcl svg{width:14px;height:14px}
-.fg{margin-bottom:.875rem}
-.fg label{display:block;font-size:.75rem;font-weight:700;color:var(--text-2);margin-bottom:.375rem;text-transform:uppercase;letter-spacing:.05em}
-.fg .finp{width:100%}
+.tbl tr:hover td{background:var(--skyxl)}
+.tbl td.mono{font-family:'JetBrains Mono',monospace;font-size:.78rem}
+
+/* ── BADGES / CHIPS ── */
+.chip{display:inline-flex;align-items:center;gap:.2rem;font-size:.7rem;font-weight:800;padding:.18rem .6rem;border-radius:20px}
+.chip-sky{background:var(--skyl);color:var(--skyd)}.chip-ok{background:var(--okl);color:var(--ok)}.chip-err{background:var(--errl);color:var(--err)}.chip-warn{background:var(--warnl);color:var(--warn)}.chip-vio{background:var(--viol);color:var(--vio)}.chip-gray{background:#f1f5f9;color:var(--t3)}.chip-pink{background:var(--pinkl);color:var(--pink)}
+
+/* ── INFO ROWS ── */
+.irow{display:flex;gap:.75rem;align-items:flex-start;padding:.5rem 0;border-bottom:1px solid var(--bd2);font-size:.83rem}
+.irow:last-child{border-bottom:none}
+.irow-l{color:var(--t3);font-weight:700;min-width:135px;font-size:.74rem;padding-top:.05rem;flex-shrink:0}
+.irow-v{color:var(--t1);font-weight:700;flex:1}
+
+/* ── FORMS ── */
+.finp{padding:.625rem .9rem;background:var(--surf);border:1.5px solid var(--bd);border-radius:var(--rs);font-size:.83rem;color:var(--t1);font-family:inherit;outline:none;transition:border-color .18s,box-shadow .18s;width:100%;font-weight:600}
+.finp:focus{border-color:var(--sky);box-shadow:0 0 0 3px rgba(14,165,233,.12)}
+.finp::placeholder{color:var(--t4);font-weight:500}
+select.finp{cursor:pointer}
+.fg{margin-bottom:.9rem}
+.fg label{display:block;font-size:.72rem;font-weight:900;color:var(--t2);margin-bottom:.375rem;text-transform:uppercase;letter-spacing:.07em}
+.fg .hint{font-size:.7rem;color:var(--t3);margin-top:.3rem;font-weight:600}
 .frow2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.modal-actions{display:flex;gap:.625rem;margin-top:1.125rem}
-.modal-actions .btn{flex:1;justify-content:center}
-/* ─ NB BARS ─ */
-.nb-bar{display:flex;align-items:flex-end;gap:.5rem;height:130px;padding:.5rem 0}
+.search-wrap{position:relative}
+.search-wrap .srch-ic{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--t4);pointer-events:none}
+.search-wrap .srch-ic svg{width:14px;height:14px}
+.search-wrap .finp{padding-left:2.5rem}
+
+/* ── ALERTS/BANNERS ── */
+.banner{border-radius:var(--rs);padding:.75rem 1rem;font-size:.82rem;font-weight:700;display:flex;align-items:center;gap:.625rem;margin-bottom:1rem}
+.banner svg{width:16px;height:16px;flex-shrink:0}
+.banner-err{background:linear-gradient(135deg,var(--errl),#fff1f2);border:1.5px solid rgba(239,68,68,.2);color:var(--err)}
+.banner-warn{background:linear-gradient(135deg,var(--warnl),#fff7ed);border:1.5px solid rgba(245,158,11,.2);color:#92400e}
+.banner-info{background:linear-gradient(135deg,var(--skyl),var(--skyxl));border:1.5px solid rgba(14,165,233,.2);color:var(--skyd)}
+
+/* ── MODAL ── */
+.m-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:9999;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(5px)}
+.m-bg.show{display:flex;animation:mfade .18s ease}
+@keyframes mfade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--surf);border:1.5px solid var(--bd);border-radius:var(--rl);padding:1.625rem;width:100%;max-width:500px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 80px rgba(14,165,233,.15);animation:mpop .22s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mpop{from{opacity:0;transform:scale(.94) translateY(10px)}to{opacity:1;transform:none}}
+.modal.wide{max-width:680px}
+.m-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.375rem}
+.m-top h3{font-size:1.05rem;font-weight:900;color:var(--t1);letter-spacing:-.02em}
+.m-close{width:32px;height:32px;border:none;background:var(--bg);border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--t3);transition:var(--tr)}
+.m-close:hover{background:var(--errl);color:var(--err)}
+.m-close svg{width:14px;height:14px}
+.m-acts{display:flex;gap:.625rem;margin-top:1.125rem}
+.m-acts .btn{flex:1;justify-content:center}
+
+/* ── NB CHART ── */
+.nb-chart{display:flex;align-items:flex-end;gap:.75rem;height:120px;padding:.5rem 0}
 .nb-bi{flex:1;display:flex;flex-direction:column;align-items:center;gap:.3rem}
-.nb-bf{width:100%;border-radius:4px 4px 0 0;transition:height .5s ease;min-height:3px}
-.nb-bl{font-size:.65rem;color:var(--text-3);text-align:center;white-space:nowrap}
-.nb-bv{font-size:.78rem;font-weight:700;color:var(--text)}
-/* ─ SUPERVISOR CARD ─ */
-.sup-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem;display:flex;align-items:center;gap:.875rem;margin-bottom:.75rem}
-.sup-av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#fff;flex-shrink:0}
-.sup-av.dean{background:linear-gradient(135deg,var(--blue,#2563eb),#1d4ed8)}
-.sup-av.vdean{background:linear-gradient(135deg,var(--purple),#6d28d9)}
-.sup-av.rector{background:linear-gradient(135deg,var(--danger),#b91c1c)}
-.sup-info{flex:1}
-.sup-role{font-size:.72rem;font-weight:700;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em}
-.sup-name{font-size:.9rem;font-weight:700;color:var(--text);margin:.15rem 0}
-.sup-contact{font-size:.78rem;color:var(--text-3)}
-.sup-contact a{color:var(--primary);text-decoration:none}
-/* ─ HISTORY TABLE ─ */
-.hist-item{display:flex;align-items:center;gap:.75rem;padding:.6rem 0;border-bottom:1px solid var(--border-light)}
-.hist-item:last-child{border-bottom:none}
-.hist-date{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:var(--text-3);min-width:80px}
-.hist-nb{min-width:50px}
-.hist-cmt{font-size:.78rem;color:var(--text-3);flex:1}
-/* ─ GRID 2 ─ */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem;margin-bottom:1.125rem}
-/* ─ LOADING / EMPTY ─ */
-.loading{display:flex;align-items:center;justify-content:center;padding:3rem}
-.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+.nb-bf{width:100%;border-radius:6px 6px 0 0;transition:height .5s cubic-bezier(.4,0,.2,1);min-height:4px}
+.nb-bl{font-size:.62rem;color:var(--t3);text-align:center;white-space:nowrap;font-weight:700}
+.nb-bv{font-size:.75rem;font-weight:900;color:var(--t1)}
+
+/* ── SUPERVISOR CARD ── */
+.sup-card{background:var(--surf2);border:1.5px solid var(--bd);border-radius:var(--r);padding:1rem 1.25rem;display:flex;align-items:center;gap:1rem;margin-bottom:.875rem;transition:var(--tr);cursor:default}
+.sup-card:hover{box-shadow:var(--shb);border-color:var(--sky);transform:translateY(-2px)}
+.sup-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff;flex-shrink:0}
+.sup-av.dean{background:linear-gradient(135deg,var(--sky),var(--skyd))}.sup-av.vdean{background:linear-gradient(135deg,var(--vio),#5b21b6)}.sup-av.rector{background:linear-gradient(135deg,#f43f5e,#be123c)}
+.sup-role{font-size:.68rem;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.08em}
+.sup-name{font-size:.9rem;font-weight:800;color:var(--t1);margin:.15rem 0}
+.sup-contact{font-size:.77rem;color:var(--t3);font-weight:600}
+.sup-contact a{color:var(--sky);text-decoration:none;font-weight:700}
+
+/* ── MISC ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+.loading{display:flex;align-items:center;justify-content:center;padding:3.5rem}
+.spinner{width:30px;height:30px;border:3px solid var(--bd);border-top-color:var(--sky);border-radius:50%;animation:spin .65s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:3rem 1.5rem;color:var(--text-3)}
-.empty svg{width:40px;height:40px;margin:0 auto .75rem;display:block;opacity:.25}
-.empty p{font-size:.875rem}
-/* ─ TOAST ─ */
-.toast-cnt{position:fixed;top:72px;right:1.25rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
-.toast{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem 1rem;font-size:.83rem;display:flex;align-items:center;gap:.625rem;box-shadow:var(--shadow);animation:tIn .25s ease;pointer-events:auto;font-weight:600;max-width:320px}
+.empty-state{text-align:center;padding:3rem 1.5rem;color:var(--t3)}
+.empty-state .es-icon{width:56px;height:56px;border-radius:50%;background:var(--bg);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+.empty-state .es-icon svg{width:24px;height:24px;opacity:.4}
+.empty-state strong{display:block;font-size:.9rem;font-weight:800;color:var(--t2);margin-bottom:.35rem}
+.empty-state p{font-size:.8rem;font-weight:600}
+
+/* ── TOAST ── */
+.toast-cnt{position:fixed;top:76px;right:1.25rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none;z-index:100000}
+.toast{background:var(--surf);border:1.5px solid var(--bd);border-radius:11px;padding:.7rem 1rem;font-size:.82rem;display:flex;align-items:center;gap:.625rem;box-shadow:var(--shb);animation:tIn .22s ease;pointer-events:auto;font-weight:700;max-width:340px}
+@keyframes tIn{from{opacity:0;transform:translateX(18px)}to{opacity:1;transform:none}}
 .toast svg{flex-shrink:0;width:15px;height:15px}
-.toast.succ{border-color:rgba(5,150,105,.4)}.toast.succ svg{color:var(--success)}
-.toast.err{border-color:rgba(220,38,38,.4)}.toast.err svg{color:var(--danger)}
-.toast.warn{border-color:rgba(217,119,6,.4)}.toast.warn svg{color:var(--warning)}
-@keyframes tIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:none}}
-/* ─ SCROLLBAR ─ */
+.toast.succ{border-color:rgba(16,185,129,.4)}.toast.succ svg{color:var(--ok)}
+.toast.err{border-color:rgba(239,68,68,.4)}.toast.err svg{color:var(--err)}
+.toast.warn{border-color:rgba(245,158,11,.4)}.toast.warn svg{color:var(--warn)}
+.toast.info{border-color:rgba(14,165,233,.35)}.toast.info svg{color:var(--sky)}
+
 ::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-/* ─ RESPONSIVE ─ */
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--t4)}
+
 @media(max-width:768px){
-.sidebar{transform:translateX(-100%)}
-.sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}
-.main{margin-left:0}
-.mnt{display:inline-flex}
-.content{padding:1rem}
-.kpi-grid{grid-template-columns:repeat(2,1fr)}
-.g2{grid-template-columns:1fr}
-.frow2{grid-template-columns:1fr}
-.tb-info{display:none}
-.toast-cnt{left:.875rem;right:.875rem;top:auto;bottom:.875rem}
-.jcell{width:36px;height:30px;font-size:.75rem}
-.week-strip{grid-template-columns:repeat(3,1fr)}
+.sb{transform:translateX(-100%)}.sb.open{transform:none;box-shadow:var(--shb)}
+.main{margin-left:0}.menu-btn{display:inline-flex}.content{padding:1rem}
+.kpi-grid{grid-template-columns:repeat(2,1fr)}.g2{grid-template-columns:1fr}
+.frow2{grid-template-columns:1fr}.top-info{display:none}
+.toast-cnt{left:.875rem;right:.875rem;top:auto;bottom:.875rem;align-items:stretch}
+.jcell{width:38px;height:30px;font-size:.75rem}.week-strip{grid-template-columns:repeat(3,1fr)}
 }
 @media(max-width:480px){
-.content{padding:.875rem}
-.kpi-grid{grid-template-columns:repeat(2,1fr)}
-.ph-a{width:100%}
-.ph-a .btn{flex:1;justify-content:center}
-.mode-tabs{flex-direction:column}
+.content{padding:.875rem}.kpi-grid{grid-template-columns:repeat(2,1fr)}
+.ph-acts{width:100%}.ph-acts .btn{flex:1;justify-content:center}
 }
 </style>
 </head>
 <body>
 <div class="overlay" id="overlay" onclick="closeSB()"></div>
 
-<!-- ════ SIDEBAR ════ -->
-<aside class="sidebar" id="sidebar">
-<div class="sl">
-  <div class="sl-ico"><img src="/static/logo.jpg" alt="Logo" onerror="this.style.display='none'"></div>
-  <div class="sl-brand">Куратор<span>Системаи Мех-мат</span></div>
-</div>
-<div class="su">
-  <div class="su-row">
-    <div class="su-av">{{ user.full_name[0].upper() if user.full_name else 'K' }}</div>
-    <div style="flex:1;min-width:0">
-      <div class="su-name">{{ user.full_name or 'Куратор' }}</div>
-      <div class="su-sub">{{ group.number if group else 'Гурӯҳ нест' }}</div>
+<aside class="sb" id="sb">
+  <div class="sb-head">
+    <div class="logo-box">
+      <img src="/static/logo.jpg" alt="" onerror="this.parentNode.innerHTML='<svg viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'currentColor\' stroke-width=\'2\'><path d=\'M22 10v6M2 10l10-5 10 5-10 5z\'/></svg>'">
+    </div>
+    <div class="logo-text">
+      <strong>Мех-мат</strong>
+      <span>Системаи Идоракунӣ</span>
     </div>
   </div>
-  <span class="badge badge-green">✅ Куратор</span>
-</div>
-<nav class="snav">
-  <div class="nsec">Асосӣ</div>
-  <button class="ni active" onclick="showSec('journal',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-    Журнали ҳафта
-  </button>
-  <button class="ni" onclick="showSec('students',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-    Донишҷӯён
-  </button>
-  <button class="ni" onclick="showSec('nb-stats',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    Омори НБ
-  </button>
-  <div class="nsec">Иттилоот</div>
-  <button class="ni" onclick="showSec('supervisors',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-    Роҳбарон
-  </button>
-  <button class="ni" onclick="showSec('profile',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-    Профили ман
-  </button>
-</nav>
-<div class="sfoot">
-  <button class="fbt" onclick="showSec('change-pw',this)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-    Парол
-  </button>
-  <a href="/logout" class="fbt dng">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    Хуруҷ
-  </a>
-</div>
+
+  <div class="sb-user">
+    <div class="user-row">
+      <div class="user-av" id="sb-av">К</div>
+      <div style="flex:1;min-width:0">
+        <div class="user-name">{{ user.full_name or 'Куратор' }}</div>
+        <div class="user-sub" id="sb-group">{{ group.number if group else 'Гурӯҳ нест' }}</div>
+      </div>
+    </div>
+    <span class="role-tag" id="role-tag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Куратор
+    </span>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-label">Асосӣ</div>
+    <button class="nav-btn on" onclick="showSec('journal',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+      Журнали ҳафта
+    </button>
+    <button class="nav-btn" onclick="showSec('students',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      Донишҷӯён
+      <span class="nav-badge" id="nb-nav-badge" style="display:none">0</span>
+    </button>
+    <button class="nav-btn" onclick="showSec('nbstats',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Омори НБ
+    </button>
+    <div class="nav-label">Маълумот</div>
+    <button class="nav-btn" onclick="showSec('supervisors',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Роҳбарон
+    </button>
+    <button class="nav-btn" onclick="showSec('profile',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Профили ман
+    </button>
+  </nav>
+
+  <div class="sb-foot">
+    <button class="foot-btn" onclick="showSec('changepw',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Парол
+    </button>
+    <a href="/logout" class="foot-btn exit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Баромад
+    </a>
+  </div>
 </aside>
 
-<!-- ════ MAIN ════ -->
-<div class="main" id="mainWrap">
-<header class="topbar">
-  <button class="mnt" onclick="openSB()">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-  </button>
-  <div class="tb-title" id="page-title">📋 Журнали ҳафта</div>
-  <div class="tb-right">
-    <div class="tb-info">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-      {{ faculty.name if faculty else '—' }} · {{ group.number if group else '—' }}
-    </div>
-    <button class="btn btn-ghost btn-sm" id="refresh-btn" onclick="refreshSec()" title="Навсозӣ">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" id="refresh-ico"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+<div class="main" id="mainW">
+  <header class="topbar">
+    <button class="menu-btn" onclick="openSB()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
-  </div>
-</header>
-
-<div class="content">
-
-{% if error %}
-<!-- ─ ERROR STATE ─ -->
-<div class="empty" style="max-width:480px;margin:4rem auto">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-  <h2 style="font-size:1.25rem;font-weight:800;color:var(--danger);margin-bottom:.5rem">⚠️ Хатогӣ</h2>
-  <p style="font-size:.9rem;color:var(--text-2);margin-bottom:1.5rem">{{ error }}</p>
-  <a href="/dean/dashboard" class="btn btn-primary">Ба Декан муроҷиат кунед →</a>
-</div>
-{% else %}
-
-<!-- ════════════ JOURNAL ════════════ -->
-<div class="section active" id="sec-journal">
-<div class="ph">
-  <div>
-    <h1>📋 Журнали ҳафтаина</h1>
-    <p id="week-label">Ҳафтаи ҷорӣ</p>
-  </div>
-  <div class="ph-a">
-    <input type="date" class="finp btn-sm" id="week-picker" onchange="loadJournal()">
-    <button class="btn btn-ghost btn-sm" onclick="loadJournal()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-      Навсозӣ
-    </button>
-  </div>
-</div>
-
-<!-- Mode Tabs -->
-<div class="mode-tabs">
-  <button class="mode-tab active" id="tab-daily" onclick="setMode('daily')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    Ҳаррӯза
-  </button>
-  <button class="mode-tab" id="tab-weekly" onclick="setMode('weekly')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="14" height="14"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
-    Ҳафтавӣ
-  </button>
-</div>
-
-<!-- Week Strip -->
-<div class="week-strip" id="week-strip"></div>
-
-<!-- Journal Panel -->
-<div class="panel">
-  <div class="panel-h">
-    <h3>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-      Гурӯҳи {{ group.number if group else '—' }}
-      <span style="font-size:.72rem;font-weight:500;color:var(--text-3)">(0=ҳозир · 1-8=соатҳои ғайб)</span>
-    </h3>
-    <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
-      <span id="mode-hint" style="font-size:.75rem;color:var(--text-3)">Имрӯзи журналро пур кунед</span>
-      <button class="btn btn-success btn-sm" id="save-btn" onclick="saveJournal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
-        <span id="save-label">Сабти имрӯз</span>
+    <div class="top-title" id="page-title">Журнали ҳафта</div>
+    <div class="top-right">
+      <div class="top-info">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>
+        <span id="top-grp">{{ faculty.name if faculty else '' }} · {{ group.number if group else '—' }}</span>
+      </div>
+      <button class="icon-btn" onclick="refreshSec()" title="Навсозӣ">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" id="ref-ico"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
       </button>
     </div>
-  </div>
-  <div class="jt-wrap">
-    <table class="jt" id="jt">
-      <thead><tr id="jt-head">
-        <th class="name-col">Донишҷӯ</th>
-        <th>Дш</th><th>Ес</th><th>Ча</th><th>Пш</th><th>Ҷм</th><th>Шб</th>
-        <th>НБ ∑</th>
-      </tr></thead>
-      <tbody id="jt-body">
-        <tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-</div>
+  </header>
 
-<!-- ════════════ STUDENTS ════════════ -->
-<div class="section" id="sec-students">
-<div class="ph">
-  <div><h1>🎓 Донишҷӯён</h1></div>
-  <div class="ph-a">
-    <button class="btn btn-primary btn-sm" onclick="openStudentModal()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      Донишҷӯи нав
-    </button>
-  </div>
-</div>
-<div class="panel">
-  <div class="panel-h">
-    <input type="text" class="finp search-inp" id="stu-search" placeholder="Ҷустуҷӯи ном..." oninput="debSearch()" style="max-width:280px;flex:1">
-    <span id="stu-count" style="font-size:.78rem;color:var(--text-3)"></span>
-  </div>
-  <div class="tw">
-    <table class="tbl">
-      <thead><tr>
-        <th>#</th><th>Ному насаб</th><th>Код</th><th>Ҷои таваллуд</th><th>Тел. волидайн</th><th>НБ</th><th>Амалиёт</th>
-      </tr></thead>
-      <tbody id="stu-tbody">
-        <tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-</div>
-
-<!-- ════════════ NB STATS ════════════ -->
-<div class="section" id="sec-nb-stats">
-<div class="ph"><div><h1>📊 Омори НБ</h1><p>Тақсимоти соатҳои ғайб дар гурӯҳ</p></div></div>
-
-<div class="kpi-grid">
-  <div class="kpi green"><div class="kpi-t"><p>Ҳамагӣ</p><div class="kv" id="nb-total">—</div></div><div class="kpi-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div></div>
-  <div class="kpi blue"><div class="kpi-t"><p>Бе ғайб (0)</p><div class="kv" id="nb-zero">—</div></div><div class="kpi-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-  <div class="kpi warn"><div class="kpi-t"><p>1-34 соат</p><div class="kv" id="nb-mid">—</div></div><div class="kpi-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div></div>
-  <div class="kpi danger"><div class="kpi-t"><p id="nb-high-label">35+ соат</p><div class="kv" id="nb-high">—</div></div><div class="kpi-i"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div>
-</div>
-
-<div class="g2">
-  <div class="panel">
-    <div class="panel-h"><h3>📊 Тақсимот</h3></div>
-    <div class="panel-b">
-      <div class="nb-bar" id="nb-bar"><div class="loading"><div class="spinner"></div></div></div>
+  <div class="content">
+{% if error %}
+  <div style="max-width:440px;margin:5rem auto;text-align:center">
+    <div style="width:72px;height:72px;border-radius:50%;background:var(--errl);display:flex;align-items:center;justify-content:center;margin:0 auto 1.25rem;box-shadow:0 4px 20px rgba(239,68,68,.2)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="1.5" width="32" height="32"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     </div>
+    <h2 style="font-size:1.25rem;font-weight:900;color:var(--err);margin-bottom:.625rem">Хатогӣ</h2>
+    <p style="color:var(--t2);margin-bottom:1.75rem;font-size:.875rem;font-weight:600">{{ error }}</p>
+    <a href="/dean/dashboard" class="btn btn-sky" style="justify-content:center">Ба Декан муроҷиат кунед →</a>
   </div>
-  <div class="panel">
-    <div class="panel-h"><h3>🚨 Хавфнокон</h3></div>
-    <div class="tw">
-      <table class="tbl" id="nb-risk-tbl">
-        <thead><tr><th>Ном</th><th>НБ</th><th>Тел. волидайн</th></tr></thead>
-        <tbody><tr><td colspan="3"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-</div>
+{% else %}
 
-<!-- ════════════ SUPERVISORS ════════════ -->
-<div class="section" id="sec-supervisors">
-<div class="ph"><div><h1>👔 Роҳбарон</h1><p>Маъмурияти факултет ва донишгоҳ</p></div></div>
-<div id="sup-list"><div class="loading"><div class="spinner"></div></div></div>
-</div>
-
-<!-- ════════════ PROFILE ════════════ -->
-<div class="section" id="sec-profile">
-<div class="ph"><div><h1>👤 Профили ман</h1></div></div>
-<div style="max-width:500px">
-  <div class="panel">
-    <div class="panel-h"><h3>Маълумоти шахсӣ</h3></div>
-    <div class="panel-b">
-      <form id="profile-form" onsubmit="saveProfile(event)">
-        <div class="fg"><label>Ному насаб *</label><input class="finp" id="pf-name" required value="{{ user.full_name or '' }}"></div>
-        <div class="frow2">
-          <div class="fg"><label>Email</label><input type="email" class="finp" id="pf-email" value="{{ user.email or '' }}"></div>
-          <div class="fg"><label>Телефон</label><input class="finp" id="pf-phone" value="{{ user.phone or '' }}" placeholder="+992..."></div>
-        </div>
-        <div class="frow2">
-          <div class="fg"><label>Кафедра</label><input class="finp" id="pf-dept" value="{{ user.department or '' }}"></div>
-          <div class="fg"><label>Соли таваллуд</label><input type="number" class="finp" id="pf-birth" value="{{ user.birth_year or '' }}" min="1950" max="2000"></div>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
-          Сабт кардан
+  <!-- ═══ JOURNAL ═══ -->
+  <div class="sec on" id="sec-journal">
+    <div class="ph">
+      <div>
+        <h1>
+          <span class="h-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+          Журнали ҳафта
+        </h1>
+        <p id="week-lbl">Ҳафтаи ҷорӣ</p>
+      </div>
+      <div class="ph-acts">
+        <input type="date" class="finp btn-sm" id="week-picker" onchange="loadJournal()" style="max-width:165px">
+        <button class="btn btn-ghost btn-sm" onclick="loadJournal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Навсозӣ
         </button>
-      </form>
+      </div>
     </div>
-  </div>
-</div>
-</div>
 
-<!-- ════════════ CHANGE PASSWORD ════════════ -->
-<div class="section" id="sec-change-pw">
-<div class="ph"><div><h1>🔐 Иваз кардани парол</h1></div></div>
-<div style="max-width:380px">
-  <div class="panel">
-    <div class="panel-b">
-      <form action="/curator/change-password" method="post">
-        <div class="fg">
-          <label>Пароли нав (6 рақам)</label>
-          <input type="password" class="finp" name="new_password" maxlength="6" pattern="\d{6}" required
-            placeholder="••••••" style="letter-spacing:6px;font-size:1.25rem;text-align:center;font-family:'JetBrains Mono',monospace">
-          <p style="font-size:.72rem;color:var(--text-3);margin-top:.375rem">6 рақам, ҳама якхела набошанд</p>
+    <div class="banner banner-err" id="closed-banner" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      Гурӯҳ маҳкам шудааст — тағйир додан мумкин нест.
+    </div>
+
+    <div class="mode-tabs">
+      <button class="m-tab on" id="tab-daily" onclick="setMode('daily')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Ҳаррӯза
+      </button>
+      <button class="m-tab" id="tab-weekly" onclick="setMode('weekly')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Ҳафтавӣ <span id="weekly-hint" style="font-size:.65rem;opacity:.7"></span>
+      </button>
+    </div>
+    <div class="banner banner-warn" id="sat-warn" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+      Режими ҳафтавӣ танҳо рӯзи <strong>Шанбе</strong> дастрас аст. Имрӯз: <span id="today-name-el"></span>
+    </div>
+
+    <div class="week-strip" id="week-strip"></div>
+
+    <div class="panel">
+      <div class="p-head">
+        <h3>
+          <span class="h3-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
+          Гурӯҳи {{ group.number if group else '—' }}
+          <span style="font-size:.7rem;font-weight:600;color:var(--t3)">&nbsp;(0 = ҳозир · 1–8 = соатҳои ғайб)</span>
+        </h3>
+        <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+          <span id="mode-hint" style="font-size:.76rem;color:var(--t3);font-weight:600"></span>
+          <button class="btn btn-ok btn-sm" id="save-btn" onclick="saveJournal()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="13" height="13"><polyline points="20 6 9 17 4 12"/></svg>
+            <span id="save-lbl">Сабти имрӯз</span>
+          </button>
         </div>
-        {% if error %}
-        <div style="background:var(--danger-light);border:1px solid rgba(220,38,38,.3);border-radius:var(--radius-sm);padding:.75rem;font-size:.83rem;color:var(--danger);margin-bottom:.875rem">⚠️ {{ error }}</div>
-        {% endif %}
-        <button type="submit" class="btn btn-warning" style="width:100%;justify-content:center">
-          🔐 Иваз кардан
-        </button>
-      </form>
+      </div>
+      <div class="jt-wrap">
+        <table class="jt" id="jt">
+          <thead><tr id="jt-head">
+            <th class="nt">Донишҷӯ</th>
+            <th>Дш</th><th>Ес</th><th>Ча</th><th>Пш</th><th>Ҷм</th><th>Шб</th>
+            <th>НБ ∑</th>
+          </tr></thead>
+          <tbody id="jt-body"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </div>
-</div>
-</div>
+
+  <!-- ═══ STUDENTS ═══ -->
+  <div class="sec" id="sec-students">
+    <div class="ph">
+      <div>
+        <h1>
+          <span class="h-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></span>
+          Донишҷӯён
+        </h1>
+        <p id="stu-sub">Рӯйхати гурӯҳ</p>
+      </div>
+      <div class="ph-acts">
+        <button class="btn btn-sky btn-sm" onclick="openStuModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Донишҷӯи нав
+        </button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="p-head">
+        <div class="search-wrap" style="flex:1;max-width:280px">
+          <div class="srch-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div>
+          <input type="text" class="finp" id="stu-search" placeholder="Ҷустуҷӯи ном..." oninput="debSearch()">
+        </div>
+        <span id="stu-cnt" style="font-size:.78rem;color:var(--t3);font-weight:700"></span>
+      </div>
+      <div class="tw">
+        <table class="tbl">
+          <thead><tr>
+            <th>#</th><th>Ному насаб</th><th>Ҷои таваллуд</th><th>Чойи зист</th><th>Тел. волидайн</th><th>НБ</th><th>Амал</th>
+          </tr></thead>
+          <tbody id="stu-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ NB STATS ═══ -->
+  <div class="sec" id="sec-nbstats">
+    <div class="ph"><div>
+      <h1>
+        <span class="h-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>
+        Омори НБ
+      </h1>
+      <p>Тақсимоти соатҳои ғайб дар гурӯҳ</p>
+    </div></div>
+    <div class="kpi-grid">
+      <div class="kpi-card kc-ok"><div class="kpi-lbl">Ҳамагӣ донишҷӯ</div><div class="kpi-inner"><div class="kpi-num" id="nb-total">—</div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div></div></div>
+      <div class="kpi-card kc-sky"><div class="kpi-lbl">Бе ғайб (0 соат)</div><div class="kpi-inner"><div class="kpi-num" id="nb-zero">—</div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div></div></div>
+      <div class="kpi-card kc-warn"><div class="kpi-lbl">Хатарнок (1–34)</div><div class="kpi-inner"><div class="kpi-num" id="nb-mid">—</div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div></div></div>
+      <div class="kpi-card kc-err"><div class="kpi-lbl" id="nb-high-lbl">НБ (35+ соат)</div><div class="kpi-inner"><div class="kpi-num" id="nb-high">—</div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div></div>
+    </div>
+    <div class="g2">
+      <div class="panel">
+        <div class="p-head"><h3><span class="h3-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></span>Тақсимоти НБ</h3></div>
+        <div class="p-body"><div class="nb-chart" id="nb-chart"><div class="loading"><div class="spinner"></div></div></div></div>
+      </div>
+      <div class="panel">
+        <div class="p-head"><h3><span class="h3-ico" style="background:var(--errl)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--err)" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></span>Хавфноктарин донишҷӯён</h3></div>
+        <div class="tw">
+          <table class="tbl">
+            <thead><tr><th>Ном</th><th>Код</th><th>НБ</th><th>Тел. волидайн</th></tr></thead>
+            <tbody id="risk-tbody"><tr><td colspan="4"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SUPERVISORS ═══ -->
+  <div class="sec" id="sec-supervisors">
+    <div class="ph"><div>
+      <h1>
+        <span class="h-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></span>
+        Роҳбарон
+      </h1>
+      <p>Маъмурияти факулет ва донишгоҳ</p>
+    </div></div>
+    <div id="sup-list" style="max-width:580px"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+
+  <!-- ═══ PROFILE ═══ -->
+  <div class="sec" id="sec-profile">
+    <div class="ph"><div>
+      <h1>
+        <span class="h-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        Профили ман
+      </h1>
+    </div></div>
+    <div style="max-width:600px">
+      <div class="panel">
+        <div class="p-head"><h3><span class="h3-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>Маълумоти шахсӣ</h3></div>
+        <div class="p-body" id="profile-body"><div class="loading"><div class="spinner"></div></div></div>
+      </div>
+      <div class="panel">
+        <div class="p-head"><h3><span class="h3-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>Таҳрири профил</h3></div>
+        <div class="p-body">
+          <form id="prof-form" onsubmit="saveProfile(event)">
+            <div class="fg"><label>Ному насаб *</label><input class="finp" id="pf-name" required value="{{ user.full_name or '' }}"></div>
+            <div class="frow2">
+              <div class="fg"><label>Email</label><input type="email" class="finp" id="pf-email" value="{{ user.email or '' }}" placeholder="email@example.com"></div>
+              <div class="fg"><label>Телефон</label><input class="finp" id="pf-phone" value="{{ user.phone or '' }}" placeholder="+992..."></div>
+            </div>
+            <div class="frow2">
+              <div class="fg"><label>Кафедра</label><input class="finp" id="pf-dept" value="{{ user.department or '' }}"></div>
+              <div class="fg"><label>Соли таваллуд</label><input type="number" class="finp" id="pf-birth" value="{{ user.birth_year or '' }}" min="1950" max="2005"></div>
+            </div>
+            <button type="submit" class="btn btn-sky" style="width:100%;justify-content:center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><polyline points="20 6 9 17 4 12"/></svg>
+              Сабт кардан
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ CHANGE PW ═══ -->
+  <div class="sec" id="sec-changepw">
+    <div style="max-width:400px;margin:0 auto">
+      <div class="panel">
+        <div class="p-head"><h3><span class="h3-ico" style="background:var(--warnl)"><svg viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>Иваз кардани парол</h3></div>
+        <div class="p-body">
+          <form action="/curator/change-password" method="post">
+            <div class="fg">
+              <label>Пароли нав (6 рақам)</label>
+              <input type="password" class="finp" name="new_password" maxlength="6" pattern="\d{6}" required
+                placeholder="••••••" style="letter-spacing:8px;font-size:1.5rem;text-align:center;font-family:'JetBrains Mono',monospace">
+              <div class="hint">Маҳз 6 рақам. Ҳама якхела набошанд.</div>
+            </div>
+            {% if error %}<div class="banner banner-err" style="margin-bottom:.875rem">⚠️ {{ error }}</div>{% endif %}
+            <button type="submit" class="btn btn-warn" style="width:100%;justify-content:center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="14" height="14"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              Иваз кардан
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
 {% endif %}
-
-</div><!-- /content -->
+  </div><!-- /content -->
 </div><!-- /main -->
 
-<!-- ════════════ MODALS ════════════ -->
+<!-- ═══ MODALS ═══ -->
 
-<!-- Student Modal -->
-<div class="modal-ov" id="student-modal">
-<div class="modal-box">
-  <div class="modal-title">
-    <h3 id="stu-modal-title">🎓 Донишҷӯи нав</h3>
-    <button class="mcl" onclick="closeModal('student-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+<!-- Student Add/Edit -->
+<div class="m-bg" id="stu-modal">
+<div class="modal">
+  <div class="m-top">
+    <h3 id="stu-modal-title">Донишҷӯи нав</h3>
+    <button class="m-close" onclick="closeModal('stu-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
-  <form id="stu-form" onsubmit="saveStudent(event)">
+  <form id="stu-form" onsubmit="saveStu(event)">
     <input type="hidden" id="stu-id">
-    <div class="fg"><label>Ному насаб *</label><input class="finp" id="sf-name" required placeholder="Фамилия Ном Отасм"></div>
+    <div class="fg"><label>Ному насаб *</label><input class="finp" id="sf-name" required placeholder="Тоҷиев Алӣ Абдуллоевич"></div>
     <div class="frow2">
-      <div class="fg"><label>Соли таваллуд</label><input type="number" class="finp" id="sf-byear" min="1990" max="2010" placeholder="2000"></div>
-      <div class="fg"><label>Соли шуруъ</label><input type="number" class="finp" id="sf-syear" min="2020" max="2030" placeholder="2023"></div>
-    </div>
-    <div class="frow2">
-      <div class="fg"><label>Ҷои таваллуд</label><input class="finp" id="sf-bplace" placeholder="Вилоят, ноҳия"></div>
-      <div class="fg"><label>Ҷои зист</label><input class="finp" id="sf-region" placeholder="Шаҳр / ноҳия"></div>
+      <div class="fg"><label>Соли таваллуд</label><input type="number" class="finp" id="sf-byear" min="1990" max="2010" placeholder="2001"></div>
+      <div class="fg"><label>НБ-и пешина</label><input type="number" class="finp" id="sf-nb" value="0" min="0" max="999"><div class="hint">Агар аз гурӯҳи дигар кӯчида бошад</div></div>
     </div>
     <div class="frow2">
-      <div class="fg"><label>Тел. донишҷӯ</label><input class="finp" id="sf-phone" placeholder="+992..."></div>
-      <div class="fg"><label>Тел. волидайн</label><input class="finp" id="sf-pphone" placeholder="+992..."></div>
+      <div class="fg"><label>Ҷои таваллуд</label><input class="finp" id="sf-bplace" placeholder="Ноҳия"></div>
+      <div class="fg"><label>Ҷои зист</label><input class="finp" id="sf-region" placeholder="Суғд..."></div>
     </div>
-    <div class="fg">
-      <label>НБ-и пешина (соатҳо)</label>
-      <input type="number" class="finp" id="sf-nb" value="0" min="0" max="500">
-      <p style="font-size:.7rem;color:var(--text-3);margin-top:.25rem">Агар донишҷӯ аз гурӯҳи дигар кӯчида бошад, НБ-и пешинаро ворид кунед</p>
-    </div>
-    <div class="modal-actions">
-      <button type="submit" class="btn btn-primary" id="stu-submit-btn">Сабт</button>
-      <button type="button" class="btn btn-ghost" onclick="closeModal('student-modal')">Бекор</button>
+    <div class="fg"><label>Тел. волидайн</label><input class="finp" id="sf-pphone" placeholder="+992..."></div>
+    <div class="m-acts">
+      <button type="submit" class="btn btn-sky" id="stu-submit">Сабт кардан</button>
+      <button type="button" class="btn btn-ghost" onclick="closeModal('stu-modal')">Бекор</button>
     </div>
   </form>
 </div>
 </div>
 
-<!-- Student History Modal -->
-<div class="modal-ov" id="hist-modal">
-<div class="modal-box" style="max-width:560px">
-  <div class="modal-title">
-    <h3 id="hist-title">📅 Таърихи ғайб</h3>
-    <button class="mcl" onclick="closeModal('hist-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+<!-- Student View -->
+<div class="m-bg" id="stu-view-modal">
+<div class="modal wide">
+  <div class="m-top">
+    <h3 id="stu-view-title">Профили донишҷӯ</h3>
+    <button class="m-close" onclick="closeModal('stu-view-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
-  <div id="hist-body"><div class="loading"><div class="spinner"></div></div></div>
+  <div id="stu-view-body"><div class="loading"><div class="spinner"></div></div></div>
 </div>
 </div>
 
 <!-- Comment Modal -->
-<div class="modal-ov" id="comment-modal">
-<div class="modal-box" style="max-width:380px">
-  <div class="modal-title">
-    <h3>📝 Шарҳ</h3>
-    <button class="mcl" onclick="closeModal('comment-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+<div class="m-bg" id="cmt-modal">
+<div class="modal" style="max-width:380px">
+  <div class="m-top">
+    <h3>Шарҳ / сабаби ғайб</h3>
+    <button class="m-close" onclick="closeModal('cmt-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
-  <div style="font-size:.82rem;color:var(--text-2);margin-bottom:.875rem" id="comment-info"></div>
-  <div class="fg"><label>Шарҳ / сабаб</label><textarea class="finp" id="comment-text" rows="3" placeholder="Сабаби ғайб..."></textarea></div>
-  <input type="hidden" id="comment-sid"><input type="hidden" id="comment-date">
-  <div class="modal-actions">
-    <button class="btn btn-primary" onclick="saveComment()">Сабт</button>
-    <button class="btn btn-ghost" onclick="closeModal('comment-modal')">Бекор</button>
+  <div id="cmt-info" style="font-size:.82rem;color:var(--t2);font-weight:700;margin-bottom:.875rem;padding:.5rem .75rem;background:var(--bg);border-radius:var(--rs)"></div>
+  <div class="fg"><label>Шарҳ</label><textarea class="finp" id="cmt-text" rows="3" placeholder="Сабаби ғайб..."></textarea></div>
+  <input type="hidden" id="cmt-sid"><input type="hidden" id="cmt-date">
+  <div class="m-acts">
+    <button class="btn btn-sky" onclick="saveCmt()">Сабт</button>
+    <button class="btn btn-ghost" onclick="closeModal('cmt-modal')">Бекор</button>
   </div>
 </div>
 </div>
 
 <div class="toast-cnt" id="toasts"></div>
 
-<!-- ════════════ JAVASCRIPT ════════════ -->
 <script>
 'use strict';
+const DAYS=['Дш','Ес','Ча','Пш','Ҷм','Шб'];
+const DAYS_TJ=['Душанбе','Сешанбе','Чоршанбе','Панҷшанбе','Ҷумъа','Шанбе','Якшанбе'];
+let curSec='journal', jData=null, jMode='daily', stuCache=[], srchTO=null;
+const isSat=new Date().getDay()===6;
+let grpClosed=false;
 
-/* ─── STATE ─── */
-let curSec = 'journal';
-let journalData = null;   // loaded week data from API
-let journalMode = 'daily'; // 'daily' | 'weekly'
-let studentsCache = [];
-let searchTO = null;
+/* SIDEBAR */
+function openSB(){document.getElementById('sb').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeSB(){document.getElementById('sb').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
 
-/* ─── SIDEBAR ─── */
-function openSB() {
-  document.getElementById('sidebar').classList.add('open');
-  document.getElementById('overlay').classList.add('show');
+/* NAV */
+const TITLES={journal:'Журнали ҳафта',students:'Донишҷӯён',nbstats:'Омори НБ',supervisors:'Роҳбарон',profile:'Профили ман',changepw:'Иваз кардани парол'};
+function showSec(name,el){
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('on'));
+  document.getElementById('sec-'+name)?.classList.add('on');
+  if(el)el.classList.add('on');
+  document.getElementById('page-title').textContent=TITLES[name]||name;
+  curSec=name;closeSB();
+  ({journal:loadJournal,students:loadStudents,nbstats:loadNbStats,supervisors:loadSupervisors,profile:loadProfile})[name]?.();
 }
-function closeSB() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
-}
-
-/* ─── NAV ─── */
-const TITLES = {
-  journal: '📋 Журнали ҳафта', students: '🎓 Донишҷӯён',
-  'nb-stats': '📊 Омори НБ', supervisors: '👔 Роҳбарон',
-  profile: '👤 Профил', 'change-pw': '🔐 Парол'
-};
-
-function showSec(name, el) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.ni').forEach(n => n.classList.remove('active'));
-  document.getElementById('sec-' + name).classList.add('active');
-  if (el) el.classList.add('active');
-  document.getElementById('page-title').textContent = TITLES[name] || name;
-  curSec = name;
-  closeSB();
-  const loads = {
-    journal: loadJournal, students: loadStudents,
-    'nb-stats': loadNbStats, supervisors: loadSupervisors,
-    profile: loadProfile
-  };
-  if (loads[name]) loads[name]();
+function refreshSec(){
+  const ico=document.getElementById('ref-ico');
+  ico.style.animation='spin .65s linear';setTimeout(()=>ico.style.animation='',700);
+  ({journal:loadJournal,students:loadStudents,nbstats:loadNbStats,supervisors:loadSupervisors,profile:loadProfile})[curSec]?.();
 }
 
-function refreshSec() {
-  const ico = document.getElementById('refresh-ico');
-  ico.style.animation = 'spin .7s linear';
-  setTimeout(() => ico.style.animation = '', 700);
-  if (curSec === 'journal') loadJournal();
-  else if (curSec === 'students') loadStudents();
-  else if (curSec === 'nb-stats') loadNbStats();
-  else if (curSec === 'supervisors') loadSupervisors();
-}
-
-/* ─── API ─── */
-async function api(url, opts = {}) {
-  const h = {};
-  if (!(opts.body instanceof FormData)) h['Content-Type'] = 'application/json';
-  const r = await fetch(url, { credentials: 'same-origin', ...opts, headers: { ...h, ...(opts.headers || {}) } });
-  if (r.status === 401 || r.status === 403) { window.location.href = '/login'; throw new Error('Сессия тамом шуд'); }
-  if (!r.ok) {
-    let m = 'Хатогӣ';
-    try { const e = await r.json(); m = e.detail || m; } catch (e) {}
-    throw new Error(m);
+/* API */
+async function api(url,opts={}){
+  if(!(opts.body instanceof FormData)&&!opts.headers?.['Content-Type']){
+    opts.headers={...opts.headers||{},'Content-Type':'application/json'};
   }
+  const r=await fetch(url,{credentials:'same-origin',...opts});
+  if(r.status===401||r.status===403){window.location.href='/login';throw new Error('Сессия тамом шуд')}
+  if(!r.ok){let m='Хатогӣ';try{const e=await r.json();m=e.detail||m}catch{}throw new Error(m)}
   return r.json();
 }
 
-/* ─── TOAST ─── */
-function toast(type, msg) {
-  const c = document.getElementById('toasts');
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  const icons = {
-    succ: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`,
-    err: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>`,
-    warn: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`
+/* TOAST */
+function toast(type,msg){
+  const c=document.getElementById('toasts');
+  const el=document.createElement('div');el.className=`toast ${type}`;
+  const ic={
+    succ:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',
+    err:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>',
+    warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>',
+    info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>'
   };
-  el.innerHTML = `${icons[type] || icons.err}${msg}`;
+  el.innerHTML=(ic[type]||ic.info)+msg;
   c.appendChild(el);
-  setTimeout(() => el.remove(), 4000);
+  setTimeout(()=>el.classList.add('fade'),4200);
+  setTimeout(()=>el.remove(),4500);
 }
 
-/* ─── MODAL ─── */
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-document.querySelectorAll('.modal-ov').forEach(m => m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); }));
+/* MODAL */
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
-/* ─── DATE HELPERS ─── */
-function getMonday() {
-  const d = new Date();
-  const day = d.getDay() || 7;
-  d.setDate(d.getDate() - day + 1);
-  return d.toISOString().split('T')[0];
-}
-const DAY_NAMES = ['Дш', 'Ес', 'Ча', 'Пш', 'Ҷм', 'Шб'];
-const DAY_NAMES_FULL = ['Душанбе', 'Сешанбе', 'Чоршанбе', 'Панҷшанбе', 'Ҷумъа', 'Шанбе'];
-function fmtDate(iso) {
-  const d = new Date(iso + 'T00:00:00');
-  return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' });
-}
-function isToday(iso) {
-  return iso === new Date().toISOString().split('T')[0];
-}
+/* DATE UTILS */
+function getMonday(d=new Date()){const dt=new Date(d);const day=dt.getDay();const diff=day===0?-6:1-day;dt.setDate(dt.getDate()+diff);return dt}
+function fmtDate(d){return d instanceof Date?d.toISOString().split('T')[0]:d}
+function addDays(d,n){const r=new Date(d);r.setDate(r.getDate()+n);return r}
 
-/* ─── MODE ─── */
-function setMode(mode) {
-  journalMode = mode;
-  document.getElementById('tab-daily').classList.toggle('active', mode === 'daily');
-  document.getElementById('tab-weekly').classList.toggle('active', mode === 'weekly');
-  if (mode === 'daily') {
-    document.getElementById('mode-hint').textContent = 'Имрӯзи журналро пур кунед';
-    document.getElementById('save-label').textContent = 'Сабти имрӯз';
-  } else {
-    document.getElementById('mode-hint').textContent = 'Ҳамаи рӯзҳои ҳафтаро пур кунед';
-    document.getElementById('save-label').textContent = 'Сабти ҳафта';
-  }
-  if (journalData) renderJournal(journalData);
+/* ─────────────────── JOURNAL ─────────────────── */
+async function loadJournal(){
+  const picker=document.getElementById('week-picker');
+  const mon=picker.value?getMonday(new Date(picker.value+'T00:00:00')):getMonday();
+  if(!picker.value)picker.value=fmtDate(mon);
+  const sat=addDays(mon,5);
+  document.getElementById('week-lbl').textContent=
+    `${mon.getDate()}.${(mon.getMonth()+1).toString().padStart(2,'0')} — ${sat.getDate()}.${(sat.getMonth()+1).toString().padStart(2,'0')}`;
+  document.getElementById('jt-body').innerHTML='<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try{
+    jData=await api(`/curator/api/journal/week?week_start=${fmtDate(mon)}`);
+    grpClosed=jData.is_closed||false;
+    document.getElementById('closed-banner').style.display=grpClosed?'flex':'none';
+    renderWeekStrip(jData.days||[]);
+    setMode(jMode);
+  }catch(e){toast('err',e.message)}
 }
 
-/* ─── JOURNAL: LOAD ─── */
-async function loadJournal() {
-  const ws = document.getElementById('week-picker');
-  if (!ws.value) ws.value = getMonday();
-
-  document.getElementById('jt-body').innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
-  document.getElementById('week-strip').innerHTML = '';
-
-  try {
-    const d = await api(`/curator/api/journal/week?week_start=${ws.value}`);
-    journalData = d;
-    renderWeekStrip(d);
-    renderJournal(d);
-
-    // Update week label
-    const mon = new Date(d.week_start + 'T00:00:00');
-    const sat = new Date(d.week_end + 'T00:00:00');
-    const fmt = (dt) => dt.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-    document.getElementById('week-label').textContent = `${fmt(mon)} — ${fmt(sat)}${d.is_past_week ? ' (ўтган ҳафта — фақат кӯр)' : ''}`;
-
-    // Lock save button for past weeks
-    const saveBtn = document.getElementById('save-btn');
-    saveBtn.disabled = d.is_past_week;
-    if (d.is_past_week) saveBtn.title = 'Ўтган ҳафтаро таҳрир кардан мумкин нест';
-  } catch (e) {
-    document.getElementById('jt-body').innerHTML = `<tr><td colspan="8"><div class="empty"><p>${e.message}</p></div></td></tr>`;
-    toast('err', e.message);
-  }
-}
-
-/* ─── JOURNAL: WEEK STRIP ─── */
-function renderWeekStrip(d) {
-  const container = document.getElementById('week-strip');
-  const days = d.days || [];
-  const today = d.today || new Date().toISOString().split('T')[0];
-  const status = d.daily_status || {};
-  container.innerHTML = days.map((dayStr, i) => {
-    const st = status[dayStr] || {};
-    const isT = dayStr === today;
-    const isDone = st.status === 'COMPLETED';
-    const isPart = st.status === 'IN_PROGRESS';
-    let cls = '';
-    if (isT && !isDone && !isPart) cls = 'today';
-    else if (isDone) cls = 'done';
-    else if (isPart) cls = 'partial';
-    const icon = isDone ? '✅' : isPart ? '⚠️' : isT ? '📍' : '⏳';
-    return `<div class="wday ${cls}" title="${DAY_NAMES_FULL[i]}">
-      <div class="wday-name">${DAY_NAMES[i]}</div>
-      <div class="wday-date">${fmtDate(dayStr)}</div>
-      <div class="wday-icon">${icon}</div>
-      ${st.total ? `<div style="font-size:.62rem;color:var(--text-3)">${st.marked||0}/${st.total}</div>` : ''}
+function renderWeekStrip(days){
+  const today=fmtDate(new Date());
+  document.getElementById('week-strip').innerHTML=days.map((d,i)=>{
+    const dt=new Date(d+'T00:00:00');
+    const isT=d===today,isSatu=i===5;
+    let hasData=false;
+    if(jData?.students){
+      hasData=jData.students.some(s=>s.days?.[d]?.nb_hours>0||s.days?.[d]?.status==='present');
+    }
+    const cls=isT?'today':isSatu?'saturday':hasData?'done':'';
+    const ic=isT?'📍':isSatu?'📅':hasData?'✅':'·';
+    return `<div class="wday ${cls}" onclick="">
+      <div class="wd-name">${DAYS[i]}</div>
+      <div class="wd-date">${dt.getDate()}.${(dt.getMonth()+1).toString().padStart(2,'0')}</div>
+      <div class="wd-ic">${ic}</div>
     </div>`;
   }).join('');
 }
 
-/* ─── JOURNAL: RENDER TABLE ─── */
-function renderJournal(d) {
-  const students = Array.isArray(d.students) ? d.students : [];
-  const days = Array.isArray(d.days) ? d.days : [];
-  const today = d.today || new Date().toISOString().split('T')[0];
-  const isPast = d.is_past_week;
-  const nb_limit = d.nb_limit || 35;
+function setMode(mode){
+  jMode=mode;
+  document.getElementById('tab-daily').classList.toggle('on',mode==='daily');
+  document.getElementById('tab-weekly').classList.toggle('on',mode==='weekly');
+  const today=new Date();
+  const todayIdx=today.getDay()===0?6:today.getDay()-1;
+  document.getElementById('today-name-el').textContent=DAYS_TJ[todayIdx]||'';
+  if(mode==='weekly'){
+    document.getElementById('sat-warn').style.display=isSat?'none':'flex';
+    document.getElementById('weekly-hint').textContent=isSat?'✅':'(Шб)';
+    document.getElementById('mode-hint').textContent='Ҳафтаи пурраро пур карда Шанбе сабт кунед';
+    document.getElementById('save-lbl').textContent='Сабти ҳафта';
+    document.getElementById('save-btn').disabled=!isSat||grpClosed;
+  } else {
+    document.getElementById('sat-warn').style.display='none';
+    document.getElementById('weekly-hint').textContent='';
+    document.getElementById('mode-hint').textContent=`Имрӯзи журналро пур кунед (${DAYS[todayIdx]})`;
+    document.getElementById('save-lbl').textContent='Сабти имрӯз';
+    document.getElementById('save-btn').disabled=grpClosed;
+  }
+  if(jData)renderJournal();
+}
 
-  // Update header columns with today highlight
-  const head = document.getElementById('jt-head');
-  head.innerHTML = `<th class="name-col">Донишҷӯ</th>` +
-    days.map((dayStr, i) => {
-      const isT = dayStr === today;
-      const cls = isT ? ' today-col' : (journalMode === 'daily' && !isT ? ' disabled-col' : '');
-      return `<th class="${cls}">${DAY_NAMES[i]}<br><span style="font-size:.65rem;font-weight:500">${fmtDate(dayStr)}</span></th>`;
-    }).join('') +
-    `<th>НБ ∑</th>`;
+function renderJournal(){
+  if(!jData)return;
+  const days=jData.days||[];
+  const students=jData.students||[];
+  const today=fmtDate(new Date());
+  const limit=jData.nb_limit||35;
 
-  if (!students.length) {
-    document.getElementById('jt-body').innerHTML = `<tr><td colspan="${days.length + 2}"><div class="empty"><p>Донишҷӯён ёфт нашуданд</p></div></td></tr>`;
+  // Header
+  document.getElementById('jt-head').innerHTML=`<th class="nt">Донишҷӯ</th>`+
+    days.map((d,i)=>{
+      const dt=new Date(d+'T00:00:00');
+      const isT=d===today;
+      return `<th class="${isT?'tc':''}">${DAYS[i]}<br><span style="font-family:'JetBrains Mono',monospace;font-size:.62rem;font-weight:700">${dt.getDate()}.${(dt.getMonth()+1).toString().padStart(2,'0')}</span></th>`;
+    }).join('')+`<th>НБ ∑</th>`;
+
+  if(!students.length){
+    document.getElementById('jt-body').innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="es-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div><strong>Донишҷӯён нестанд</strong></div></td></tr>';
     return;
   }
 
-  document.getElementById('jt-body').innerHTML = students.map(s => {
-    const nbHigh = (s.total_absent_hours || 0) >= nb_limit;
-    let row = `<tr>
-      <td class="name-col">
-        <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
-          <strong style="font-size:.83rem">${s.full_name || '—'}</strong>
-          <button class="btn btn-ghost btn-xs" onclick="showHistory(${s.id},'${(s.full_name||'').replace(/'/g,'')}')" title="Таърихи ғайб" style="padding:.2rem .4rem">📅</button>
+  document.getElementById('jt-body').innerHTML=students.map((s,si)=>{
+    const nbTotal=s.total_absent_hours||0;
+    const nbCls=nbTotal>=limit?'chip-err':nbTotal>14?'chip-warn':'chip-ok';
+    const cells=days.map((d,di)=>{
+      const info=s.days?.[d];
+      const nb=info?.nb_hours||0;
+      const cmt=info?.comment||'';
+      const isT=d===today,isSatu=di===5;
+      const isDaily=jMode==='daily';
+      const disabled=grpClosed||(isDaily&&d!==today);
+      const cellCls=nb>0?'a':info?.status==='present'?'p':'';
+      const tcCls=isT?'tc':'';
+      const dcCls=disabled&&!isSatu?'dcol':'';
+      return `<td class="${tcCls} ${dcCls}">
+        <div style="display:flex;align-items:center;justify-content:center;gap:3px">
+          <input type="number" class="jcell ${cellCls}${cmt?' hc':''}"
+            data-sid="${s.id}" data-date="${d}" data-si="${si}"
+            value="${nb}" min="0" max="8"
+            ${disabled&&!isSatu?'disabled':''}
+            oninput="cellChange(this)">
+          <button type="button" class="cmt-dot${cmt?' filled':''}" onclick="openCmt(${s.id},'${d}','${escH(s.full_name)}',this.previousElementSibling)" title="${escH(cmt)||'Шарҳ илова кун'}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          </button>
         </div>
-        <div style="font-size:.68rem;color:var(--text-4);font-family:'JetBrains Mono',monospace">${s.student_code || ''}</div>
       </td>`;
-
-    days.forEach(dayStr => {
-      const dayData = s.days && s.days[dayStr];
-      const val = dayData !== null && dayData !== undefined && dayData.nb_hours !== undefined ? dayData.nb_hours : '';
-      const comment = dayData?.comment || '';
-      const isT = dayStr === today;
-      const readonly = isPast || (journalMode === 'daily' && !isT);
-      const cls = 'jcell' + (val === 0 ? ' present' : val > 0 ? ' absent' : '') + (comment ? ' has-comment' : '');
-      const tdCls = isT ? 'today-col' : (readonly ? 'disabled-col' : '');
-
-      row += `<td class="${tdCls}">
-        <input type="number" class="${cls}"
-          data-sid="${s.id}" data-date="${dayStr}"
-          value="${val}" min="0" max="8"
-          ${readonly ? 'readonly' : ''}
-          onchange="onCellChange(this)"
-          title="${comment || (readonly ? 'Таҳрир мумкин нест' : '')}"
-        >
-        ${!readonly && comment ? `<button onclick="openComment(${s.id},'${dayStr}','${comment.replace(/'/g,'')}')" style="font-size:.6rem;color:var(--warning);border:none;background:none;cursor:pointer" title="Шарҳ">💬</button>` : ''}
-        ${!readonly && !comment ? `<button onclick="openComment(${s.id},'${dayStr}','')" style="font-size:.6rem;color:var(--text-4);border:none;background:none;cursor:pointer;opacity:.5" title="Шарҳ гузоштан">💬</button>` : ''}
-      </td>`;
-    });
-
-    row += `<td><span class="chip ${nbHigh ? 'chip-red' : (s.total_absent_hours||0) > 15 ? 'chip-warn' : 'chip-green'}">${s.total_absent_hours || 0}</span></td></tr>`;
-    return row;
+    }).join('');
+    return `<tr>
+      <td class="nt" style="cursor:pointer" onclick="viewStu(${s.id})">
+        <div style="font-weight:800;font-size:.83rem">${escH(s.full_name)}</div>
+        <div style="font-size:.68rem;color:var(--t3);font-weight:600;font-family:'JetBrains Mono',monospace">${s.student_code||''}</div>
+      </td>
+      ${cells}
+      <td><span class="chip ${nbCls}">${nbTotal}</span></td>
+    </tr>`;
   }).join('');
 }
 
-/* ─── CELL CHANGE ─── */
-function onCellChange(input) {
-  const val = input.value === '' ? '' : (parseInt(input.value) || 0);
-  input.classList.remove('present', 'absent');
-  if (val === 0) input.classList.add('present');
-  else if (val > 0) input.classList.add('absent');
+function cellChange(inp){
+  const v=Math.max(0,Math.min(8,parseInt(inp.value)||0));
+  inp.value=v;inp.classList.remove('p','a');
+  if(v>0)inp.classList.add('a');else inp.classList.add('p');
 }
 
-/* ─── COMMENT ─── */
-function openComment(sid, dayStr, existing) {
-  document.getElementById('comment-sid').value = sid;
-  document.getElementById('comment-date').value = dayStr;
-  document.getElementById('comment-text').value = existing;
-  document.getElementById('comment-info').textContent = `${dayStr} · ${DAY_NAMES_FULL[new Date(dayStr+'T00:00:00').getDay()-1]||''}`;
-  openModal('comment-modal');
+function openCmt(sid,date,name,inp){
+  const existing=inp?.classList.contains('hc')?'':''
+  document.getElementById('cmt-info').textContent=`${name}  ·  ${date}`;
+  document.getElementById('cmt-text').value='';
+  document.getElementById('cmt-sid').value=sid;
+  document.getElementById('cmt-date').value=date;
+  // Load existing comment from jData
+  if(jData?.students){
+    const s=jData.students.find(x=>x.id===sid);
+    if(s?.days?.[date]?.comment)document.getElementById('cmt-text').value=s.days[date].comment;
+  }
+  openModal('cmt-modal');
 }
-async function saveComment() {
-  const sid = parseInt(document.getElementById('comment-sid').value);
-  const dayStr = document.getElementById('comment-date').value;
-  const comment = document.getElementById('comment-text').value;
-  const input = document.querySelector(`input[data-sid="${sid}"][data-date="${dayStr}"]`);
-  const nb_hours = input ? (parseInt(input.value) || 0) : 0;
-  try {
-    await api('/curator/api/journal/mark', {
-      method: 'POST',
-      body: JSON.stringify({ student_id: sid, date: dayStr, nb_hours, comment })
-    });
-    toast('succ', '✅ Шарҳ сабт шуд');
-    closeModal('comment-modal');
-    if (input) { input.classList.toggle('has-comment', !!comment); input.title = comment; }
-  } catch (e) { toast('err', e.message); }
+function saveCmt(){
+  const sid=parseInt(document.getElementById('cmt-sid').value);
+  const date=document.getElementById('cmt-date').value;
+  const txt=document.getElementById('cmt-text').value.trim();
+  if(jData?.students){
+    const s=jData.students.find(x=>x.id===sid);
+    if(s?.days?.[date]){s.days[date].comment=txt;}
+    else if(s?.days){s.days[date]={nb_hours:0,comment:txt,status:'present'};}
+  }
+  // Update cell visual
+  const inp=document.querySelector(`.jcell[data-sid="${sid}"][data-date="${date}"]`);
+  if(inp){inp.classList.toggle('hc',!!txt);inp.nextElementSibling?.classList.toggle('filled',!!txt)}
+  closeModal('cmt-modal');
+  toast('succ','Шарҳ сабт шуд');
 }
 
-/* ─── SAVE JOURNAL ─── */
-async function saveJournal() {
-  if (!journalData) { toast('warn', 'Аввал журналро бор кунед'); return; }
-  if (journalData.is_past_week) { toast('warn', 'Ўтган ҳафтаро таҳрир кардан мумкин нест'); return; }
-
-  const days = journalData.days || [];
-  const today = journalData.today;
-  const btn = document.getElementById('save-btn');
-  btn.disabled = true;
-
-  try {
-    if (journalMode === 'daily') {
-      // Mark today only via mark-day
-      const records = [];
-      document.querySelectorAll(`input[data-date="${today}"]`).forEach(inp => {
-        const nb = parseInt(inp.value) || 0;
-        records.push({ student_id: parseInt(inp.dataset.sid), nb_hours: nb, comment: '' });
-      });
-      if (!records.length) { toast('warn', 'Имрӯз дарс нест'); btn.disabled = false; return; }
-      await api('/curator/api/journal/mark-day', {
-        method: 'POST',
-        body: JSON.stringify({ date: today, records })
-      });
-      toast('succ', `✅ Имрӯз (${today}) сабт шуд`);
+async function saveJournal(){
+  if(grpClosed){toast('warn','Гурӯҳ маҳкам шудааст');return}
+  if(!jData){toast('err','Маълумот бор нашудааст');return}
+  const btn=document.getElementById('save-btn');btn.disabled=true;
+  const today=fmtDate(new Date());
+  try{
+    if(jMode==='daily'){
+      const inputs=Array.from(document.querySelectorAll(`.jcell[data-date="${today}"]:not([disabled])`));
+      if(!inputs.length){toast('warn','Имрӯзи журнал барои ин ҳафта нест');return}
+      const records=inputs.map(i=>({student_id:parseInt(i.dataset.sid),nb_hours:parseInt(i.value)||0,comment:''}));
+      await api('/curator/api/journal/mark-day',{method:'POST',body:JSON.stringify({date:today,records})});
+      toast('succ',`✅ Давомоти имрӯз сабт шуд (${records.length} донишҷӯ)`);
     } else {
-      // Save full week
-      const daysData = {};
-      days.forEach(dayStr => {
-        const recs = [];
-        document.querySelectorAll(`input[data-date="${dayStr}"]`).forEach(inp => {
-          recs.push({ student_id: parseInt(inp.dataset.sid), nb_hours: parseInt(inp.value) || 0, comment: '' });
-        });
-        daysData[dayStr] = recs;
+      if(!isSat){toast('warn','Режими ҳафтавӣ танҳо Шанбе дастрас аст');return}
+      const days_data={};
+      (jData.days||[]).forEach(d=>{
+        const inps=Array.from(document.querySelectorAll(`.jcell[data-date="${d}"]`));
+        days_data[d]=inps.map(i=>({student_id:parseInt(i.dataset.sid),nb_hours:parseInt(i.value)||0,comment:''}));
       });
-      await api('/curator/api/journal/save-week', {
-        method: 'POST',
-        body: JSON.stringify({ week_start: journalData.week_start, days: daysData })
-      });
-      toast('succ', '✅ Ҳафта сабт шуд');
+      await api('/curator/api/journal/save-week',{method:'POST',body:JSON.stringify({week_start:jData.week_start,days:days_data})});
+      toast('succ','✅ Давомоти ҳафта сабт шуд');
     }
     await loadJournal();
-  } catch (e) {
-    toast('err', e.message);
-  } finally {
-    btn.disabled = false;
-  }
+  }catch(e){toast('err',e.message)}finally{btn.disabled=false}
 }
 
-/* ─── STUDENT HISTORY ─── */
-async function showHistory(id, name) {
-  document.getElementById('hist-title').textContent = `📅 ${name}`;
-  document.getElementById('hist-body').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  openModal('hist-modal');
-  try {
-    const d = await api(`/curator/api/journal/student/${id}`);
-    const records = d.records || [];
-    if (!records.length) {
-      document.getElementById('hist-body').innerHTML = '<div class="empty"><p>Ғайб нест</p></div>';
-      return;
-    }
-    document.getElementById('hist-body').innerHTML = `
-      <div style="margin-bottom:.875rem;display:flex;gap:.5rem;align-items:center">
-        <span style="font-size:.83rem;color:var(--text-3)">Ҳамагӣ НБ:</span>
-        <span class="chip ${(d.total_absent_hours||0)>=35?'chip-red':'chip-warn'}">${d.total_absent_hours||0} соат</span>
-      </div>
-      ${records.map(r => `
-        <div class="hist-item">
-          <div class="hist-date">${r.date}</div>
-          <div class="hist-nb"><span class="chip ${r.nb_hours>0?'chip-red':'chip-green'}">${r.nb_hours>0?r.nb_hours+'с':'✓'}</span></div>
-          <div class="hist-cmt">${r.comment || (r.nb_hours>0?'<span style="color:var(--text-4)">шарҳ нест</span>':'')||''}</div>
+/* ─────────────────── STUDENTS ─────────────────── */
+async function loadStudents(){
+  const q=document.getElementById('stu-search').value.trim();
+  let url='/curator/api/students';
+  if(q.length>=2)url+=`?search=${encodeURIComponent(q)}`;
+  try{
+    stuCache=await api(url);
+    renderStudents(stuCache);
+  }catch(e){toast('err',e.message)}
+}
+function renderStudents(arr){
+  document.getElementById('stu-cnt').textContent=`${arr.length} донишҷӯ`;
+  const lim=35;
+  if(!arr.length){
+    document.getElementById('stu-tbody').innerHTML=`<tr><td colspan="7"><div class="empty-state"><div class="es-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div><strong>Донишҷӯён нестанд</strong></div></td></tr>`;
+    return;
+  }
+  document.getElementById('stu-tbody').innerHTML=arr.map((s,i)=>{
+    const nb=s.total_absent_hours||0;
+    const nbCls=nb>=lim?'chip-err':nb>14?'chip-warn':'chip-ok';
+    return `<tr>
+      <td class="mono" style="color:var(--t3)">${i+1}</td>
+      <td style="cursor:pointer;font-weight:800" onclick="viewStu(${s.id})">${escH(s.full_name)}</td>
+      <td style="color:var(--t2)">${escH(s.birth_place||'—')}</td>
+      <td style="color:var(--t2)">${escH(s.region||'—')}</td>
+      <td class="mono" style="color:var(--t2)">${s.parent_phone||'—'}</td>
+      <td><span class="chip ${nbCls}">${nb}</span></td>
+      <td>
+        <div style="display:flex;gap:.35rem">
+          <button class="btn btn-ghost btn-xs" onclick="editStu(${s.id})">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="12" height="12"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn btn-err btn-xs" onclick="delStu(${s.id},'${escH(s.full_name)}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="12" height="12"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          </button>
         </div>
-      `).join('')}
-    `;
-  } catch (e) {
-    document.getElementById('hist-body').innerHTML = `<div class="empty"><p>${e.message}</p></div>`;
-  }
+      </td>
+    </tr>`;
+  }).join('');
+  // Update NB risk badge
+  const highRisk=arr.filter(s=>(s.total_absent_hours||0)>=lim).length;
+  const badge=document.getElementById('nb-nav-badge');
+  badge.textContent=highRisk;badge.style.display=highRisk>0?'':'none';
 }
+function debSearch(){clearTimeout(srchTO);srchTO=setTimeout(loadStudents,380)}
 
-/* ─── STUDENTS ─── */
-function debSearch() {
-  clearTimeout(searchTO);
-  searchTO = setTimeout(loadStudents, 500);
+function openStuModal(){
+  document.getElementById('stu-id').value='';
+  document.getElementById('stu-form').reset();
+  document.getElementById('sf-nb').value=0;
+  document.getElementById('stu-modal-title').textContent='Донишҷӯи нав';
+  openModal('stu-modal');
 }
-
-async function loadStudents() {
-  const search = document.getElementById('stu-search')?.value || '';
-  const tbody = document.getElementById('stu-tbody');
-  tbody.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
-  try {
-    const d = await api(`/curator/api/students?search=${encodeURIComponent(search)}`);
-    studentsCache = Array.isArray(d) ? d : [];
-    document.getElementById('stu-count').textContent = `${studentsCache.length} нафар`;
-    if (!studentsCache.length) {
-      tbody.innerHTML = '<tr><td colspan="7"><div class="empty"><p>Донишҷӯ ёфт нашуд</p></div></td></tr>';
-      return;
-    }
-    const nb_limit = journalData?.nb_limit || 35;
-    tbody.innerHTML = studentsCache.map((s, i) => `
-      <tr>
-        <td class="mono">${i + 1}</td>
-        <td><strong>${s.full_name || '—'}</strong></td>
-        <td class="mono">${s.student_code || '—'}</td>
-        <td style="font-size:.78rem;color:var(--text-3)">${s.birth_place || '—'}</td>
-        <td>${s.parent_phone || '—'}</td>
-        <td><span class="chip ${(s.total_absent_hours||0) >= nb_limit ? 'chip-red' : (s.total_absent_hours||0)>15?'chip-warn':'chip-green'}">${s.total_absent_hours || 0}</span></td>
-        <td style="display:flex;gap:.375rem;flex-wrap:wrap">
-          <button class="btn btn-ghost btn-xs" onclick="showHistory(${s.id},'${(s.full_name||'').replace(/'/g,'')}')" title="Таърихи ғайб">📅</button>
-          <button class="btn btn-primary btn-xs" onclick="editStudent(${s.id})">✏️</button>
-          <button class="btn btn-danger btn-xs" onclick="deleteStudent(${s.id})">🗑</button>
-        </td>
-      </tr>`).join('');
-  } catch (e) {
-    tbody.innerHTML = `<tr><td colspan="7"><div class="empty"><p>${e.message}</p></div></td></tr>`;
-    toast('err', e.message);
-  }
+function editStu(id){
+  const s=stuCache.find(x=>x.id===id);if(!s)return;
+  document.getElementById('stu-id').value=id;
+  document.getElementById('sf-name').value=s.full_name||'';
+  document.getElementById('sf-byear').value=s.birth_year||'';
+  document.getElementById('sf-bplace').value=s.birth_place||'';
+  document.getElementById('sf-region').value=s.region||'';
+  document.getElementById('sf-pphone').value=s.parent_phone||'';
+  document.getElementById('sf-nb').value=0;
+  document.getElementById('stu-modal-title').textContent='Таҳрири донишҷӯ';
+  openModal('stu-modal');
 }
-
-function openStudentModal(id) {
-  document.getElementById('stu-id').value = id || '';
-  const isNew = !id;
-  document.getElementById('stu-modal-title').textContent = isNew ? '🎓 Донишҷӯи нав' : '✏️ Таҳрири донишҷӯ';
-  document.getElementById('stu-submit-btn').textContent = isNew ? 'Илова кардан' : 'Сабт кардан';
-
-  if (id) {
-    api(`/curator/api/students/${id}`).then(s => {
-      document.getElementById('sf-name').value = s.full_name || '';
-      document.getElementById('sf-byear').value = s.birth_year || '';
-      document.getElementById('sf-syear').value = s.study_start ? s.study_start.split('-')[0] : '';
-      document.getElementById('sf-bplace').value = s.birth_place || '';
-      document.getElementById('sf-region').value = s.region || '';
-      document.getElementById('sf-phone').value = s.phone || '';
-      document.getElementById('sf-pphone').value = s.parent_phone || '';
-      document.getElementById('sf-nb').value = s.total_absent_hours || 0;
-    }).catch(() => {});
-  } else {
-    ['sf-name','sf-byear','sf-syear','sf-bplace','sf-region','sf-phone','sf-pphone'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('sf-nb').value = '0';
-  }
-  openModal('student-modal');
-}
-
-function editStudent(id) { openStudentModal(id); }
-
-async function saveStudent(e) {
+async function saveStu(e){
   e.preventDefault();
-  const id = document.getElementById('stu-id').value;
-  const isNew = !id;
-  const fd = new FormData();
-  fd.append('full_name', document.getElementById('sf-name').value);
-  fd.append('birth_year', document.getElementById('sf-byear').value || '');
-  const sy = document.getElementById('sf-syear').value;
-  fd.append('study_start', sy ? `${sy}-09-01` : '');
-  fd.append('birth_place', document.getElementById('sf-bplace').value || '');
-  fd.append('region', document.getElementById('sf-region').value || '');
-  fd.append('phone', document.getElementById('sf-phone').value || '');
-  fd.append('parent_phone', document.getElementById('sf-pphone').value || '');
-  fd.append('initial_nb_hours', document.getElementById('sf-nb').value || '0');
-
-  const btn = document.getElementById('stu-submit-btn');
-  btn.disabled = true;
-  try {
-    await api(isNew ? '/curator/api/students' : `/curator/api/students/${id}`, { method: isNew ? 'POST' : 'PUT', body: fd });
-    toast('succ', isNew ? '✅ Донишҷӯ илова шуд' : '✅ Сабт шуд');
-    closeModal('student-modal');
-    loadStudents();
-    if (curSec === 'journal') loadJournal();
-  } catch (err) {
-    toast('err', err.message);
-  } finally {
-    btn.disabled = false;
-  }
+  const id=document.getElementById('stu-id').value;
+  const body={
+    full_name:document.getElementById('sf-name').value,
+    birth_year:parseInt(document.getElementById('sf-byear').value)||null,
+    birth_place:document.getElementById('sf-bplace').value||null,
+    region:document.getElementById('sf-region').value||null,
+    parent_phone:document.getElementById('sf-pphone').value||null,
+    initial_nb_hours:parseInt(document.getElementById('sf-nb').value)||0,
+  };
+  const btn=document.getElementById('stu-submit');btn.disabled=true;
+  try{
+    if(id){
+      await api(`/curator/api/students/${id}`,{method:'PUT',body:JSON.stringify(body)});
+      toast('succ','Донишҷӯ навсозӣ шуд ✅');
+    }else{
+      await api('/curator/api/students',{method:'POST',body:JSON.stringify(body)});
+      toast('succ','Донишҷӯи нав илова шуд ✅');
+    }
+    closeModal('stu-modal');loadStudents();
+  }catch(ex){toast('err',ex.message)}finally{btn.disabled=false}
+}
+async function delStu(id,name){
+  if(!confirm(`«${name}»-ро нест кунем?`))return;
+  try{await api(`/curator/api/students/${id}`,{method:'DELETE'});toast('succ','Нест шуд');loadStudents();}
+  catch(e){toast('err',e.message)}
+}
+async function viewStu(id){
+  document.getElementById('stu-view-body').innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  openModal('stu-view-modal');
+  try{
+    const s=await api(`/curator/api/students/${id}`);
+    document.getElementById('stu-view-title').textContent=s.full_name;
+    const lim=s.nb_limit||35;
+    const nb=s.total_absent_hours||0;
+    const nbCls=nb>=lim?'chip-err':nb>14?'chip-warn':'chip-ok';
+    const hist=s.nb_history||[];
+    document.getElementById('stu-view-body').innerHTML=`
+      <div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.125rem">
+        <span class="chip chip-sky">${escH(s.group_number||'—')} · Навбат ${s.group_shift||'?'}</span>
+        <span class="chip ${nbCls}">НБ: ${nb} соат</span>
+        ${s.is_high_risk?'<span class="chip chip-err">🚨 Хавфнок</span>':''}
+        ${s.education_type?`<span class="chip chip-gray">${s.education_type}</span>`:''}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.25rem 2rem">
+        ${[['Код',s.student_code],['Соли таваллуд',s.birth_year],
+           ['Ҷои таваллуд',s.birth_place],['Вилоят',s.region],
+           ['Тел. волидайн',s.parent_phone],['Соли шуруъ',s.study_start]
+          ].map(([l,v])=>`<div class="irow"><span class="irow-l">${l}</span><span class="irow-v">${escH(String(v||'—'))}</span></div>`).join('')}
+      </div>
+      <div style="margin-top:1.125rem;margin-bottom:.625rem">
+        <div style="font-size:.78rem;font-weight:900;color:var(--t2);text-transform:uppercase;letter-spacing:.06em">Таърихи НБ (${hist.length} қайд)</div>
+      </div>
+      ${hist.length?`<div class="tw"><table class="tbl"><thead><tr><th>Сана</th><th>Соат</th><th>Шарҳ</th><th>Асос</th></tr></thead><tbody>
+        ${hist.map(r=>`<tr>
+          <td class="mono">${r.date}</td>
+          <td><span class="chip chip-err">${r.nb_hours}</span></td>
+          <td style="color:var(--t2)">${escH(r.comment||'—')}</td>
+          <td>${r.is_reasoned?'<span class="chip chip-ok">✓ Асоснок</span>':'<span class="chip chip-gray">—</span>'}</td>
+        </tr>`).join('')}
+      </tbody></table></div>`:
+      '<div class="empty-state" style="padding:1.5rem"><div class="es-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg></div><strong>НБ нест</strong><p>Бе ғайб ✅</p></div>'}
+    `;
+  }catch(e){document.getElementById('stu-view-body').innerHTML=`<div class="empty-state"><p>Хатогӣ: ${e.message}</p></div>`}
 }
 
-async function deleteStudent(id) {
-  if (!confirm('Донишҷӯ нест карда шавад? Ин амал барнагардандааст.')) return;
-  try {
-    await api(`/curator/api/students/${id}`, { method: 'DELETE' });
-    toast('succ', '🗑 Донишҷӯ нест шуд');
-    loadStudents();
-    if (curSec === 'journal') loadJournal();
-  } catch (e) {
-    toast('err', e.message);
-  }
-}
-
-/* ─── NB STATS ─── */
-async function loadNbStats() {
-  try {
-    const d = await api('/curator/api/nb-stats');
-    const ranges = d.ranges || {};
-    const nb_limit = d.nb_limit || 35;
-
-    document.getElementById('nb-total').textContent = d.total_students || 0;
-    document.getElementById('nb-zero').textContent = ranges['0'] || 0;
-    const mid = (ranges['1-10']||0) + (ranges['11-20']||0) + (ranges['21-34']||0);
-    document.getElementById('nb-mid').textContent = mid;
-    document.getElementById('nb-high').textContent = ranges['35+'] || 0;
-    document.getElementById('nb-high-label').textContent = `${nb_limit}+ соат`;
-
-    // Bar chart
-    const maxVal = Math.max(...Object.values(ranges), 1);
-    const colors = ['#059669','#0891b2','#d97706','#f97316','#dc2626'];
-    const labels = ['0','1-10','11-20','21-34','35+'];
-    document.getElementById('nb-bar').innerHTML = labels.map((lbl, i) => {
-      const val = ranges[lbl] || 0;
-      const h = Math.max((val / maxVal) * 100, val > 0 ? 5 : 0);
-      return `<div class="nb-bi">
-        <div class="nb-bv">${val}</div>
-        <div class="nb-bf" style="height:${h}%;background:${colors[i]}"></div>
+/* ─────────────────── NB STATS ─────────────────── */
+async function loadNbStats(){
+  try{
+    const d=await api('/curator/api/nb-stats');
+    const r=d.ranges||{};
+    document.getElementById('nb-total').textContent=d.total_students||0;
+    document.getElementById('nb-zero').textContent=r['0']||0;
+    const mid=(r['1-10']||0)+(r['11-20']||0)+(r['21-34']||0);
+    document.getElementById('nb-mid').textContent=mid;
+    document.getElementById('nb-high').textContent=r['35+']||0;
+    document.getElementById('nb-high-lbl').textContent=`НБ (${d.nb_limit}+ соат)`;
+    // Chart
+    const keys=Object.keys(r);
+    const vals=keys.map(k=>r[k]||0);
+    const max=Math.max(...vals,1);
+    const colors=['#10b981','#0ea5e9','#f59e0b','#ef4444','#dc2626'];
+    document.getElementById('nb-chart').innerHTML=keys.map((lbl,i)=>`
+      <div class="nb-bi">
+        <div class="nb-bv">${vals[i]}</div>
+        <div class="nb-bf" style="height:${Math.max(6,Math.round(vals[i]/max*95))}px;background:${colors[i]||'#0ea5e9'}"></div>
         <div class="nb-bl">${lbl}</div>
+      </div>`).join('');
+    // Risk table
+    const risk=d.high_risk||[];
+    document.getElementById('risk-tbody').innerHTML=risk.length
+      ?risk.map(s=>`<tr>
+          <td style="font-weight:800;cursor:pointer" onclick="viewStu(${s.id})">${escH(s.full_name)}</td>
+          <td class="mono">${s.student_code||'—'}</td>
+          <td><span class="chip chip-err">${s.total_absent_hours}</span></td>
+          <td class="mono">${s.parent_phone||'—'}</td>
+        </tr>`).join('')
+      :'<tr><td colspan="4"><div class="empty-state" style="padding:1.5rem"><div class="es-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg></div><strong>Хавфнок нестанд</strong></div></td></tr>';
+  }catch(e){toast('err',e.message)}
+}
+
+/* ─────────────────── SUPERVISORS ─────────────────── */
+async function loadSupervisors(){
+  const el=document.getElementById('sup-list');
+  el.innerHTML='<div class="loading"><div class="spinner"></div></div>';
+  try{
+    const sups=await api('/curator/api/supervisors');
+    if(!sups.length){el.innerHTML='<div class="empty-state"><p>Роҳбарон нестанд</p></div>';return}
+    el.innerHTML=sups.map(s=>{
+      const av=s.role?.includes('Декан')&&!s.role?.includes('Зам')?'dean':s.role?.includes('Зам')?'vdean':'rector';
+      return `<div class="sup-card">
+        <div class="sup-av ${av}">${(s.full_name||'?')[0].toUpperCase()}</div>
+        <div style="flex:1;min-width:0">
+          <div class="sup-role">${escH(s.role||'')}</div>
+          <div class="sup-name">${escH(s.full_name||'')}</div>
+          <div class="sup-contact">${s.email?`<a href="mailto:${s.email}">${s.email}</a>`:''}${s.phone?` · ${s.phone}`:''}</div>
+        </div>
       </div>`;
     }).join('');
-
-    // High risk table
-    const highRisk = Array.isArray(d.high_risk) ? d.high_risk : [];
-    const ht = document.querySelector('#nb-risk-tbl tbody');
-    ht.innerHTML = !highRisk.length
-      ? '<tr><td colspan="3"><div class="empty"><p>🎉 Хавфнок нест</p></div></td></tr>'
-      : highRisk.map(s => `<tr>
-          <td><strong>${s.full_name||'—'}</strong></td>
-          <td><span class="chip chip-red">${s.total_absent_hours||0}</span></td>
-          <td>${s.parent_phone ? `<a href="tel:${s.parent_phone}" style="color:var(--primary)">${s.parent_phone}</a>` : '—'}</td>
-        </tr>`).join('');
-  } catch (e) {
-    toast('err', e.message);
-    document.getElementById('nb-bar').innerHTML = '<div class="empty"><p>Маълумот нест</p></div>';
-  }
+  }catch(e){el.innerHTML=`<div class="empty-state"><p>Хатогӣ: ${e.message}</p></div>`}
 }
 
-/* ─── SUPERVISORS ─── */
-async function loadSupervisors() {
-  const container = document.getElementById('sup-list');
-  container.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
-  try {
-    const d = await api('/curator/api/supervisors');
-    const list = Array.isArray(d) ? d : [];
-    if (!list.length) {
-      container.innerHTML = '<div class="empty"><p>Роҳбарон ёфт нашуданд</p></div>';
-      return;
-    }
-    const avMap = { 'Декан': 'dean', 'Замдекан': 'vdean', 'Ректор': 'rector' };
-    container.innerHTML = list.map(s => `
-      <div class="sup-card">
-        <div class="sup-av ${avMap[s.role]||'dean'}">${(s.full_name||'?')[0].toUpperCase()}</div>
-        <div class="sup-info">
-          <div class="sup-role">${s.role || '—'}</div>
-          <div class="sup-name">${s.full_name || '—'}</div>
-          <div class="sup-contact">
-            ${s.email ? `<a href="mailto:${s.email}">📧 ${s.email}</a>` : ''}
-            ${s.email && s.phone ? ' · ' : ''}
-            ${s.phone ? `<a href="tel:${s.phone}">📞 ${s.phone}</a>` : ''}
-            ${!s.email && !s.phone ? 'Контакт нест' : ''}
-          </div>
-        </div>
-      </div>`).join('');
-  } catch (e) {
-    container.innerHTML = `<div class="empty"><p>${e.message}</p></div>`;
-    toast('err', e.message);
-  }
+/* ─────────────────── PROFILE ─────────────────── */
+async function loadProfile(){
+  try{
+    const p=await api('/curator/api/profile');
+    document.getElementById('profile-body').innerHTML=`
+      ${[
+        ['Ному насаб',`<span style="font-weight:900">${escH(p.full_name)}</span>`],
+        ['Логин',`<span class="chip chip-gray" style="font-family:'JetBrains Mono'">${p.username}</span>`],
+        ['Факулта',p.faculty||'—'],
+        ['Гурӯҳ',p.groups?.map(g=>`<span class="chip chip-sky">${escH(g.number)}${g.is_closed?' 🔒':''}</span>`).join(' ')||'—'],
+        ['Email',p.email||'—'],['Телефон',p.phone||'—'],['Кафедра',p.department||'—'],
+      ].map(([l,v])=>`<div class="irow"><span class="irow-l">${l}</span><span class="irow-v">${v}</span></div>`).join('')}
+    `;
+    // Update sidebar avatar
+    document.getElementById('sb-av').textContent=(p.full_name||'К')[0].toUpperCase();
+  }catch(e){document.getElementById('profile-body').innerHTML=`<div class="empty-state"><p>Хатогӣ: ${e.message}</p></div>`}
 }
-
-/* ─── PROFILE ─── */
-async function loadProfile() {
-  try {
-    const d = await api('/curator/api/profile');
-    document.getElementById('pf-name').value = d.full_name || '';
-    document.getElementById('pf-email').value = d.email || '';
-    document.getElementById('pf-phone').value = d.phone || '';
-    document.getElementById('pf-dept').value = d.department || '';
-    document.getElementById('pf-birth').value = d.birth_year || '';
-    if (d.force_password_change) {
-      toast('warn', '⚠️ Шумо бояд паролро иваз кунед!');
-      setTimeout(() => showSec('change-pw', null), 1500);
-    }
-  } catch (e) { toast('err', e.message); }
-}
-
-async function saveProfile(e) {
+async function saveProfile(e){
   e.preventDefault();
-  const fd = new FormData();
-  fd.append('full_name', document.getElementById('pf-name').value);
-  fd.append('email', document.getElementById('pf-email').value || '');
-  fd.append('phone', document.getElementById('pf-phone').value || '');
-  fd.append('department', document.getElementById('pf-dept').value || '');
-  fd.append('birth_year', document.getElementById('pf-birth').value || '');
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.disabled = true;
-  try {
-    await api('/curator/api/profile', { method: 'PUT', body: fd });
-    toast('succ', '✅ Профил сабт шуд');
-  } catch (err) {
-    toast('err', err.message);
-  } finally {
-    btn.disabled = false;
-  }
+  try{
+    await api('/curator/api/profile',{method:'PUT',body:JSON.stringify({
+      full_name:document.getElementById('pf-name').value,
+      email:document.getElementById('pf-email').value||null,
+      phone:document.getElementById('pf-phone').value||null,
+      department:document.getElementById('pf-dept').value||null,
+      birth_year:parseInt(document.getElementById('pf-birth').value)||null,
+    })});
+    toast('succ','Профил сабт шуд ✅');loadProfile();
+  }catch(e){toast('err',e.message)}
 }
 
-/* ─── INIT ─── */
-document.addEventListener('DOMContentLoaded', () => {
-  const wp = document.getElementById('week-picker');
-  if (wp) wp.value = getMonday();
+/* INIT */
+window.addEventListener('DOMContentLoaded',()=>{
+  // Set avatar initials from page
+  const uname='{{ user.full_name or "К" }}';
+  document.getElementById('sb-av').textContent=uname[0]?.toUpperCase()||'К';
   loadJournal();
 });
 </script>
-
 </body>
 </html>

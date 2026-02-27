@@ -10,14 +10,15 @@
 :root{
   --primary:#7c3aed;--primary-dark:#6d28d9;--primary-light:#ede9fe;--primary-xlight:#f5f3ff;
   --success:#059669;--success-light:#d1fae5;--warning:#d97706;--warning-light:#fef3c7;
-  --danger:#dc2626;--danger-light:#fee2e2;
+  --danger:#dc2626;--danger-light:#fee2e2;--info:#0284c7;--info-light:#e0f2fe;
   --bg:#f5f3ff;--surface:#fff;--surface2:#faf9ff;--border:#e5e0fd;--border-light:#f0ecff;
   --text:#0f172a;--text-2:#334155;--text-3:#64748b;--text-4:#94a3b8;
   --sidebar-w:256px;--topbar-h:60px;
-  --radius:12px;--radius-sm:8px;--shadow-sm:0 1px 4px rgba(124,58,237,.08);--shadow:0 4px 16px rgba(124,58,237,.12);--tr:all .2s cubic-bezier(.4,0,.2,1);
+  --radius:12px;--radius-sm:8px;
+  --shadow-sm:0 1px 4px rgba(124,58,237,.08);--shadow:0 4px 16px rgba(124,58,237,.12);
+  --tr:all .2s cubic-bezier(.4,0,.2,1);
 }
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden}
-/* SIDEBAR */
 .sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1.5px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;transition:transform .3s ease;overflow-y:auto}
 .slogo{padding:1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
 .slogo img{width:38px;height:38px;border-radius:9px;object-fit:cover;border:2px solid var(--border)}
@@ -40,7 +41,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .fbtna:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-xlight)}
 .fbtna.dng{color:var(--danger);border-color:var(--danger-light)}.fbtna.dng:hover{background:var(--danger-light)}
 .fbtna svg{width:13px;height:13px}
-/* MAIN */
 .overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:150;backdrop-filter:blur(2px)}
 .overlay.show{display:block}
 .main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin .3s ease}
@@ -52,16 +52,15 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .section{display:none}
 .section.active{display:block;animation:fadeIn .2s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-/* COMPONENTS */
 .kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.875rem;margin-bottom:1.25rem}
 .kpi{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between;gap:.875rem}
 .kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.kpi.purple::before{background:var(--primary)}.kpi.blue::before{background:#2563eb}.kpi.green::before{background:var(--success)}.kpi.warn::before{background:var(--warning)}.kpi.danger::before{background:var(--danger)}
+.kpi.purple::before{background:var(--primary)}.kpi.blue::before{background:#2563eb}.kpi.green::before{background:var(--success)}.kpi.warn::before{background:var(--warning)}.kpi.danger::before{background:var(--danger)}.kpi.info::before{background:var(--info)}
 .kpi-text p{font-size:.78rem;color:var(--text-3);font-weight:500}
 .kpi-text .kv{font-size:1.75rem;font-weight:700;font-family:'JetBrains Mono',monospace;line-height:1;margin-top:.2rem}
 .kpi-ico{width:40px;height:40px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .kpi-ico svg{width:18px;height:18px}
-.kpi.purple .kpi-ico{background:var(--primary-light);color:var(--primary)}.kpi.blue .kpi-ico{background:#dbeafe;color:#2563eb}.kpi.green .kpi-ico{background:var(--success-light);color:var(--success)}.kpi.warn .kpi-ico{background:var(--warning-light);color:var(--warning)}.kpi.danger .kpi-ico{background:var(--danger-light);color:var(--danger)}
+.kpi.purple .kpi-ico{background:var(--primary-light);color:var(--primary)}.kpi.blue .kpi-ico{background:#dbeafe;color:#2563eb}.kpi.green .kpi-ico{background:var(--success-light);color:var(--success)}.kpi.warn .kpi-ico{background:var(--warning-light);color:var(--warning)}.kpi.danger .kpi-ico{background:var(--danger-light);color:var(--danger)}.kpi.info .kpi-ico{background:var(--info-light);color:var(--info)}
 .panel{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.125rem}
 .phead{padding:.875rem 1.125rem;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:.875rem;flex-wrap:wrap}
 .phead h3{font-size:.9rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:.5rem;margin:0}
@@ -80,20 +79,20 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(-
 .btn-sm{padding:.45rem .875rem;font-size:.78rem}.btn-xs{padding:.3rem .625rem;font-size:.72rem}
 .btn:disabled{opacity:.6;cursor:not-allowed}
 .tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.tbl{width:100%;border-collapse:collapse;min-width:560px}
+table.tbl{width:100%;border-collapse:collapse;min-width:520px}
 .tbl thead{background:var(--surface2)}
 .tbl th{padding:.625rem .875rem;font-size:.72rem;font-weight:700;color:var(--text-3);text-align:left;border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em}
 .tbl td{padding:.7rem .875rem;border-bottom:1px solid var(--border-light);font-size:.83rem}
 .tbl tr:last-child td{border-bottom:none}
 .tbl tr:hover td{background:var(--primary-xlight)}
 .chip{display:inline-flex;align-items:center;font-size:.7rem;font-weight:700;padding:.2rem .625rem;border-radius:20px}
-.chip-green{background:var(--success-light);color:var(--success)}.chip-warn{background:var(--warning-light);color:var(--warning)}.chip-red{background:var(--danger-light);color:var(--danger)}.chip-purple{background:var(--primary-light);color:var(--primary)}
+.chip-green{background:var(--success-light);color:var(--success)}.chip-warn{background:var(--warning-light);color:var(--warning)}.chip-red{background:var(--danger-light);color:var(--danger)}.chip-purple{background:var(--primary-light);color:var(--primary)}.chip-blue{background:#dbeafe;color:#1d4ed8}
 .filters{display:flex;gap:.625rem;flex-wrap:wrap}
 .finp{padding:.6rem .875rem;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.83rem;color:var(--text);font-family:inherit;outline:none;transition:border-color .2s}
 .finp:focus{border-color:var(--primary)}.finp::placeholder{color:var(--text-4)}
 .modal-ov{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:9999;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
 .modal-ov.show{display:flex}
-.modal-box{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:1.5rem;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
+.modal-box{background:var(--surface);border:1.5px solid var(--border);border-radius:16px;padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
 .mtitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
 .mtitle h3{font-size:1rem;font-weight:800;color:var(--text)}
 .mclose{width:30px;height:30px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);transition:var(--tr)}
@@ -101,12 +100,12 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
 .fg{margin-bottom:.875rem}
 .fg label{display:block;font-size:.75rem;font-weight:700;color:var(--text-2);margin-bottom:.375rem;text-transform:uppercase;letter-spacing:.05em}
 .fg .finp{width:100%}
-.fg textarea.finp{resize:vertical}
+.fg textarea.finp{resize:vertical;min-height:80px}
 .mactions{display:flex;gap:.625rem;margin-top:1.125rem}
 .mactions .btn{flex:1;justify-content:center}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem;margin-bottom:1.125rem}
 .toast-cnt{position:fixed;top:72px;right:1.25rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
-.toast{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem 1rem;font-size:.83rem;display:flex;align-items:center;gap:.625rem;box-shadow:var(--shadow);animation:tIn .25s ease;pointer-events:auto;font-weight:600;max-width:300px}
+.toast{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem 1rem;font-size:.83rem;display:flex;align-items:center;gap:.625rem;box-shadow:var(--shadow);animation:tIn .25s ease;pointer-events:auto;font-weight:600;max-width:320px}
 .toast svg{flex-shrink:0;width:15px;height:15px}
 .toast.succ{border-color:rgba(5,150,105,.4)}.toast.succ svg{color:var(--success)}
 .toast.err{border-color:rgba(220,38,38,.4)}.toast.err svg{color:var(--danger)}
@@ -115,6 +114,11 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
 .spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:3rem;color:var(--text-3);font-size:.875rem}
+.info-row{display:flex;gap:.5rem;align-items:baseline;margin-bottom:.625rem}
+.info-row .lbl{font-size:.75rem;color:var(--text-3);min-width:110px;font-weight:600}
+.info-row .val{font-size:.875rem;font-weight:600;color:var(--text)}
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-green{background:var(--success)}.dot-warn{background:var(--warning)}.dot-red{background:var(--danger)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
 @media(max-width:768px){
@@ -153,12 +157,20 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
       Донишҷӯён
     </button>
     <button class="nitem" onclick="showSec('at-risk',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       Хавфнок (NB)
     </button>
     <button class="nitem" onclick="showSec('groups',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       Гурӯҳҳо
+    </button>
+    <button class="nitem" onclick="showSec('curators',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Кураторон
+    </button>
+    <button class="nitem" onclick="showSec('monitoring',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      Мониторинг
     </button>
     <div class="nsec">Низом</div>
     <button class="nitem" onclick="showSec('profile',this)">
@@ -173,7 +185,7 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
     </button>
     <a href="/logout" class="fbtna dng">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Хуруҷ
+      Баромад
     </a>
   </div>
 </aside>
@@ -191,10 +203,11 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
   <!-- DASHBOARD -->
   <div class="section active" id="sec-dashboard">
     <div class="kpi-grid">
-      <div class="kpi blue"><div class="kpi-text"><p>Донишҷӯён</p><div class="kv" id="kpi-students">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div></div>
-      <div class="kpi purple"><div class="kpi-text"><p>Гурӯҳҳо</p><div class="kv" id="kpi-groups">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
-      <div class="kpi green"><div class="kpi-text"><p>Иштирок%</p><div class="kv" id="kpi-att">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div></div>
-      <div class="kpi danger"><div class="kpi-text"><p>Хавфнок</p><div class="kv" id="kpi-risk">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div></div>
+      <div class="kpi blue"><div class="kpi-text"><p>Донишҷӯён</p><div class="kv" id="kpi-students">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg></div></div>
+      <div class="kpi purple"><div class="kpi-text"><p>Гурӯҳҳо</p><div class="kv" id="kpi-groups">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+      <div class="kpi green"><div class="kpi-text"><p>Кураторон</p><div class="kv" id="kpi-curators">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div></div>
+      <div class="kpi danger"><div class="kpi-text"><p>Хавфнок</p><div class="kv" id="kpi-risk">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div></div>
+      <div class="kpi warn"><div class="kpi-text"><p>Бе журнал (имрӯз)</p><div class="kv" id="kpi-noatt">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div></div>
     </div>
     <div class="g2">
       <div class="panel">
@@ -202,8 +215,8 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
         <div id="dash-risk"><div class="loading"><div class="spinner"></div></div></div>
       </div>
       <div class="panel">
-        <div class="phead"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/></svg>Иштирок бо гурӯҳҳо</h3></div>
-        <div id="dash-groups"><div class="loading"><div class="spinner"></div></div></div>
+        <div class="phead"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Курсҳо</h3></div>
+        <div id="dash-courses"><div class="loading"><div class="spinner"></div></div></div>
       </div>
     </div>
   </div>
@@ -222,14 +235,14 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
     <div class="panel">
       <div class="phead">
         <div class="filters">
-          <select class="finp" id="stu-group" onchange="loadStudents()"><option value="">Ҳама гурӯҳ</option></select>
-          <select class="finp" id="stu-course" onchange="loadStudents()"><option value="">Ҳама курс</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
+          <select class="finp" id="stu-group" onchange="loadStudents()" style="min-width:130px"><option value="">Ҳама гурӯҳ</option></select>
+          <select class="finp" id="stu-course" onchange="loadStudents()"><option value="">Ҳама курс</option><option value="1">1-курс</option><option value="2">2-курс</option><option value="3">3-курс</option><option value="4">4-курс</option></select>
           <input type="text" class="finp" id="stu-search" placeholder="Ҷустуҷӯ..." oninput="debStu()" style="flex:1;min-width:150px">
         </div>
       </div>
       <div class="tw"><table class="tbl">
-        <thead><tr><th>#</th><th>Ном</th><th>Гурӯҳ</th><th>Курс</th><th>NB</th><th>Тел. волидайн</th></tr></thead>
-        <tbody id="stu-tbody"><tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        <thead><tr><th>#</th><th>Ном ва насаб</th><th>Гурӯҳ</th><th>Курс</th><th>NB соат</th><th>Тел. волидайн</th><th>Амал</th></tr></thead>
+        <tbody id="stu-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
       </table></div>
       <div style="padding:.875rem 1.125rem;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
         <span style="font-size:.8rem;color:var(--text-3)">Ҷамъ: <strong id="stu-total" style="color:var(--text)">0</strong></span>
@@ -241,7 +254,7 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
   <!-- AT-RISK -->
   <div class="section" id="sec-at-risk">
     <div class="ph">
-      <div><h1>🚨 Хавфнок (NB)</h1><p>Донишҷӯёне ки NB аз ҳади фароvarтар аст</p></div>
+      <div><h1>🚨 Хавфнок (NB)</h1><p>Донишҷӯёне ки NB аз ҳади фаровартар аст</p></div>
       <div class="phacts">
         <button class="btn btn-success btn-sm" onclick="exportNB()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -251,19 +264,71 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
     </div>
     <div class="panel">
       <div class="tw"><table class="tbl">
-        <thead><tr><th>#</th><th>Ном</th><th>Гурӯҳ</th><th>NB</th><th>Тел. волидайн</th></tr></thead>
-        <tbody id="risk-tbody"><tr><td colspan="5"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        <thead><tr><th>#</th><th>Ном</th><th>Гурӯҳ</th><th>NB соат</th><th>Тел. волидайн</th><th>Амал</th></tr></thead>
+        <tbody id="risk-tbody"><tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
       </table></div>
     </div>
   </div>
 
   <!-- GROUPS -->
   <div class="section" id="sec-groups">
-    <div class="ph"><div><h1>👥 Гурӯҳҳо</h1></div></div>
+    <div class="ph">
+      <div><h1>👥 Гурӯҳҳо</h1></div>
+      <div class="phacts">
+        <button class="btn btn-primary btn-sm" onclick="openAddGroup()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Иловаи гурӯҳ
+        </button>
+      </div>
+    </div>
     <div class="panel">
       <div class="tw"><table class="tbl">
-        <thead><tr><th>#</th><th>Рақам</th><th>Курс</th><th>Навбат</th><th>Куратор</th><th>Донишҷӯён</th><th>Att%</th></tr></thead>
-        <tbody id="groups-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        <thead><tr><th>#</th><th>Рақам / Ном</th><th>Курс</th><th>Навбат / Забон</th><th>Куратор</th><th>Донишҷӯён</th><th>Вазъ</th><th>Амал</th></tr></thead>
+        <tbody id="groups-tbody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- CURATORS -->
+  <div class="section" id="sec-curators">
+    <div class="ph">
+      <div><h1>🧑‍🏫 Кураторон</h1></div>
+      <div class="phacts">
+        <button class="btn btn-primary btn-sm" onclick="openAddCurator()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Иловаи куратор
+        </button>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="tw"><table class="tbl">
+        <thead><tr><th>#</th><th>Ном ва насаб</th><th>Юзернейм</th><th>Гурӯҳ</th><th>Тел. / Email</th><th>Соли таваллуд</th><th>Амал</th></tr></thead>
+        <tbody id="curators-tbody"><tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- MONITORING -->
+  <div class="section" id="sec-monitoring">
+    <div class="ph">
+      <div><h1>📊 Мониторинг</h1><p id="mon-date-label">Давомоти имрӯз</p></div>
+      <div class="phacts">
+        <input type="date" class="finp" id="mon-date" onchange="loadMonitoring()">
+        <button class="btn btn-ghost btn-sm" onclick="loadMonitoring()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+          Навсозӣ
+        </button>
+      </div>
+    </div>
+    <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+      <div class="kpi green"><div class="kpi-text"><p>Пурра иҷро</p><div class="kv" id="mon-filled">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div></div>
+      <div class="kpi danger"><div class="kpi-text"><p>Иҷро нашудааст</p><div class="kv" id="mon-missing">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div></div>
+      <div class="kpi blue"><div class="kpi-text"><p>Ҷамъ гурӯҳ</p><div class="kv" id="mon-total">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
+    </div>
+    <div class="panel">
+      <div class="tw"><table class="tbl">
+        <thead><tr><th>#</th><th>Гурӯҳ</th><th>Курс</th><th>Навбат</th><th>Куратор</th><th>Донишҷӯён</th><th>Давомот</th></tr></thead>
+        <tbody id="mon-tbody"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
       </table></div>
     </div>
   </div>
@@ -271,13 +336,31 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
   <!-- PROFILE -->
   <div class="section" id="sec-profile">
     <div class="ph"><div><h1>👤 Профил</h1></div></div>
-    <div style="max-width:480px">
+    <div style="max-width:560px">
+      <!-- Info card -->
+      <div class="panel" style="margin-bottom:1rem">
+        <div class="phead"><h3>📋 Маълумоти умумӣ</h3></div>
+        <div class="pbody" id="profile-info-card">
+          <div class="loading"><div class="spinner"></div></div>
+        </div>
+      </div>
+      <!-- Edit form -->
       <div class="panel">
+        <div class="phead"><h3>✏️ Таҳрири маълумот</h3></div>
         <div class="pbody">
           <form onsubmit="saveProfile(event)">
-            <div class="fg"><label>Ному насаб *</label><input class="finp" id="p-name" required></div>
-            <div class="fg"><label>Email</label><input type="email" class="finp" id="p-email"></div>
-            <div class="fg"><label>Телефон</label><input class="finp" id="p-phone"></div>
+            <div class="g2">
+              <div class="fg"><label>Ному насаб *</label><input class="finp" id="p-name" required></div>
+              <div class="fg"><label>Соли таваллуд</label><input type="number" class="finp" id="p-birth-year" min="1950" max="2010"></div>
+            </div>
+            <div class="g2">
+              <div class="fg"><label>Email</label><input type="email" class="finp" id="p-email"></div>
+              <div class="fg"><label>Телефон</label><input class="finp" id="p-phone" placeholder="+992..."></div>
+            </div>
+            <div class="g2">
+              <div class="fg"><label>Кафедра / Вазифа</label><input class="finp" id="p-dept"></div>
+              <div class="fg"><label>Факултет</label><input class="finp" id="p-faculty" disabled></div>
+            </div>
             <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Сабт кардан</button>
           </form>
         </div>
@@ -290,8 +373,8 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
     <div class="ph"><div><h1>🔐 Иваз кардани парол</h1></div></div>
     <div style="max-width:380px">
       <div class="panel"><div class="pbody">
-        <form action="/zamdean/change-password" method="post">
-          <div class="fg"><label>Пароли нав (6 рақам)</label><input type="password" class="finp" name="new_password" maxlength="6" pattern="\d{6}" required placeholder="••••••" style="letter-spacing:6px;font-size:1.25rem;text-align:center"></div>
+        <form action="/vice-dean/change-password" method="post">
+          <div class="fg"><label>Пароли нав (ҳадди ақал 6 аломат)</label><input type="password" class="finp" name="new_password" minlength="6" required placeholder="Пароли нав" autocomplete="new-password" style="font-size:1.1rem;text-align:center;letter-spacing:3px"></div>
           <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Иваз кардан</button>
         </form>
       </div></div>
@@ -301,101 +384,844 @@ table.tbl{width:100%;border-collapse:collapse;min-width:560px}
   </div><!-- /content -->
 </div><!-- /main -->
 
+<!-- ─── MODAL: ADD / EDIT GROUP ─── -->
+<div class="modal-ov" id="modal-group">
+  <div class="modal-box">
+    <div class="mtitle">
+      <h3 id="mg-title">Иловаи гурӯҳ</h3>
+      <button class="mclose" onclick="closeModal('modal-group')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="mg-err" style="display:none;background:var(--danger-light);color:var(--danger);border-radius:8px;padding:.625rem .875rem;font-size:.83rem;margin-bottom:.875rem"></div>
+    <div class="g2">
+      <div class="fg"><label>Рақами гурӯҳ *</label><input class="finp" id="mg-number" placeholder="мисол: ИТ-101" required></div>
+      <div class="fg"><label>Навбат *</label><select class="finp" id="mg-shift"><option value="1">1-навбат</option><option value="2">2-навбат</option></select></div>
+    </div>
+    <div class="fg"><label>Курс *</label><select class="finp" id="mg-course" required><option value="">Интихоб...</option></select></div>
+    <div class="fg"><label>Куратор</label><select class="finp" id="mg-curator"><option value="">Куратор таъин нашудааст</option></select></div>
+    <input type="hidden" id="mg-id">
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-group')">Бекор</button>
+      <button class="btn btn-primary" onclick="saveGroup()" id="mg-save-btn">Сабт кардан</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: ADD / EDIT CURATOR ─── -->
+<div class="modal-ov" id="modal-curator">
+  <div class="modal-box">
+    <div class="mtitle">
+      <h3 id="mc-title">Иловаи куратор</h3>
+      <button class="mclose" onclick="closeModal('modal-curator')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="mc-err" style="display:none;background:var(--danger-light);color:var(--danger);border-radius:8px;padding:.625rem .875rem;font-size:.83rem;margin-bottom:.875rem"></div>
+    <div class="g2">
+      <div class="fg"><label>Ному насаб *</label><input class="finp" id="mc-name" required></div>
+      <div class="fg"><label>Юзернейм *</label><input class="finp" id="mc-username" required placeholder="латиница"></div>
+    </div>
+    <div class="g2">
+      <div class="fg"><label>Телефон</label><input class="finp" id="mc-phone" placeholder="+992..."></div>
+      <div class="fg"><label>Email</label><input type="email" class="finp" id="mc-email"></div>
+    </div>
+    <div class="fg"><label>Кафедра</label><input class="finp" id="mc-dept"></div>
+    <div id="mc-pw-info" style="background:var(--info-light);color:var(--info);border-radius:8px;padding:.625rem .875rem;font-size:.8rem;margin-bottom:.875rem">
+      🔑 Пароли ибтидоӣ: <strong>020304</strong> (корбар ҳангоми воридшавӣ тағйир медиҳад)
+    </div>
+    <input type="hidden" id="mc-id">
+    <div class="mactions">
+      <button class="btn btn-ghost" onclick="closeModal('modal-curator')">Бекор</button>
+      <button class="btn btn-primary" onclick="saveCurator()" id="mc-save-btn">Сабт кардан</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MODAL: STUDENT PROFILE ─── -->
+<div class="modal-ov" id="modal-student">
+  <div class="modal-box" style="max-width:540px">
+    <div class="mtitle">
+      <h3>Профили донишҷӯ</h3>
+      <button class="mclose" onclick="closeModal('modal-student')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="modal-student-body"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
 <div class="toast-cnt" id="toasts"></div>
 
 <script>
 'use strict';
-const titles={dashboard:'Умумӣ',students:'Донишҷӯён','at-risk':'Хавфнок (NB)',groups:'Гурӯҳҳо',profile:'Профил','change-pw':'Иваз кардани парол'};
-let stuTO=null, stuPage=1; const PAGE=50;
 
+const BASE = '/vice-dean';
+const titles = {
+  dashboard:'Умумӣ', students:'Донишҷӯён', 'at-risk':'Хавфнок (NB)',
+  groups:'Гурӯҳҳо', curators:'Кураторон', monitoring:'Мониторинг',
+  profile:'Профил', 'change-pw':'Иваз кардани парол'
+};
+
+let stuTO = null, stuPage = 1;
+const PAGE = 50;
+let _courses = [], _curators = [];
+
+// ── NAVIGATION ────────────────────────────────────────────────────────────────
 function openSB(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeSB(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
-function showSec(name,el){
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.nitem').forEach(n=>n.classList.remove('active'));
-  document.getElementById('sec-'+name).classList.add('active');
-  if(el)el.classList.add('active');
-  document.getElementById('page-title').textContent=titles[name]||name;
+
+function showSec(name, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nitem').forEach(n => n.classList.remove('active'));
+  document.getElementById('sec-' + name).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('page-title').textContent = titles[name] || name;
   closeSB();
-  const loaders={dashboard:loadDashboard,students:()=>{loadGroupsFilter();loadStudents();},'at-risk':loadAtRisk,groups:loadGroups,profile:loadProfile};
-  if(loaders[name])loaders[name]();
+  const loaders = {
+    dashboard: loadDashboard,
+    students: () => { loadGroupsFilter(); loadStudents(); },
+    'at-risk': loadAtRisk,
+    groups: loadGroups,
+    curators: loadCurators,
+    monitoring: () => {
+      document.getElementById('mon-date').value = new Date().toISOString().split('T')[0];
+      loadMonitoring();
+    },
+    profile: loadProfile,
+  };
+  if (loaders[name]) loaders[name]();
 }
-async function api(url,opts={}){
-  const h={};if(!(opts.body instanceof FormData))h['Content-Type']='application/json';
-  const r=await fetch(url,{...opts,headers:{...h,...(opts.headers||{})}});
-  if(!r.ok){let m='Хатогӣ';try{const e=await r.json();m=e.detail||m;}catch(e){}throw new Error(m);}
+
+// ── API ───────────────────────────────────────────────────────────────────────
+async function api(url, opts = {}) {
+  const isFormData = opts.body instanceof FormData;
+  const h = {};
+  if (!isFormData) h['Content-Type'] = 'application/json';
+  const r = await fetch(url, { ...opts, headers: { ...h, ...(opts.headers || {}) } });
+  if (!r.ok) {
+    let m = 'Хатогӣ';
+    try { const e = await r.json(); m = e.detail || m; } catch(e) {}
+    throw new Error(m);
+  }
   return r.json();
 }
-function toast(type,msg){
-  const c=document.getElementById('toasts');const el=document.createElement('div');el.className=`toast ${type}`;
-  el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="${type==='succ'?'20 6 9 17 4 12':''}"/>${type==='err'?'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/>':''}</svg>${msg}`;
-  c.appendChild(el);setTimeout(()=>el.remove(),3500);
+
+function toast(type, msg) {
+  const c = document.getElementById('toasts');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  const icon = type === 'succ'
+    ? '<polyline points="20 6 9 17 4 12"/>'
+    : '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">${icon}</svg>${msg}`;
+  c.appendChild(el);
+  setTimeout(() => el.remove(), 3500);
 }
-async function loadDashboard(){
-  try{const d=await api('/zamdean/api/stats');
-    document.getElementById('kpi-students').textContent=d.total_students||0;
-    document.getElementById('kpi-groups').textContent=d.total_groups||0;
-    document.getElementById('kpi-att').textContent=(d.attendance_rate||0)+'%';
-    document.getElementById('kpi-risk').textContent=d.high_risk_count||0;
-    const risk=document.getElementById('dash-risk');
-    const top=(d.high_risk||[]).slice(0,5);
-    risk.innerHTML=top.length?top.map(s=>`<div style="display:flex;align-items:center;gap:.75rem;padding:.625rem 1rem;border-bottom:1px solid var(--border-light)"><div style="flex:1;font-size:.83rem;font-weight:600">${s.full_name||'—'}</div><div style="font-size:.83rem;font-weight:700;color:var(--danger);font-family:'JetBrains Mono',monospace">${s.total_absent_hours||0} НБ</div></div>`).join(''):'<div class="empty">Хавфнок нест</div>';
-    const grps=document.getElementById('dash-groups');
-    grps.innerHTML=(d.groups||[]).slice(0,5).map(g=>`<div style="padding:.625rem 1rem;border-bottom:1px solid var(--border-light)"><div style="display:flex;justify-content:space-between;margin-bottom:.3rem"><span style="font-size:.83rem;font-weight:700">Гурӯҳ ${g.number||g.group_number||'—'}</span><span style="font-size:.83rem;font-weight:700;color:var(--primary)">${g.attendance_rate||0}%</span></div><div style="height:5px;background:var(--border);border-radius:5px;overflow:hidden"><div style="height:100%;border-radius:5px;background:linear-gradient(90deg,var(--success),#34d399);width:${g.attendance_rate||0}%"></div></div></div>`).join('')||'<div class="empty">Маълумот нест</div>';
-  }catch(e){}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('show');
 }
-async function loadGroupsFilter(){
-  try{const d=await api('/zamdean/api/groups');
-    const sel=document.getElementById('stu-group');sel.innerHTML='<option value="">Ҳама гурӯҳ</option>';
-    d.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=`Гурӯҳ ${g.number}`;sel.appendChild(o);});
-  }catch(e){}
+
+// ── DASHBOARD ─────────────────────────────────────────────────────────────────
+async function loadDashboard() {
+  try {
+    const d = await api(`${BASE}/api/stats`);
+    document.getElementById('kpi-students').textContent = d.total_students || 0;
+    document.getElementById('kpi-groups').textContent = d.total_groups || 0;
+    document.getElementById('kpi-curators').textContent = d.total_curators || 0;
+    document.getElementById('kpi-risk').textContent = d.high_risk_count || d.high_absence_students || 0;
+    document.getElementById('kpi-noatt').textContent = d.groups_no_attendance_today || 0;
+
+    // Top risk students
+    const riskEl = document.getElementById('dash-risk');
+    const top = (d.high_risk || []).slice(0, 6);
+    riskEl.innerHTML = top.length
+      ? top.map(s => `<div style="display:flex;align-items:center;gap:.75rem;padding:.625rem 1rem;border-bottom:1px solid var(--border-light)">
+          <div style="flex:1;font-size:.83rem;font-weight:600">${s.full_name}</div>
+          <div style="font-size:.75rem;color:var(--text-3)">${s.group_number || '—'}</div>
+          <span class="chip chip-red">${s.total_absent_hours} NB</span>
+        </div>`).join('')
+      : '<div class="empty">Хавфнок нест 🎉</div>';
+
+    // Course stats
+    const coursesEl = document.getElementById('dash-courses');
+    const cs = d.course_stats || [];
+    coursesEl.innerHTML = cs.length
+      ? cs.map(c => `<div style="display:flex;align-items:center;justify-content:space-between;padding:.625rem 1rem;border-bottom:1px solid var(--border-light)">
+          <span class="chip chip-purple">${c.year}-курс</span>
+          <span style="font-size:.83rem"><strong>${c.students}</strong> донишҷӯ</span>
+          <span style="font-size:.8rem;color:var(--text-3)">${c.groups} гурӯҳ</span>
+        </div>`).join('')
+      : '<div class="empty">Маълумот нест</div>';
+  } catch(e) {
+    console.error('Dashboard error:', e);
+  }
 }
-function debStu(){clearTimeout(stuTO);stuTO=setTimeout(()=>{stuPage=1;loadStudents();},400);}
-async function loadStudents(){
-  const g=document.getElementById('stu-group')?.value||'';const c=document.getElementById('stu-course')?.value||'';const s=document.getElementById('stu-search')?.value||'';
-  const p=new URLSearchParams();if(g)p.append('group_id',g);if(c)p.append('course',c);if(s)p.append('search',s);p.append('page',stuPage);p.append('page_size',PAGE);
-  try{const d=await api(`/zamdean/api/students?${p}`);
-    const arr=d.students||d||[];const total=d.total||arr.length;
-    document.getElementById('stu-total').textContent=total;
-    const tb=document.getElementById('stu-tbody');
-    if(!arr.length){tb.innerHTML='<tr><td colspan="6"><div class="empty">Донишҷӯ ёфт нашуд</div></td></tr>';return;}
-    tb.innerHTML=arr.map((s,i)=>`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${(stuPage-1)*PAGE+i+1}</td><td><strong>${s.full_name||'—'}</strong></td><td>${s.group_number||'—'}</td><td>${s.course_year||'—'}</td><td><span class="chip ${(s.total_absent_hours||0)>=(d.nb_limit||35)?'chip-red':(s.total_absent_hours||0)>=20?'chip-warn':'chip-green'}">${s.total_absent_hours||0}</span></td><td>${s.parent_phone||'—'}</td></tr>`).join('');
-    const pages=Math.ceil(total/PAGE);const pager=document.getElementById('stu-pager');pager.innerHTML='';
-    for(let pg=1;pg<=Math.min(pages,8);pg++){const b=document.createElement('button');b.style.cssText=`width:32px;height:32px;border:1.5px solid var(--border);border-radius:8px;background:${pg===stuPage?'var(--primary)':'var(--surface)'};color:${pg===stuPage?'#fff':'var(--text-2)'};border-color:${pg===stuPage?'var(--primary)':'var(--border)'};font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit`;b.textContent=pg;b.onclick=()=>{stuPage=pg;loadStudents();};pager.appendChild(b);}
-  }catch(e){}
+
+// ── STUDENTS ──────────────────────────────────────────────────────────────────
+async function loadGroupsFilter() {
+  try {
+    const d = await api(`${BASE}/api/groups`);
+    const sel = document.getElementById('stu-group');
+    sel.innerHTML = '<option value="">Ҳама гурӯҳ</option>';
+    d.forEach(g => {
+      const o = document.createElement('option');
+      o.value = g.id;
+      o.textContent = `Гурӯҳ ${g.number}`;
+      sel.appendChild(o);
+    });
+  } catch(e) {}
 }
-async function loadAtRisk(){
-  try{const d=await api('/zamdean/api/at-risk');
-    const tb=document.getElementById('risk-tbody');
-    if(!d.length){tb.innerHTML='<tr><td colspan="5"><div class="empty">Хавфнок нест</div></td></tr>';return;}
-    tb.innerHTML=d.map((s,i)=>`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${i+1}</td><td><strong>${s.full_name||'—'}</strong></td><td>${s.group_number||'—'}</td><td><span class="chip chip-red">${s.total_absent_hours||0}</span></td><td>${s.parent_phone||'—'}</td></tr>`).join('');
-  }catch(e){}
+
+function debStu() { clearTimeout(stuTO); stuTO = setTimeout(() => { stuPage = 1; loadStudents(); }, 400); }
+
+async function loadStudents() {
+  const g = document.getElementById('stu-group')?.value || '';
+  const c = document.getElementById('stu-course')?.value || '';
+  const s = document.getElementById('stu-search')?.value || '';
+  const p = new URLSearchParams();
+  if (g) p.append('group_id', g);
+  if (c) p.append('course', c);
+  if (s) p.append('search', s);
+  p.append('page', stuPage);
+  p.append('page_size', PAGE);
+
+  const tb = document.getElementById('stu-tbody');
+  tb.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+
+  try {
+    const d = await api(`${BASE}/api/students?${p}`);
+    const arr = d.students || d || [];
+    const total = d.total || arr.length;
+    const nbLimit = d.nb_limit || 35;
+    document.getElementById('stu-total').textContent = total;
+
+    if (!arr.length) {
+      tb.innerHTML = '<tr><td colspan="7"><div class="empty">Донишҷӯ ёфт нашуд</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = arr.map((s, i) => `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${(stuPage - 1) * PAGE + i + 1}</td>
+        <td><strong>${s.full_name || '—'}</strong></td>
+        <td>${s.group_number || '—'}</td>
+        <td><span class="chip chip-purple">${s.course_year || '?'}-курс</span></td>
+        <td><span class="chip ${(s.total_absent_hours || 0) >= nbLimit ? 'chip-red' : (s.total_absent_hours || 0) >= 20 ? 'chip-warn' : 'chip-green'}">${s.total_absent_hours || 0}</span></td>
+        <td>${s.parent_phone || '—'}</td>
+        <td><button class="btn btn-ghost btn-xs" onclick="viewStudent(${s.id})">Профил</button></td>
+      </tr>`).join('');
+
+    const pages = Math.ceil(total / PAGE);
+    const pager = document.getElementById('stu-pager');
+    pager.innerHTML = '';
+    for (let pg = 1; pg <= Math.min(pages, 8); pg++) {
+      const b = document.createElement('button');
+      b.style.cssText = `width:32px;height:32px;border:1.5px solid ${pg === stuPage ? 'var(--primary)' : 'var(--border)'};border-radius:8px;background:${pg === stuPage ? 'var(--primary)' : 'var(--surface)'};color:${pg === stuPage ? '#fff' : 'var(--text-2)'};font-size:.8rem;font-weight:600;cursor:pointer;font-family:inherit`;
+      b.textContent = pg;
+      b.onclick = () => { stuPage = pg; loadStudents(); };
+      pager.appendChild(b);
+    }
+  } catch(e) { toast('err', e.message); }
 }
-async function loadGroups(){
-  try{const d=await api('/zamdean/api/groups');
-    const tb=document.getElementById('groups-tbody');
-    if(!d.length){tb.innerHTML='<tr><td colspan="7"><div class="empty">Гурӯҳ нест</div></td></tr>';return;}
-    tb.innerHTML=d.map((g,i)=>`<tr><td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${i+1}</td><td><strong>${g.number||'—'}</strong></td><td><span class="chip chip-purple">${g.course_year||'?'}-курс</span></td><td>${g.shift}-навбат</td><td>${g.curator_name||'—'}</td><td>${g.student_count||0}</td><td><span class="chip ${(g.attendance_rate||0)>=80?'chip-green':(g.attendance_rate||0)>=60?'chip-warn':'chip-red'}">${g.attendance_rate||0}%</span></td></tr>`).join('');
-  }catch(e){}
+
+async function viewStudent(sid) {
+  document.getElementById('modal-student').classList.add('show');
+  document.getElementById('modal-student-body').innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const s = await api(`${BASE}/api/students/${sid}`);
+    const nbLimit = 35;
+    const nbRows = (s.nb_history || []).slice(0, 15).map(r =>
+      `<tr><td>${r.date}</td><td><span class="chip chip-red">${r.nb_hours}</span></td><td style="font-size:.78rem;color:var(--text-3)">${r.comment || '—'}</td><td>${r.is_reasoned ? '<span class="chip chip-green">Ҷоиз</span>' : ''}</td></tr>`
+    ).join('');
+
+    document.getElementById('modal-student-body').innerHTML = `
+      <div style="margin-bottom:1rem">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#a855f7);display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;color:#fff;flex-shrink:0">${(s.full_name||'?')[0].toUpperCase()}</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800">${s.full_name}</div>
+            <div style="font-size:.8rem;color:var(--text-3);font-family:'JetBrains Mono',monospace">${s.student_code || ''}</div>
+          </div>
+          <span class="chip ${(s.total_absent_hours||0) >= nbLimit ? 'chip-red' : (s.total_absent_hours||0) >= 20 ? 'chip-warn' : 'chip-green'}" style="margin-left:auto">${(s.total_absent_hours||0)} NB</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem">
+          <div class="info-row"><span class="lbl">Гурӯҳ</span><span class="val">${s.group_number || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Курс</span><span class="val">${s.course_year ? s.course_year + '-курс' : '—'}</span></div>
+          <div class="info-row"><span class="lbl">Навбат</span><span class="val">${s.group_shift ? s.group_shift + '-навбат' : '—'}</span></div>
+          <div class="info-row"><span class="lbl">Шакли таълим</span><span class="val">${s.education_type || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Соли таваллуд</span><span class="val">${s.birth_year || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Зодгоҳ</span><span class="val">${s.birth_place || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Вилоят</span><span class="val">${s.region || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Тел. волидайн</span><span class="val">${s.parent_phone || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Оғози таҳсил</span><span class="val">${s.study_start || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Хатми тахминӣ</span><span class="val">${s.expected_graduation || '—'}</span></div>
+          ${s.created_at ? `<div class="info-row"><span class="lbl">Сабт шуд</span><span class="val" style="font-size:.75rem">${s.created_at.split('T')[0]}</span></div>` : ''}
+          ${s.updated_at ? `<div class="info-row"><span class="lbl">Навсозӣ</span><span class="val" style="font-size:.75rem">${s.updated_at.split('T')[0]}</span></div>` : ''}
+        </div>
+      </div>
+      ${nbRows ? `<div style="font-size:.8rem;font-weight:700;color:var(--text-3);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.05em">Таърихи NB (охирин 15)</div>
+      <div class="tw"><table class="tbl" style="min-width:300px">
+        <thead><tr><th>Сана</th><th>NB</th><th>Изоҳ</th><th>Ҷоиз</th></tr></thead>
+        <tbody>${nbRows}</tbody>
+      </table></div>` : '<div class="empty" style="padding:1.5rem">Қайди NB нест</div>'}
+    `;
+  } catch(e) {
+    document.getElementById('modal-student-body').innerHTML = `<div class="empty">Хатогӣ: ${e.message}</div>`;
+  }
 }
-async function loadProfile(){
-  try{const d=await api('/zamdean/api/profile');
-    document.getElementById('p-name').value=d.full_name||'';
-    document.getElementById('p-email').value=d.email||'';
-    document.getElementById('p-phone').value=d.phone||'';
-  }catch(e){}
+
+// ── AT-RISK ───────────────────────────────────────────────────────────────────
+async function loadAtRisk() {
+  const tb = document.getElementById('risk-tbody');
+  tb.innerHTML = '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const d = await api(`${BASE}/api/at-risk`);
+    if (!d.length) {
+      tb.innerHTML = '<tr><td colspan="6"><div class="empty">Хавфнок нест 🎉</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = d.map((s, i) => `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${i + 1}</td>
+        <td><strong>${s.full_name || '—'}</strong></td>
+        <td>${s.group_number || '—'}</td>
+        <td><span class="chip chip-red">${s.total_absent_hours || 0}</span></td>
+        <td>${s.parent_phone || '—'}</td>
+        <td><button class="btn btn-ghost btn-xs" onclick="viewStudent(${s.id})">Профил</button></td>
+      </tr>`).join('');
+  } catch(e) { toast('err', e.message); }
 }
-async function saveProfile(e){e.preventDefault();
-  const fd=new FormData();
-  fd.append('full_name',document.getElementById('p-name').value);
-  fd.append('email',document.getElementById('p-email').value||'');
-  fd.append('phone',document.getElementById('p-phone').value||'');
-  try{await api('/zamdean/api/profile',{method:'PUT',body:fd});toast('succ','✅ Профил сабт шуд');}
-  catch(err){toast('err',err.message);}
+
+// ── GROUPS ────────────────────────────────────────────────────────────────────
+async function loadGroups() {
+  const tb = document.getElementById('groups-tbody');
+  tb.innerHTML = '<tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const d = await api(`${BASE}/api/groups`);
+    if (!d.length) {
+      tb.innerHTML = '<tr><td colspan="8"><div class="empty">Гурӯҳ нест</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = d.map((g, i) => `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${i + 1}</td>
+        <td>
+          <strong>${g.number || '—'}</strong>
+          ${g.name && g.name !== g.number ? `<br><span style="font-size:.72rem;color:var(--text-3)">${g.name}</span>` : ''}
+        </td>
+        <td><span class="chip chip-purple">${g.course_year || '?'}-курс</span></td>
+        <td>${g.shift}-навбат${g.study_lang ? ` <span class="chip chip-blue" style="font-size:.65rem">${g.study_lang}</span>` : ''}</td>
+        <td>
+          ${g.curator_name
+            ? `<span style="font-weight:600">${g.curator_name}</span>${g.curator_phone ? `<br><span style="font-size:.72rem;color:var(--text-3)">${g.curator_phone}</span>` : ''}`
+            : '<span style="color:var(--text-4)">Таъин нашудааст</span>'}
+        </td>
+        <td><strong>${g.student_count || g.total_students || 0}</strong></td>
+        <td>
+          <span class="chip ${g.is_closed ? 'chip-red' : g.is_active !== false ? 'chip-green' : 'chip-warn'}">
+            ${g.is_closed ? 'Баста' : g.is_active !== false ? 'Фаъол' : 'Ғайрифаъол'}
+          </span>
+          ${g.attendance_today ? '<span class="chip chip-blue" style="margin-left:2px;font-size:.65rem">✓ Давомот</span>' : ''}
+        </td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-ghost btn-xs" onclick="viewGroup(${g.id})">👁️</button>
+          ${!g.is_closed ? `<button class="btn btn-ghost btn-xs" onclick="openEditGroup(${g.id}, '${escHtml(g.number)}', ${g.shift}, ${g.course_id || 0}, ${g.curator_id || 0})">✏️</button>` : ''}
+          ${g.is_closed
+            ? `<button class="btn btn-xs" style="background:var(--success-light);color:var(--success)" onclick="reopenGroup(${g.id}, '${escHtml(g.number)}')">🔓 Кушо</button>`
+            : `<button class="btn btn-xs" style="background:var(--warning-light);color:var(--warning)" onclick="closeGroup(${g.id}, '${escHtml(g.number)}')">🔒 Баст</button>`
+          }
+          <button class="btn btn-xs" style="background:var(--danger-light);color:var(--danger)" onclick="deleteGroup(${g.id}, '${escHtml(g.number)}')">🗑️</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { toast('err', e.message); }
 }
-function exportStudents(){window.open('/zamdean/api/export/students','_blank');}
-function exportNB(){window.open('/zamdean/api/export/nb','_blank');}
-document.addEventListener('DOMContentLoaded',loadDashboard);
+
+function escHtml(s) { return String(s||'').replace(/'/g, "\\'"); }
+
+async function openAddGroup() {
+  document.getElementById('mg-title').textContent = 'Иловаи гурӯҳ';
+  document.getElementById('mg-id').value = '';
+  document.getElementById('mg-number').value = '';
+  document.getElementById('mg-shift').value = '1';
+  document.getElementById('mg-err').style.display = 'none';
+  await _loadGroupModalData(0, 0);
+  document.getElementById('modal-group').classList.add('show');
+}
+
+async function openEditGroup(id, number, shift, courseId, curatorId) {
+  document.getElementById('mg-title').textContent = 'Таҳрири гурӯҳ';
+  document.getElementById('mg-id').value = id;
+  document.getElementById('mg-number').value = number;
+  document.getElementById('mg-shift').value = shift;
+  document.getElementById('mg-err').style.display = 'none';
+  await _loadGroupModalData(courseId, curatorId);
+  document.getElementById('modal-group').classList.add('show');
+}
+
+async function _loadGroupModalData(selectedCourse, selectedCurator) {
+  // Load courses
+  try {
+    if (!_courses.length) _courses = await api(`${BASE}/api/courses`);
+    const cs = document.getElementById('mg-course');
+    cs.innerHTML = '<option value="">Интихоб...</option>';
+    _courses.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id;
+      o.textContent = `${c.year}-курс`;
+      if (c.id === selectedCourse) o.selected = true;
+      cs.appendChild(o);
+    });
+  } catch(e) {}
+
+  // Load curators
+  try {
+    if (!_curators.length) _curators = await api(`${BASE}/api/curators`);
+    const cc = document.getElementById('mg-curator');
+    cc.innerHTML = '<option value="">Куратор таъин нашудааст</option>';
+    _curators.forEach(c => {
+      const o = document.createElement('option');
+      o.value = c.id;
+      o.textContent = c.full_name;
+      if (c.id === selectedCurator) o.selected = true;
+      cc.appendChild(o);
+    });
+  } catch(e) {}
+}
+
+async function saveGroup() {
+  const id        = document.getElementById('mg-id').value;
+  const number    = document.getElementById('mg-number').value.trim();
+  const shift     = parseInt(document.getElementById('mg-shift').value);
+  const course_id = document.getElementById('mg-course').value;
+  const curator_id = document.getElementById('mg-curator').value || null;
+  const errEl     = document.getElementById('mg-err');
+  const btn       = document.getElementById('mg-save-btn');
+
+  if (!number)    { errEl.textContent = 'Рақами гурӯҳро ворид кунед'; errEl.style.display = 'block'; return; }
+  if (!course_id) { errEl.textContent = 'Курсро интихоб кунед';       errEl.style.display = 'block'; return; }
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Сабт...';
+
+  try {
+    const payload = {
+      number,
+      shift,
+      course_id: parseInt(course_id),
+      curator_id: curator_id ? parseInt(curator_id) : null,
+    };
+
+    if (id) {
+      await api(`${BASE}/api/groups/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+      toast('succ', '✅ Гурӯҳ навсозӣ шуд');
+    } else {
+      await api(`${BASE}/api/groups`, { method: 'POST', body: JSON.stringify(payload) });
+      toast('succ', '✅ Гурӯҳ иловашуд');
+    }
+
+    _curators = [];
+    closeModal('modal-group');
+    loadGroups();
+    loadGroupsFilter();
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Сабт кардан';
+  }
+}
+
+async function closeGroup(id, name) {
+  if (!confirm(`Гурӯҳ «${name}»-ро мебандем? Баъди он куратор давомот сабт карда наметавонад.`)) return;
+  try {
+    await api(`${BASE}/api/groups/${id}/close`, { method: 'POST' });
+    toast('succ', `🔒 Гурӯҳ «${name}» баста шуд`);
+    loadGroups();
+  } catch(e) { toast('err', e.message); }
+}
+
+async function reopenGroup(id, name) {
+  if (!confirm(`Гурӯҳ «${name}»-ро кушоем?`)) return;
+  try {
+    await api(`${BASE}/api/groups/${id}/reopen`, { method: 'POST' });
+    toast('succ', `🔓 Гурӯҳ «${name}» кушода шуд`);
+    loadGroups();
+  } catch(e) { toast('err', e.message); }
+}
+
+async function deleteGroup(id, name) {
+  if (!confirm(`Гурӯҳ «${name}»-ро нест мекунед?`)) return;
+  try {
+    await api(`${BASE}/api/groups/${id}`, { method: 'DELETE' });
+    toast('succ', '✅ Гурӯҳ нест шуд');
+    loadGroups();
+  } catch(e) { toast('err', e.message); }
+}
+
+// ── CURATORS ──────────────────────────────────────────────────────────────────
+async function loadCurators() {
+  const tb = document.getElementById('curators-tbody');
+  tb.innerHTML = '<tr><td colspan="6"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const d = await api(`${BASE}/api/curators`);
+    _curators = d; // cache
+    if (!d.length) {
+      tb.innerHTML = '<tr><td colspan="6"><div class="empty">Куратор нест</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = d.map((c, i) => `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${i + 1}</td>
+        <td>
+          <strong>${c.full_name}</strong>
+          ${c.department ? `<br><span style="font-size:.72rem;color:var(--text-3)">${c.department}</span>` : ''}
+        </td>
+        <td>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:.78rem">${c.username}</span>
+          ${c.force_password_change ? ' <span class="chip chip-warn" style="font-size:.65rem">⚠ Парол</span>' : ''}
+        </td>
+        <td>
+          ${c.group_number ? `<span class="chip chip-purple">${c.group_number}</span>` : '<span style="color:var(--text-4)">Таъин нашудааст</span>'}
+        </td>
+        <td>
+          ${c.phone ? `<a href="tel:${c.phone}" style="color:var(--text-2);text-decoration:none">${c.phone}</a>` : '—'}
+          ${c.email ? `<br><span style="font-size:.72rem;color:var(--text-3)">${c.email}</span>` : ''}
+        </td>
+        <td>${c.birth_year || '—'}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-ghost btn-xs" onclick="viewCurator(${c.id})">👁️</button>
+          <button class="btn btn-ghost btn-xs" onclick="openEditCurator(${c.id})">✏️</button>
+          <button class="btn btn-xs" style="background:var(--warning-light);color:var(--warning)" onclick="resetCuratorPw(${c.id}, '${escHtml(c.full_name)}')">🔑</button>
+          <button class="btn btn-xs" style="background:var(--danger-light);color:var(--danger)" onclick="deleteCurator(${c.id}, '${escHtml(c.full_name)}')">🗑️</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) { toast('err', e.message); }
+}
+
+function openAddCurator() {
+  document.getElementById('mc-title').textContent = 'Иловаи куратор';
+  document.getElementById('mc-id').value = '';
+  document.getElementById('mc-name').value = '';
+  document.getElementById('mc-username').value = '';
+  document.getElementById('mc-phone').value = '';
+  document.getElementById('mc-email').value = '';
+  document.getElementById('mc-dept').value = '';
+  document.getElementById('mc-username').disabled = false;
+  document.getElementById('mc-err').style.display = 'none';
+  document.getElementById('mc-pw-info').style.display = 'block';
+  document.getElementById('modal-curator').classList.add('show');
+}
+
+async function openEditCurator(id) {
+  document.getElementById('mc-title').textContent = 'Таҳрири куратор';
+  document.getElementById('mc-id').value = id;
+  document.getElementById('mc-err').style.display = 'none';
+  document.getElementById('mc-pw-info').style.display = 'none';
+  document.getElementById('mc-username').disabled = true;
+  try {
+    const c = await api(`${BASE}/api/curators/${id}`);
+    document.getElementById('mc-name').value = c.full_name || '';
+    document.getElementById('mc-username').value = c.username || '';
+    document.getElementById('mc-phone').value = c.phone || '';
+    document.getElementById('mc-email').value = c.email || '';
+    document.getElementById('mc-dept').value = c.department || '';
+  } catch(e) {}
+  document.getElementById('modal-curator').classList.add('show');
+}
+
+async function saveCurator() {
+  const id = document.getElementById('mc-id').value;
+  const full_name = document.getElementById('mc-name').value.trim();
+  const username = document.getElementById('mc-username').value.trim();
+  const phone = document.getElementById('mc-phone').value.trim() || null;
+  const email = document.getElementById('mc-email').value.trim() || null;
+  const department = document.getElementById('mc-dept').value.trim() || null;
+  const errEl = document.getElementById('mc-err');
+  const btn = document.getElementById('mc-save-btn');
+
+  if (!full_name) { errEl.textContent = 'Ному насабро ворид кунед'; errEl.style.display = 'block'; return; }
+  if (!id && !username) { errEl.textContent = 'Юзернеймро ворид кунед'; errEl.style.display = 'block'; return; }
+
+  errEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Сабт...';
+
+  try {
+    if (id) {
+      await api(`${BASE}/api/curators/${id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ full_name, phone, email, department }),
+      });
+      toast('succ', '✅ Куратор навсозӣ шуд');
+    } else {
+      await api(`${BASE}/api/curators`, {
+        method: 'POST',
+        body: JSON.stringify({ full_name, username, phone, email, department }),
+      });
+      toast('succ', `✅ Куратор иловашуд. Парол: 020304`);
+    }
+    _curators = []; // reset curator cache so group modal reloads fresh
+    _courses = [];  // also reset courses cache
+    closeModal('modal-curator');
+    loadCurators();
+  } catch(e) {
+    errEl.textContent = e.message;
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Сабт кардан';
+  }
+}
+
+async function resetCuratorPw(id, name) {
+  if (!confirm(`Пароли «${name}»-ро ба 020304 баргардонем?`)) return;
+  try {
+    await api(`${BASE}/api/curators/${id}/reset-password`, { method: 'POST' });
+    toast('succ', `✅ Парол ба 020304 баргардонида шуд`);
+  } catch(e) { toast('err', e.message); }
+}
+
+async function deleteCurator(id, name) {
+  if (!confirm(`Куратор «${name}»-ро нест мекунед?`)) return;
+  try {
+    await api(`${BASE}/api/curators/${id}`, { method: 'DELETE' });
+    toast('succ', '✅ Куратор нест шуд');
+    _curators = [];
+    loadCurators();
+  } catch(e) { toast('err', e.message); }
+}
+
+// ── MONITORING ────────────────────────────────────────────────────────────────
+async function loadMonitoring() {
+  const d = document.getElementById('mon-date').value || new Date().toISOString().split('T')[0];
+  document.getElementById('mon-date-label').textContent = `Давомоти санаи: ${d}`;
+  const tb = document.getElementById('mon-tbody');
+  tb.innerHTML = '<tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr>';
+  try {
+    const data = await api(`${BASE}/api/monitoring/no-attendance?target_date=${d}`);
+    document.getElementById('mon-filled').textContent = data.filled || 0;
+    document.getElementById('mon-missing').textContent = data.missing || 0;
+    document.getElementById('mon-total').textContent = data.total_groups || 0;
+    const groups = data.groups || [];
+    if (!groups.length) {
+      tb.innerHTML = '<tr><td colspan="7"><div class="empty">Гурӯҳ нест</div></td></tr>';
+      return;
+    }
+    tb.innerHTML = groups.map((g, i) => `
+      <tr>
+        <td style="font-family:'JetBrains Mono',monospace;font-size:.8rem">${i+1}</td>
+        <td><strong>${g.group_number}</strong></td>
+        <td><span class="chip chip-purple">${g.course_year || '?'}-курс</span></td>
+        <td>${g.shift}-навбат</td>
+        <td>${g.curator_name || '<span style="color:var(--text-4)">—</span>'}</td>
+        <td>${g.total_students || 0}</td>
+        <td>
+          <span class="chip ${g.has_attendance ? 'chip-green' : 'chip-red'}">
+            ${g.has_attendance ? '✅ Иҷро шудааст' : '❌ Иҷро нашудааст'}
+          </span>
+        </td>
+      </tr>`).join('');
+  } catch(e) { toast('err', e.message); }
+}
+
+// ── PROFILE ───────────────────────────────────────────────────────────────────
+async function loadProfile() {
+  try {
+    const d = await api(`${BASE}/api/profile`);
+    // Fill edit form
+    document.getElementById('p-name').value = d.full_name || '';
+    document.getElementById('p-email').value = d.email || '';
+    document.getElementById('p-phone').value = d.phone || '';
+    document.getElementById('p-faculty').value = d.faculty_name || d.faculty || '';
+    document.getElementById('p-dept').value = d.department || '';
+    const byEl = document.getElementById('p-birth-year');
+    if (byEl) byEl.value = d.birth_year || '';
+
+    // Fill info card
+    const card = document.getElementById('profile-info-card');
+    if (card) {
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem">
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#a855f7);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:#fff">${(d.full_name||'З')[0].toUpperCase()}</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800">${d.full_name||'—'}</div>
+            <span class="badge badge-purple">Замдекан</span>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem">
+          <div class="info-row"><span class="lbl">ID</span><span class="val" style="font-family:'JetBrains Mono',monospace">#${d.id}</span></div>
+          <div class="info-row"><span class="lbl">Юзернейм</span><span class="val" style="font-family:'JetBrains Mono',monospace">@${d.username}</span></div>
+          <div class="info-row"><span class="lbl">Факултет</span><span class="val">${d.faculty_name||d.faculty||'—'}</span></div>
+          <div class="info-row"><span class="lbl">Соли таваллуд</span><span class="val">${d.birth_year||'—'}</span></div>
+          <div class="info-row"><span class="lbl">Версия токен</span><span class="val" style="font-family:'JetBrains Mono',monospace">${d.token_version||1}</span></div>
+          ${d.created_at?`<div class="info-row"><span class="lbl">Сабт</span><span class="val" style="font-size:.72rem">${d.created_at.split('T')[0]}</span></div>`:''}
+        </div>`;
+    }
+  } catch(e) {
+    const card = document.getElementById('profile-info-card');
+    if (card) card.innerHTML = '<div class="empty">Хатогӣ</div>';
+  }
+}
+
+async function saveProfile(e) {
+  e.preventDefault();
+  const byVal = document.getElementById('p-birth-year')?.value;
+  try {
+    await api(`${BASE}/api/profile`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        full_name: document.getElementById('p-name').value,
+        email: document.getElementById('p-email').value || null,
+        phone: document.getElementById('p-phone').value || null,
+        department: document.getElementById('p-dept').value || null,
+        birth_year: byVal ? parseInt(byVal) : null,
+      }),
+    });
+    toast('succ', '✅ Профил сабт шуд');
+    loadProfile(); // refresh info card
+  } catch(err) { toast('err', err.message); }
+}
+
+function exportStudents() { window.open(`${BASE}/api/export/students`, '_blank'); }
+function exportNB() { window.open(`${BASE}/api/export/nb`, '_blank'); }
+
+document.addEventListener('DOMContentLoaded', loadDashboard);
+
+// ── VIEW GROUP PROFILE ────────────────────────────────────────────────────────
+async function viewGroup(gid) {
+  document.getElementById('modal-group-view').classList.add('show');
+  const body = document.getElementById('modal-group-view-body');
+  body.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    // Try to find in DOM data first, otherwise fetch
+    let g = null;
+    try {
+      const groups = await api(`${BASE}/api/groups`);
+      g = groups.find(x => x.id === gid);
+    } catch(err) {}
+    if (!g) throw new Error('Гурӯҳ ёфт нашуд');
+
+    body.innerHTML = `
+      <div style="margin-bottom:1rem">
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+          <div style="width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#a855f7);display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;color:#fff;flex-shrink:0">${(g.number||'?')[0]}</div>
+          <div>
+            <div style="font-size:1.1rem;font-weight:800">${g.number}</div>
+            ${g.name && g.name !== g.number ? `<div style="font-size:.8rem;color:var(--text-3)">${g.name}</div>` : ''}
+          </div>
+          <span class="chip ${g.is_closed ? 'chip-red' : g.is_active !== false ? 'chip-green' : 'chip-warn'}" style="margin-left:auto">
+            ${g.is_closed ? 'Баста' : g.is_active !== false ? 'Фаъол' : 'Ғайрифаъол'}
+          </span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+          <div class="info-row"><span class="lbl">ID</span><span class="val" style="font-family:'JetBrains Mono',monospace">#${g.id}</span></div>
+          <div class="info-row"><span class="lbl">Курс</span><span class="val">${g.course_year ? g.course_year + '-курс' : '—'}</span></div>
+          <div class="info-row"><span class="lbl">Навбат</span><span class="val">${g.shift}-навбат</span></div>
+          <div class="info-row"><span class="lbl">Забони таълим</span><span class="val">${g.study_lang || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Донишҷӯён</span><span class="val"><strong>${g.total_students || 0}</strong></span></div>
+          <div class="info-row"><span class="lbl">Факултет ID</span><span class="val">${g.faculty_id || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Соли таҳсилӣ</span><span class="val">${g.academic_year_name || (g.academic_year_id ? '#'+g.academic_year_id : '—')}</span></div>
+          <div class="info-row"><span class="lbl">Баста?</span><span class="val">${g.is_closed ? '✅ Ҳа' : '❌ Не'}</span></div>
+        </div>
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border)">
+          <div style="font-size:.75rem;font-weight:700;color:var(--text-3);text-transform:uppercase;margin-bottom:.625rem">Куратор</div>
+          ${g.curator_name
+            ? `<div style="display:flex;gap:.75rem;align-items:center">
+                <div style="width:38px;height:38px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--primary)">${g.curator_name[0]}</div>
+                <div>
+                  <div style="font-weight:700">${g.curator_name}</div>
+                  ${g.curator_username ? `<div style="font-size:.75rem;color:var(--text-3);font-family:'JetBrains Mono',monospace">@${g.curator_username}</div>` : ''}
+                  ${g.curator_phone ? `<div style="font-size:.75rem;color:var(--text-3)">${g.curator_phone}</div>` : ''}
+                </div>
+               </div>`
+            : '<span style="color:var(--text-4)">Таъин нашудааст</span>'}
+        </div>
+        ${(g.created_at || g.updated_at) ? `
+        <div style="margin-top:.875rem;padding-top:.875rem;border-top:1px solid var(--border);display:flex;gap:1rem">
+          ${g.created_at ? `<div class="info-row"><span class="lbl" style="min-width:80px">Сабт</span><span class="val" style="font-size:.75rem">${g.created_at.split('T')[0]}</span></div>` : ''}
+          ${g.updated_at ? `<div class="info-row"><span class="lbl" style="min-width:80px">Навсозӣ</span><span class="val" style="font-size:.75rem">${g.updated_at.split('T')[0]}</span></div>` : ''}
+        </div>` : ''}
+      </div>
+    `;
+  } catch(e) {
+    body.innerHTML = `<div class="empty">Хатогӣ: ${e.message}</div>`;
+  }
+}
+
+// ── VIEW CURATOR PROFILE ──────────────────────────────────────────────────────
+async function viewCurator(uid) {
+  document.getElementById('modal-curator-view').classList.add('show');
+  const body = document.getElementById('modal-curator-view-body');
+  body.innerHTML = '<div class="loading"><div class="spinner"></div></div>';
+  try {
+    const c = await api(`${BASE}/api/curators/${uid}`);
+    body.innerHTML = `
+      <div>
+        <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem">
+          <div style="width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--primary),#a855f7);display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;color:#fff;flex-shrink:0">${(c.full_name||'?')[0].toUpperCase()}</div>
+          <div>
+            <div style="font-size:1rem;font-weight:800">${c.full_name}</div>
+            <span class="badge badge-purple">Куратор</span>
+          </div>
+          ${c.force_password_change ? '<span class="chip chip-warn" style="margin-left:auto">⚠ Парол</span>' : ''}
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:1rem">
+          <div class="info-row"><span class="lbl">ID</span><span class="val" style="font-family:'JetBrains Mono',monospace">#${c.id}</span></div>
+          <div class="info-row"><span class="lbl">Юзернейм</span><span class="val" style="font-family:'JetBrains Mono',monospace">@${c.username}</span></div>
+          <div class="info-row"><span class="lbl">Телефон</span><span class="val">${c.phone || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Email</span><span class="val">${c.email || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Кафедра</span><span class="val">${c.department || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Соли таваллуд</span><span class="val">${c.birth_year || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Факултет ID</span><span class="val">${c.faculty_id || '—'}</span></div>
+          <div class="info-row"><span class="lbl">Версия токен</span><span class="val" style="font-family:'JetBrains Mono',monospace">${c.token_version || 1}</span></div>
+        </div>
+
+        <div style="padding:1rem;border:1.5px solid var(--border);border-radius:var(--radius-sm);margin-bottom:1rem">
+          <div style="font-size:.75rem;font-weight:700;color:var(--text-3);text-transform:uppercase;margin-bottom:.625rem">Гурӯҳҳо</div>
+          ${c.groups && c.groups.length
+            ? c.groups.map(g => `
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:.375rem 0;border-bottom:1px solid var(--border-light)">
+                <span class="chip chip-purple">${g.number}</span>
+                <span style="font-size:.8rem">${g.course_year ? g.course_year + '-курс' : '—'}</span>
+                <span style="font-size:.8rem">${g.shift}-навбат</span>
+                <span class="chip ${g.is_active !== false ? 'chip-green' : 'chip-warn'}">${g.is_active !== false ? 'Фаъол' : 'Ғайрифаъол'}</span>
+              </div>`).join('')
+            : '<div style="color:var(--text-4);font-size:.83rem">Гурӯҳ таъин нашудааст</div>'}
+        </div>
+
+        ${(c.created_at || c.updated_at) ? `
+        <div style="display:flex;gap:1.5rem;font-size:.75rem;color:var(--text-3)">
+          ${c.created_at ? `<span>Сабт: ${c.created_at.split('T')[0]}</span>` : ''}
+          ${c.updated_at ? `<span>Навсозӣ: ${c.updated_at.split('T')[0]}</span>` : ''}
+        </div>` : ''}
+      </div>
+    `;
+  } catch(e) {
+    body.innerHTML = `<div class="empty">Хатогӣ: ${e.message}</div>`;
+  }
+}
+
 </script>
+
+<!-- ─── MODAL: GROUP PROFILE ─── -->
+<div class="modal-ov" id="modal-group-view">
+  <div class="modal-box" style="max-width:560px">
+    <div class="mtitle">
+      <h3>📋 Профили гурӯҳ</h3>
+      <button class="mclose" onclick="closeModal('modal-group-view')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="modal-group-view-body"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
+<!-- ─── MODAL: CURATOR PROFILE ─── -->
+<div class="modal-ov" id="modal-curator-view">
+  <div class="modal-box" style="max-width:520px">
+    <div class="mtitle">
+      <h3>👤 Профили куратор</h3>
+      <button class="mclose" onclick="closeModal('modal-curator-view')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="modal-curator-view-body"><div class="loading"><div class="spinner"></div></div></div>
+  </div>
+</div>
+
 </body>
 </html>

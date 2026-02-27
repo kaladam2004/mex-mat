@@ -3,568 +3,596 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Декан — Системаи Мех-мат</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<title>Декан — АИС Мех-мат</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 :root{
-  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#dbeafe;--primary-xlight:#eff6ff;
-  --success:#059669;--success-light:#d1fae5;
-  --warning:#d97706;--warning-light:#fef3c7;
-  --danger:#dc2626;--danger-light:#fee2e2;
-  --purple:#7c3aed;--purple-light:#ede9fe;
-  --cyan:#0891b2;--cyan-light:#cffafe;
-  --bg:#f0f4ff;--surface:#fff;--surface2:#f8faff;--border:#dde5f7;--border-light:#eef2fb;
-  --text:#0f172a;--text-2:#334155;--text-3:#64748b;--text-4:#94a3b8;
-  --sidebar-w:260px;--topbar-h:60px;
-  --radius:12px;--radius-sm:8px;--radius-lg:16px;
-  --shadow-sm:0 1px 4px rgba(37,99,235,.08);
-  --shadow:0 4px 16px rgba(37,99,235,.1);
-  --tr:all 0.2s cubic-bezier(0.4,0,0.2,1);
+  --blue:#2563eb;--blue-d:#1d4ed8;--blue-l:#dbeafe;--blue-xl:#eff6ff;
+  --green:#059669;--green-l:#d1fae5;--green-xl:#ecfdf5;
+  --amber:#d97706;--amber-l:#fef3c7;
+  --red:#dc2626;--red-l:#fee2e2;--red-xl:#fff5f5;
+  --purple:#7c3aed;--purple-l:#ede9fe;
+  --slate:#64748b;
+  --bg:#f1f5f9;--surf:#fff;--surf2:#f8fafc;
+  --bdr:#e2e8f0;--bdr-l:#f1f5f9;
+  --tx:#0f172a;--tx2:#334155;--tx3:#64748b;--tx4:#94a3b8;
+  --sw:260px;--th:60px;
+  --r:10px;--rsm:7px;--rlg:14px;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+  --shm:0 4px 16px rgba(0,0,0,.1);
+  --tr:all .18s ease;
 }
-body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;overflow-x:hidden}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;display:flex;font-size:14px;line-height:1.5;overflow-x:hidden}
 
-/* ── SIDEBAR ── */
-.sidebar{width:var(--sidebar-w);min-height:100vh;background:var(--surface);border-right:1.5px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:200;transition:transform .3s ease;overflow-y:auto}
-.sidebar-logo{padding:1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
-.logo-icon{width:40px;height:40px;border-radius:10px;overflow:hidden;flex-shrink:0;box-shadow:var(--shadow-sm);border:2px solid var(--border)}
-.logo-icon img{width:100%;height:100%;object-fit:cover}
-.logo-brand{font-size:.85rem;font-weight:800;color:var(--text)}
-.logo-brand span{display:block;font-size:.72rem;font-weight:500;color:var(--text-3);margin-top:1px}
-.sidebar-user{padding:1rem 1.25rem;border-bottom:1px solid var(--border);flex-shrink:0}
-.u-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.5rem}
-.u-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:800;color:#fff;flex-shrink:0}
-.u-name{font-size:.875rem;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.u-sub{font-size:.72rem;color:var(--text-3)}
-.badge{display:inline-flex;align-items:center;gap:.25rem;font-size:.7rem;font-weight:600;padding:.2rem .6rem;border-radius:20px}
-.badge-blue{background:var(--primary-light);color:var(--primary)}
-.badge-green{background:var(--success-light);color:var(--success)}
-.sidebar-nav{flex:1;padding:.625rem .75rem}
-.nav-sec{font-size:.68rem;font-weight:700;color:var(--text-4);text-transform:uppercase;letter-spacing:.08em;padding:.75rem .75rem .35rem}
-.nav-item{display:flex;align-items:center;gap:.625rem;padding:.65rem .875rem;border-radius:var(--radius-sm);font-size:.83rem;font-weight:600;color:var(--text-3);cursor:pointer;transition:var(--tr);text-decoration:none;border:none;background:none;width:100%;text-align:left;margin-bottom:1px}
-.nav-item:hover{background:var(--primary-xlight);color:var(--primary)}
-.nav-item.active{background:var(--primary-light);color:var(--primary);font-weight:700}
-.nav-item svg{width:15px;height:15px;flex-shrink:0}
-.sidebar-foot{padding:.875rem .75rem;border-top:1px solid var(--border);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
-.foot-btn{display:flex;align-items:center;justify-content:center;gap:.35rem;padding:.6rem .5rem;border-radius:var(--radius-sm);font-size:.75rem;font-weight:700;font-family:inherit;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text-2);text-decoration:none;transition:var(--tr)}
-.foot-btn:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-xlight)}
-.foot-btn.danger{color:var(--danger);border-color:var(--danger-light)}
-.foot-btn.danger:hover{background:var(--danger-light)}
-.foot-btn svg{width:13px;height:13px}
+/* ─── SIDEBAR ─── */
+.sb{width:var(--sw);min-height:100vh;background:var(--surf);border-right:1px solid var(--bdr);display:flex;flex-direction:column;position:fixed;top:0;left:0;bottom:0;z-index:300;overflow-y:auto;transition:transform .25s ease}
+.sb-logo{padding:1.125rem 1.25rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
+.sb-logo-ico{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-ico svg{width:18px;height:18px;color:#fff}
+.sb-logo-txt{font-size:.825rem;font-weight:700;color:var(--tx);line-height:1.3}
+.sb-logo-txt span{font-size:.7rem;font-weight:500;color:var(--tx3);display:block}
+.sb-user{padding:.875rem 1.25rem;border-bottom:1px solid var(--bdr);flex-shrink:0}
+.sb-av{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:#fff;flex-shrink:0}
+.sb-urow{display:flex;align-items:center;gap:.625rem;margin-bottom:.375rem}
+.sb-uname{font-size:.825rem;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip{display:inline-flex;align-items:center;font-size:.67rem;font-weight:600;padding:.2rem .5rem;border-radius:20px;white-space:nowrap}
+.chip-blue{background:var(--blue-l);color:var(--blue)}
+.chip-green{background:var(--green-l);color:var(--green)}
+.chip-red{background:var(--red-l);color:var(--red)}
+.chip-amber{background:var(--amber-l);color:var(--amber)}
+.chip-purple{background:var(--purple-l);color:var(--purple)}
+.chip-gray{background:#f1f5f9;color:var(--tx3)}
+.sb-nav{flex:1;padding:.5rem .75rem}
+.nav-sec{font-size:.62rem;font-weight:700;color:var(--tx4);text-transform:uppercase;letter-spacing:.08em;padding:.75rem .625rem .3rem}
+.nav-item{display:flex;align-items:center;gap:.5rem;padding:.55rem .75rem;border-radius:var(--rsm);font-size:.8rem;font-weight:500;color:var(--tx3);cursor:pointer;transition:var(--tr);text-decoration:none;border:none;background:none;width:100%;text-align:left;margin-bottom:1px}
+.nav-item:hover{background:var(--blue-xl);color:var(--blue)}
+.nav-item.active{background:var(--blue-l);color:var(--blue);font-weight:600}
+.nav-item svg{width:15px;height:15px;flex-shrink:0;opacity:.8}
+.nav-item.active svg{opacity:1}
+.sb-foot{padding:.75rem .75rem;border-top:1px solid var(--bdr);flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:.375rem}
+.foot-btn{display:flex;align-items:center;justify-content:center;gap:.3rem;padding:.5rem .375rem;border-radius:var(--rsm);font-size:.72rem;font-weight:600;font-family:inherit;cursor:pointer;border:1px solid var(--bdr);background:var(--surf2);color:var(--tx3);text-decoration:none;transition:var(--tr)}
+.foot-btn:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-xl)}
+.foot-btn.danger{color:var(--red)}.foot-btn.danger:hover{background:var(--red-l);border-color:var(--red-l)}
+.foot-btn svg{width:12px;height:12px}
 
-/* ── OVERLAY ── */
-.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:150;backdrop-filter:blur(2px)}
-.overlay.show{display:block}
+/* ─── OVERLAY ─── */
+.ov{display:none;position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;backdrop-filter:blur(2px)}
+.ov.show{display:block}
 
-/* ── MAIN ── */
-.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh;transition:margin .3s ease}
-.topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1.5px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:.875rem;position:sticky;top:0;z-index:100;box-shadow:var(--shadow-sm)}
-.menu-toggle{display:none;width:36px;height:36px;border:none;background:var(--bg);border-radius:var(--radius-sm);cursor:pointer;align-items:center;justify-content:center;color:var(--text-2);flex-shrink:0}
-.menu-toggle svg{width:18px;height:18px}
-.topbar-title{font-size:.95rem;font-weight:700;color:var(--text);flex:1}
-.topbar-right{display:flex;align-items:center;gap:.625rem}
-.topbar-info{font-size:.78rem;color:var(--text-3);background:var(--bg);padding:.35rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--border);display:flex;align-items:center;gap:.4rem}
-.content{padding:1.5rem;flex:1}
+/* ─── MAIN ─── */
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:var(--th);background:var(--surf);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 1.5rem;gap:.75rem;position:sticky;top:0;z-index:100;box-shadow:var(--sh)}
+.menu-toggle{display:none;width:34px;height:34px;border:none;background:var(--bg);border-radius:var(--rsm);cursor:pointer;align-items:center;justify-content:center;color:var(--tx2);flex-shrink:0}
+.menu-toggle svg{width:16px;height:16px}
+.topbar-title{font-size:.9rem;font-weight:700;color:var(--tx);flex:1}
+.topbar-right{display:flex;align-items:center;gap:.5rem}
+.tb-date{font-size:.75rem;color:var(--tx3);background:var(--bg);padding:.3rem .625rem;border-radius:var(--rsm);border:1px solid var(--bdr)}
+.content{padding:1.375rem;flex:1}
 .section{display:none}
-.section.active-section{display:block;animation:fadeIn .2s ease}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.section.active-section{display:block;animation:fadeUp .2s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
-/* ── PAGE HEADER ── */
+/* ─── PAGE HEADER ─── */
 .ph{margin-bottom:1.25rem;display:flex;align-items:flex-start;justify-content:space-between;gap:.875rem;flex-wrap:wrap}
-.ph h1{font-size:1.2rem;font-weight:800;color:var(--text)}
-.ph p{font-size:.82rem;color:var(--text-3);margin-top:.2rem}
-.ph-actions{display:flex;gap:.625rem;flex-wrap:wrap;flex-shrink:0}
+.ph-left h1{font-size:1.15rem;font-weight:800;color:var(--tx)}
+.ph-left p{font-size:.78rem;color:var(--tx3);margin-top:.15rem}
+.ph-right{display:flex;gap:.5rem;flex-wrap:wrap;flex-shrink:0;align-items:flex-start}
 
-/* ── BUTTONS ── */
-.btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.125rem;border:none;border-radius:var(--radius-sm);font-size:.83rem;font-weight:700;font-family:inherit;cursor:pointer;transition:var(--tr)}
-.btn svg{width:14px;height:14px;flex-shrink:0}
-.btn-primary{background:var(--primary);color:#fff}
-.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
-.btn-success{background:var(--success);color:#fff}
-.btn-success:hover{background:#047857;transform:translateY(-1px)}
-.btn-warning{background:var(--warning);color:#fff}
-.btn-warning:hover{background:#b45309;transform:translateY(-1px)}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-danger:hover{background:#b91c1c}
-.btn-purple{background:var(--purple);color:#fff}
-.btn-purple:hover{background:#6d28d9}
-.btn-ghost{background:transparent;border:1.5px solid var(--border);color:var(--text-2)}
-.btn-ghost:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-xlight)}
-.btn-sm{padding:.45rem .875rem;font-size:.78rem}
-.btn-xs{padding:.3rem .625rem;font-size:.72rem}
-.btn:disabled{opacity:.6;cursor:not-allowed;transform:none!important}
+/* ─── BUTTONS ─── */
+.btn{display:inline-flex;align-items:center;gap:.35rem;padding:.55rem 1rem;border:none;border-radius:var(--rsm);font-size:.8rem;font-weight:600;font-family:inherit;cursor:pointer;transition:var(--tr);white-space:nowrap}
+.btn svg{width:13px;height:13px;flex-shrink:0}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover{background:var(--blue-d);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.35)}
+.btn-success{background:var(--green);color:#fff}.btn-success:hover{background:#047857;transform:translateY(-1px)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#b45309}
+.btn-purple{background:var(--purple);color:#fff}.btn-purple:hover{background:#6d28d9}
+.btn-ghost{background:transparent;border:1px solid var(--bdr);color:var(--tx2)}.btn-ghost:hover{border-color:var(--blue);color:var(--blue);background:var(--blue-xl)}
+.btn-sm{padding:.4rem .75rem;font-size:.75rem}
+.btn-xs{padding:.275rem .5rem;font-size:.7rem}
+.btn:disabled{opacity:.55;cursor:not-allowed;transform:none!important}
 
-/* ── STAT CARDS ── */
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:.875rem;margin-bottom:1.25rem}
-.kpi{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1.125rem;display:flex;align-items:center;justify-content:space-between;gap:.875rem;position:relative;overflow:hidden}
-.kpi::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
-.kpi.blue::before{background:var(--primary)}.kpi.green::before{background:var(--success)}.kpi.warning::before{background:var(--warning)}.kpi.danger::before{background:var(--danger)}.kpi.purple::before{background:var(--purple)}.kpi.cyan::before{background:var(--cyan)}
-.kpi-text p{font-size:.78rem;color:var(--text-3);font-weight:500}
-.kpi-text .val{font-size:1.875rem;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;line-height:1;margin-top:.25rem}
-.kpi-ico{width:46px;height:46px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.kpi-ico svg{width:20px;height:20px}
-.kpi.blue .kpi-ico{background:var(--primary-light);color:var(--primary)}
-.kpi.green .kpi-ico{background:var(--success-light);color:var(--success)}
-.kpi.warning .kpi-ico{background:var(--warning-light);color:var(--warning)}
-.kpi.danger .kpi-ico{background:var(--danger-light);color:var(--danger)}
-.kpi.purple .kpi-ico{background:var(--purple-light);color:var(--purple)}
-.kpi.cyan .kpi-ico{background:var(--cyan-light);color:var(--cyan)}
+/* ─── CARDS ─── */
+.panel{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;margin-bottom:1rem;box-shadow:var(--sh)}
+.panel-head{padding:.75rem 1rem;border-bottom:1px solid var(--bdr-l);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap}
+.panel-head h3{font-size:.85rem;font-weight:700;color:var(--tx);display:flex;align-items:center;gap:.4rem;margin:0}
+.panel-head h3 svg{width:14px;height:14px;color:var(--blue)}
+.panel-body{padding:1rem}
 
-/* ── PANEL ── */
-.panel{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1.125rem}
-.panel-head{padding:.875rem 1.125rem;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:.875rem;flex-wrap:wrap}
-.panel-head h3{font-size:.9rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:.5rem;margin:0}
-.panel-head h3 svg{width:15px;height:15px;color:var(--primary);flex-shrink:0}
-.panel-body{padding:1.125rem}
+/* ─── KPI GRID ─── */
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:.875rem;margin-bottom:1.25rem}
+.kpi{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:1rem 1.125rem;position:relative;overflow:hidden;box-shadow:var(--sh);transition:var(--tr)}
+.kpi:hover{transform:translateY(-1px);box-shadow:var(--shm)}
+.kpi::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r) var(--r) 0 0}
+.kpi.blue::after{background:linear-gradient(90deg,var(--blue),#60a5fa)}
+.kpi.green::after{background:linear-gradient(90deg,var(--green),#34d399)}
+.kpi.red::after{background:linear-gradient(90deg,var(--red),#f87171)}
+.kpi.amber::after{background:linear-gradient(90deg,var(--amber),#fbbf24)}
+.kpi.purple::after{background:linear-gradient(90deg,var(--purple),#a855f7)}
+.kpi-lbl{font-size:.72rem;font-weight:500;color:var(--tx3);margin-bottom:.35rem}
+.kpi-val{font-size:1.875rem;font-weight:800;color:var(--tx);font-family:'JetBrains Mono',monospace;line-height:1}
+.kpi-sub{font-size:.68rem;color:var(--tx4);margin-top:.25rem}
+.kpi-ico{position:absolute;top:.875rem;right:1rem;width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.kpi-ico svg{width:16px;height:16px}
+.kpi.blue .kpi-ico{background:var(--blue-xl);color:var(--blue)}
+.kpi.green .kpi-ico{background:var(--green-xl);color:var(--green)}
+.kpi.red .kpi-ico{background:var(--red-xl);color:var(--red)}
+.kpi.amber .kpi-ico{background:#fffbeb;color:var(--amber)}
+.kpi.purple .kpi-ico{background:#faf5ff;color:var(--purple)}
 
-/* ── DAILY CONTROL ── */
-.dc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:.875rem;margin-bottom:1.25rem}
-.dc-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem;transition:var(--tr)}
-.dc-card:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
-.dc-card.completed{border-color:var(--success);background:var(--success-light)}
-.dc-card.in-progress{border-color:var(--warning);background:var(--warning-light)}
-.dc-card.not-started{border-color:var(--danger-light)}
-.dc-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.625rem}
-.dc-group{font-size:.9rem;font-weight:800;color:var(--text)}
-.dc-badge{font-size:.72rem;font-weight:700;padding:.25rem .625rem;border-radius:20px}
-.dc-badge.done{background:var(--success-light);color:var(--success)}
-.dc-badge.prog{background:var(--warning-light);color:var(--warning)}
-.dc-badge.none{background:var(--danger-light);color:var(--danger)}
-.dc-curator{font-size:.78rem;color:var(--text-3);display:flex;align-items:center;gap:.35rem;margin-bottom:.5rem}
-.dc-progress{height:6px;background:var(--border);border-radius:6px;overflow:hidden}
-.dc-progress-bar{height:100%;border-radius:6px;transition:width .5s ease}
-.dc-stats{font-size:.72rem;color:var(--text-3);margin-top:.4rem}
+/* ─── TABLE ─── */
+.tw{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:.8rem}
+.tbl th{padding:.6rem .875rem;text-align:left;font-size:.68rem;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;background:var(--surf2);border-bottom:1px solid var(--bdr);white-space:nowrap}
+.tbl td{padding:.625rem .875rem;border-bottom:1px solid var(--bdr-l);vertical-align:middle}
+.tbl tbody tr:hover{background:#fafbff}
+.tbl tbody tr:last-child td{border-bottom:none}
+.mono{font-family:'JetBrains Mono',monospace;font-size:.75rem}
 
-/* ── WEEKLY VIEW ── */
-.wv-table{width:100%;border-collapse:collapse}
-.wv-table th{padding:.625rem .875rem;font-size:.72rem;font-weight:700;color:var(--text-3);text-align:left;border-bottom:1.5px solid var(--border);background:var(--surface2);text-transform:uppercase;letter-spacing:.04em}
-.wv-table td{padding:.75rem .875rem;border-bottom:1px solid var(--border-light);font-size:.83rem;vertical-align:middle}
-.wv-table tr:last-child td{border-bottom:none}
-.wv-table tr:hover td{background:var(--primary-xlight)}
-.day-dot{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:6px;font-size:.65rem;font-weight:700;margin:1px}
-.day-dot.ok{background:var(--success-light);color:var(--success)}
-.day-dot.miss{background:var(--danger-light);color:var(--danger)}
-.day-dot.na{background:var(--border);color:var(--text-4)}
-.prog-bar{height:8px;background:var(--border);border-radius:8px;overflow:hidden;min-width:80px}
-.prog-fill{height:100%;border-radius:8px;transition:width .5s ease;background:linear-gradient(90deg,var(--success),#34d399)}
+/* ─── FORMS ─── */
+.inp{width:100%;padding:.5rem .75rem;border:1px solid var(--bdr);border-radius:var(--rsm);font-size:.8rem;font-family:inherit;color:var(--tx);background:var(--surf);transition:var(--tr);outline:none}
+.inp:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.inp::placeholder{color:var(--tx4)}
+select.inp{cursor:pointer}
+.fg{margin-bottom:.75rem}
+.fg label{display:block;font-size:.75rem;font-weight:600;color:var(--tx2);margin-bottom:.3rem}
 
-/* ── TABLE GENERAL ── */
-.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.tbl{width:100%;border-collapse:collapse;min-width:580px}
-.tbl thead{background:var(--surface2)}
-.tbl th{padding:.625rem .875rem;font-size:.72rem;font-weight:700;color:var(--text-3);text-align:left;border-bottom:1.5px solid var(--border);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
-.tbl td{padding:.75rem .875rem;border-bottom:1px solid var(--border-light);font-size:.83rem}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tr:hover td{background:var(--primary-xlight)}
-.tbl td.mono{font-family:'JetBrains Mono',monospace;font-size:.8rem}
+/* ─── FILTERS ─── */
+.filters{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.filters .inp{width:auto;min-width:130px}
 
-/* ── CHIPS/BADGES ── */
-.chip{display:inline-flex;align-items:center;gap:.25rem;font-size:.72rem;font-weight:600;padding:.2rem .625rem;border-radius:20px}
-.chip-green{background:var(--success-light);color:var(--success)}
-.chip-red{background:var(--danger-light);color:var(--danger)}
-.chip-warn{background:var(--warning-light);color:var(--warning)}
-.chip-blue{background:var(--primary-light);color:var(--primary)}
-.chip-purple{background:var(--purple-light);color:var(--purple)}
+/* ─── GRID 2 ─── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;margin-bottom:1rem}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}}
 
-/* ── FILTERS ── */
-.filters{display:flex;gap:.625rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
-.finp{padding:.65rem .875rem;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:.83rem;color:var(--text);font-family:inherit;outline:none;transition:border-color .2s}
-.finp:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.finp::placeholder{color:var(--text-4)}
-.finp select{background:var(--surface)}
-select.finp{min-width:150px}
-.search-finp{flex:1;min-width:200px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:.75rem center;padding-left:2.5rem}
+/* ─── PROGRESS ─── */
+.prog{height:7px;background:var(--bdr);border-radius:99px;overflow:hidden;margin:.25rem 0}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--blue),#60a5fa);border-radius:99px;transition:width .5s ease}
 
-/* ── MODAL ── */
-.modal-ov{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:9999;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
-.modal-ov.show{display:flex}
-.modal-box{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:1.5rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:var(--shadow)}
-.modal-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
-.modal-title h3{font-size:1rem;font-weight:800;color:var(--text)}
-.modal-close{width:30px;height:30px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text-3);transition:var(--tr)}
-.modal-close:hover{background:var(--danger-light);color:var(--danger)}
+/* ─── ALERTS ─── */
+.alert-item{display:flex;align-items:flex-start;gap:.625rem;padding:.7rem .875rem;border-radius:var(--rsm);margin-bottom:.375rem;font-size:.8rem}
+.alert-item.warn{background:#fffbeb;border-left:3px solid var(--amber)}
+.alert-item.danger{background:var(--red-xl);border-left:3px solid var(--red)}
+.alert-item.info{background:var(--blue-xl);border-left:3px solid var(--blue)}
+.alert-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:.35rem}
+
+/* ─── DAILY CONTROL CARDS ─── */
+.dc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.75rem}
+.dc-card{background:var(--surf);border:1px solid var(--bdr);border-radius:var(--r);padding:.875rem;transition:var(--tr);box-shadow:var(--sh)}
+.dc-card:hover{box-shadow:var(--shm)}
+.dc-card.done{border-left:3px solid var(--green)}
+.dc-card.prog{border-left:3px solid var(--amber)}
+.dc-card.none{border-left:3px solid var(--red)}
+.dc-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
+.dc-tag{font-size:.63rem;font-weight:700;padding:.2rem .5rem;border-radius:20px;text-transform:uppercase}
+.dc-tag.done{background:var(--green-l);color:var(--green)}
+.dc-tag.prog{background:var(--amber-l);color:var(--amber)}
+.dc-tag.none{background:var(--red-l);color:var(--red)}
+.dc-num{font-size:1.1rem;font-weight:800;color:var(--tx)}
+.dc-info{font-size:.75rem;color:var(--tx3);display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+
+/* ─── WEEKLY TABLE ─── */
+.wv-tbl{width:100%;border-collapse:collapse;font-size:.78rem;min-width:600px}
+.wv-tbl th{padding:.5rem .75rem;font-size:.65rem;font-weight:700;color:var(--tx3);text-transform:uppercase;background:var(--surf2);border-bottom:1px solid var(--bdr)}
+.wv-tbl td{padding:.5rem .75rem;border-bottom:1px solid var(--bdr-l)}
+.day-cell{width:28px;height:28px;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700}
+.day-ok{background:var(--green-l);color:var(--green)}
+.day-miss{background:var(--red-l);color:var(--red)}
+.day-empty{background:var(--bdr-l);color:var(--tx4)}
+
+/* ─── MODAL ─── */
+.modal-ov{display:none;position:fixed;inset:0;z-index:500;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);overflow-y:auto;padding:1.5rem}
+.modal-ov.show{display:flex;align-items:flex-start;justify-content:center}
+.modal-box{background:var(--surf);border-radius:var(--rlg);box-shadow:0 20px 60px rgba(0,0,0,.2);width:100%;max-width:540px;margin:auto;position:relative}
+.modal-box.wide{max-width:720px}
+.modal-box.narrow{max-width:420px}
+.modal-head{padding:1rem 1.25rem;border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between}
+.modal-head h3{font-size:.95rem;font-weight:700;color:var(--tx);margin:0}
+.modal-close{width:30px;height:30px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx3);transition:var(--tr)}
+.modal-close:hover{background:var(--red-l);color:var(--red)}
 .modal-close svg{width:14px;height:14px}
-.fg{margin-bottom:.875rem}
-.fg label{display:block;font-size:.75rem;font-weight:700;color:var(--text-2);margin-bottom:.375rem;text-transform:uppercase;letter-spacing:.05em}
-.fg .finp{width:100%}
-.frow2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-.modal-actions{display:flex;gap:.625rem;margin-top:1.125rem}
-.modal-actions .btn{flex:1;justify-content:center}
+.modal-body{padding:1.25rem}
+.modal-foot{padding:.875rem 1.25rem;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:.5rem;flex-wrap:wrap}
 
-/* ── GRID 2 ── */
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.125rem;margin-bottom:1.125rem}
+/* ─── TOAST ─── */
+.toast-wrap{position:fixed;bottom:1.25rem;right:1.25rem;z-index:9999;display:flex;flex-direction:column;gap:.375rem}
+.toast{display:flex;align-items:center;gap:.625rem;padding:.7rem 1rem;border-radius:var(--rsm);font-size:.8rem;font-weight:500;max-width:340px;box-shadow:0 4px 16px rgba(0,0,0,.15);animation:slideIn .25s ease}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+.toast.succ{background:#ecfdf5;border:1px solid #6ee7b7;color:#065f46}
+.toast.err{background:var(--red-xl);border:1px solid #fca5a5;color:#991b1b}
+.toast.warn{background:#fffbeb;border:1px solid #fcd34d;color:#78350f}
+.toast svg{width:14px;height:14px;flex-shrink:0}
 
-/* ── ALERTS ── */
-.alert-item{border-radius:var(--radius-sm);padding:.875rem;margin-bottom:.625rem;border-left:4px solid;display:flex;align-items:flex-start;gap:.75rem}
-.alert-item.warn-alert{background:var(--warning-light);border-color:var(--warning)}
-.alert-item.danger-alert{background:var(--danger-light);border-color:var(--danger)}
-.alert-item.info-alert{background:var(--primary-xlight);border-color:var(--primary)}
-.alert-icon{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.alert-icon svg{width:15px;height:15px}
-.alert-text h5{font-size:.83rem;font-weight:700;color:var(--text)}
-.alert-text p{font-size:.75rem;color:var(--text-2);margin-top:.2rem}
-.alert-time{font-size:.7rem;color:var(--text-4);margin-top:.35rem}
-
-/* ── LOADING / EMPTY ── */
-.loading{display:flex;align-items:center;justify-content:center;padding:3rem}
-.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .7s linear infinite}
+/* ─── SPINNER ─── */
+.spin{width:32px;height:32px;border:3px solid var(--bdr);border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:auto}
 @keyframes spin{to{transform:rotate(360deg)}}
-.empty{text-align:center;padding:3rem 1.5rem;color:var(--text-3)}
-.empty svg{width:40px;height:40px;margin:0 auto .75rem;display:block;opacity:.25}
-.empty p{font-size:.875rem}
+.loading{display:flex;align-items:center;justify-content:center;padding:2.5rem;color:var(--tx4);gap:.75rem;font-size:.8rem}
 
-/* ── TOAST ── */
-.toast-cnt{position:fixed;top:72px;right:1.25rem;z-index:99999;display:flex;flex-direction:column;gap:.5rem;pointer-events:none}
-.toast{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--radius-sm);padding:.7rem 1rem;font-size:.83rem;display:flex;align-items:center;gap:.625rem;box-shadow:var(--shadow);animation:tIn .25s ease;pointer-events:auto;font-weight:600;max-width:320px}
-.toast svg{flex-shrink:0;width:15px;height:15px}
-.toast.succ{border-color:rgba(5,150,105,.4)}
-.toast.succ svg{color:var(--success)}
-.toast.err{border-color:rgba(220,38,38,.4)}
-.toast.err svg{color:var(--danger)}
-.toast.warn{border-color:rgba(217,119,6,.4)}
-.toast.warn svg{color:var(--warning)}
-@keyframes tIn{from{opacity:0;transform:translateX(15px)}to{opacity:1;transform:none}}
+/* ─── EMPTY ─── */
+.empty{text-align:center;padding:3rem 1rem;color:var(--tx4)}
+.empty svg{width:40px;height:40px;opacity:.4;margin-bottom:.75rem}
+.empty p{font-size:.85rem}
 
-/* ── PAGINATION ── */
-.pager{display:flex;align-items:center;gap:.375rem;flex-wrap:wrap}
-.pager-btn{width:32px;height:32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-2);font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:var(--tr);font-family:inherit}
-.pager-btn:hover{border-color:var(--primary);color:var(--primary)}
-.pager-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+/* ─── INFO ROW ─── */
+.info-row{display:flex;align-items:baseline;justify-content:space-between;padding:.45rem 0;border-bottom:1px solid var(--bdr-l);font-size:.8rem;gap:.5rem}
+.info-row:last-child{border-bottom:none}
+.info-lbl{color:var(--tx3);font-weight:500;flex-shrink:0}
+.info-val{color:var(--tx);font-weight:600;text-align:right}
+.info-val.mono{font-family:'JetBrains Mono',monospace;font-size:.75rem}
 
-/* ── RESPONSIVE ── */
-::-webkit-scrollbar{width:5px;height:5px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-@media(max-width:768px){
-  .sidebar{transform:translateX(-100%)}
-  .sidebar.open{transform:translateX(0);box-shadow:var(--shadow)}
+/* ─── PAGINATION ─── */
+.pager{display:flex;gap:.25rem;margin-top:.75rem;flex-wrap:wrap}
+.pg-btn{padding:.35rem .625rem;border:1px solid var(--bdr);border-radius:var(--rsm);font-size:.75rem;font-weight:600;cursor:pointer;background:var(--surf);color:var(--tx3);transition:var(--tr)}
+.pg-btn:hover{border-color:var(--blue);color:var(--blue)}
+.pg-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* ─── NB HISTORY TABLE ─── */
+.nb-tbl{width:100%;border-collapse:collapse;font-size:.78rem;margin-top:.5rem}
+.nb-tbl th{padding:.4rem .625rem;text-align:left;font-size:.67rem;font-weight:700;color:var(--tx3);text-transform:uppercase;background:var(--surf2);border-bottom:1px solid var(--bdr)}
+.nb-tbl td{padding:.5rem .625rem;border-bottom:1px solid var(--bdr-l)}
+.nb-tbl tbody tr:last-child td{border-bottom:none}
+.nb-tbl tbody tr:hover{background:#fafbff}
+
+/* ─── PROFILE CARD ─── */
+.profile-card{background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:var(--r);padding:1.5rem;color:#fff;margin-bottom:1rem;display:flex;align-items:center;gap:1rem}
+.profile-av{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:1.6rem;font-weight:800;flex-shrink:0;border:3px solid rgba(255,255,255,.4)}
+.profile-name{font-size:1.25rem;font-weight:800}
+.profile-sub{font-size:.8rem;opacity:.85;margin-top:.2rem}
+
+/* ─── CLOSE BTN MODAL ─── */
+.close-btn{width:30px;height:30px;border:none;background:var(--bg);border-radius:6px;cursor:pointer;color:var(--tx3);transition:var(--tr)}
+.close-btn:hover{background:var(--red-l);color:var(--red)}
+
+/* ─── RESPONSIVE ─── */
+@media(max-width:900px){
+  .sb{transform:translateX(-100%)}
+  .sb.open{transform:none}
   .main{margin-left:0}
-  .menu-toggle{display:inline-flex}
-  .content{padding:1rem}
+  .menu-toggle{display:flex}
   .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .dc-grid{grid-template-columns:1fr}
-  .g2{grid-template-columns:1fr}
-  .frow2{grid-template-columns:1fr}
-  .topbar-info{display:none}
-  .toast-cnt{left:.875rem;right:.875rem;top:auto;bottom:.875rem}
 }
 @media(max-width:480px){
+  .kpi-grid{grid-template-columns:1fr 1fr}
   .content{padding:.875rem}
-  .kpi-grid{grid-template-columns:repeat(2,1fr)}
-  .ph-actions{width:100%}
-  .ph-actions .btn{flex:1;justify-content:center}
+  .g2{grid-template-columns:1fr}
 }
+
+/* ─── BADGE COUNT ─── */
+.badge-count{background:var(--red);color:#fff;font-size:.62rem;font-weight:700;padding:.1rem .375rem;border-radius:20px;min-width:18px;text-align:center}
+
+/* ─── STATUS ICONS ─── */
+.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;flex-shrink:0}
+.dot-green{background:var(--green)}
+.dot-red{background:var(--red)}
+.dot-amber{background:var(--amber)}
+.dot-gray{background:var(--tx4)}
+
+/* ─── CLOSED GROUP BADGE ─── */
+.closed-badge{display:inline-flex;align-items:center;gap:.25rem;background:#f1f5f9;color:var(--tx3);border:1px dashed var(--bdr);font-size:.67rem;font-weight:600;padding:.15rem .5rem;border-radius:20px}
 </style>
 </head>
 <body>
 
-<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
 <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <div class="sidebar-logo">
-    <div class="logo-icon"><img src="/static/logo.jpg" alt="Logo"></div>
-    <div class="logo-brand">Декан<span>Системаи Мех-мат</span></div>
+<aside class="sb" id="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="sb-logo-txt">АИС Мех-мат<span>Идораи Факулта</span></div>
   </div>
-  <div class="sidebar-user">
-    <div class="u-row">
-      <div class="u-avatar">{{ user.full_name[0].upper() if user.full_name else 'D' }}</div>
-      <div style="flex:1;min-width:0">
-        <div class="u-name">{{ user.full_name or 'Декан' }}</div>
-        <div class="u-sub">{{ faculty.name if faculty else 'Факултет' }}</div>
+
+  <div class="sb-user">
+    <div class="sb-urow">
+      <div class="sb-av" id="sb-av">Д</div>
+      <div style="overflow:hidden;flex:1">
+        <div class="sb-uname" id="sb-uname">{{ user.full_name or 'Декан' }}</div>
+        <span class="chip chip-blue">Декан</span>
       </div>
     </div>
-    <span class="badge badge-blue">Декан</span>
+    <div style="font-size:.7rem;color:var(--tx4)" id="sb-faculty">{{ faculty.name if faculty else '—' }}</div>
   </div>
-  <nav class="sidebar-nav">
+
+  <nav class="sb-nav">
     <div class="nav-sec">Асосӣ</div>
-    <button class="nav-item active" onclick="showSection('dashboard',this)" id="navDashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <button class="nav-item active" onclick="showSection('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
       Умумӣ
     </button>
-    <button class="nav-item" onclick="showSection('daily-control',this)" id="navDailyControl">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    <button class="nav-item" onclick="showSection('daily-control',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       Назорати рӯзона
     </button>
-    <button class="nav-item" onclick="showSection('weekly',this)" id="navWeekly">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+    <button class="nav-item" onclick="showSection('weekly',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
       Назорати ҳафтаина
     </button>
-    <button class="nav-item" onclick="showSection('analytics',this)" id="navAnalytics">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Аналитика
-    </button>
-    <div class="nav-sec">Идоракунӣ</div>
+
+    <div class="nav-sec">Маълумот</div>
     <button class="nav-item" onclick="showSection('curators',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Кураторон
     </button>
     <button class="nav-item" onclick="showSection('groups',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
       Гурӯҳҳо
     </button>
     <button class="nav-item" onclick="showSection('students',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
       Донишҷӯён
     </button>
     <button class="nav-item" onclick="showSection('at-risk',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       Хавфнок (NB)
     </button>
-    <div class="nav-sec">Система</div>
+
+    <div class="nav-sec">Тизим</div>
     <button class="nav-item" onclick="showSection('audit-log',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
       Аудит лог
     </button>
     <button class="nav-item" onclick="showSection('profile',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
       Профил
     </button>
   </nav>
-  <div class="sidebar-foot">
-    <button class="foot-btn" onclick="showSection('change-password',this)">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+
+  <div class="sb-foot">
+    <a href="/dean/change-password" class="foot-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
       Парол
-    </button>
+    </a>
     <a href="/logout" class="foot-btn danger">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      Хуруҷ
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Баромад
     </a>
   </div>
 </aside>
 
+<div class="ov" id="overlay" onclick="closeSidebar()"></div>
+
 <!-- MAIN -->
-<div class="main" id="mainContent">
-  <header class="topbar">
+<div class="main">
+  <div class="topbar">
     <button class="menu-toggle" onclick="openSidebar()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
     </button>
     <div class="topbar-title" id="page-title">Умумӣ</div>
     <div class="topbar-right">
-      <div class="topbar-info">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="12" height="12"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-        {{ faculty.name if faculty else 'Факултет' }}
-      </div>
+      <div class="tb-date" id="tb-date"></div>
       <button class="btn btn-ghost btn-sm" onclick="refreshCurrentSection()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13" id="refresh-icon"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        <svg id="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+        Навсозӣ
       </button>
     </div>
-  </header>
+  </div>
 
   <div class="content">
 
-  <!-- ══════════════════ DASHBOARD ══════════════════ -->
+  <!-- ══ DASHBOARD ══ -->
   <section id="dashboard" class="section active-section">
-    <div class="kpi-grid">
-      <div class="kpi blue"><div class="kpi-text"><p>Донишҷӯён</p><div class="val" id="kpi-students">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div></div>
-      <div class="kpi green"><div class="kpi-text"><p>Кураторҳо</p><div class="val" id="kpi-curators">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div></div>
-      <div class="kpi purple"><div class="kpi-text"><p>Гурӯҳҳо</p><div class="val" id="kpi-groups">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div></div>
-      <div class="kpi danger"><div class="kpi-text"><p>Зиёда аз NB</p><div class="val" id="kpi-high-absence">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div></div>
-      <div class="kpi warning"><div class="kpi-text"><p>Иштирок имрӯз</p><div class="val" id="kpi-attendance">—</div></div><div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div></div>
+    <div class="ph">
+      <div class="ph-left"><h1>Умумӣ</h1><p id="dash-subtitle">Вазъи умумии факулта имрӯз</p></div>
     </div>
 
-    <!-- Charts row -->
+    <div class="kpi-grid">
+      <div class="kpi blue">
+        <div class="kpi-lbl">Ҳамаи донишҷӯён</div>
+        <div class="kpi-val" id="kpi-students">—</div>
+        <div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+      </div>
+      <div class="kpi purple">
+        <div class="kpi-lbl">Кураторон</div>
+        <div class="kpi-val" id="kpi-curators">—</div>
+        <div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      </div>
+      <div class="kpi green">
+        <div class="kpi-lbl">Гурӯҳҳо</div>
+        <div class="kpi-val" id="kpi-groups">—</div>
+        <div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+      </div>
+      <div class="kpi amber">
+        <div class="kpi-lbl">Давомот имрӯз</div>
+        <div class="kpi-val" id="kpi-attendance">—</div>
+        <div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+      </div>
+      <div class="kpi red">
+        <div class="kpi-lbl">NB > <span id="nb-limit-lbl">35</span></div>
+        <div class="kpi-val" id="kpi-high-absence">—</div>
+        <div class="kpi-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div>
+      </div>
+    </div>
+
     <div class="g2">
+      <!-- Chart -->
       <div class="panel">
-        <div class="panel-head"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Иштирок</h3>
-        <div style="display:flex;gap:.375rem">
-          <button class="btn btn-sm" id="cBtn-daily" onclick="updateChart('daily')" style="background:var(--primary);color:#fff">Рӯз</button>
-          <button class="btn btn-ghost btn-sm" id="cBtn-weekly" onclick="updateChart('weekly')">Ҳафта</button>
-          <button class="btn btn-ghost btn-sm" id="cBtn-monthly" onclick="updateChart('monthly')">Моҳ</button>
-        </div>
+        <div class="panel-head">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Давомот (%)</h3>
+          <div style="display:flex;gap:.375rem">
+            <button class="btn btn-sm btn-primary" id="cBtn-daily" onclick="updateChart('daily')">Рӯз</button>
+            <button class="btn btn-sm btn-ghost" id="cBtn-weekly" onclick="updateChart('weekly')">Ҳафта</button>
+            <button class="btn btn-sm btn-ghost" id="cBtn-monthly" onclick="updateChart('monthly')">Моҳ</button>
+          </div>
         </div>
         <div class="panel-body" style="height:220px"><canvas id="attendanceChart"></canvas></div>
       </div>
+
+      <!-- Alerts -->
       <div class="panel">
-        <div class="panel-head"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>Омор бо курсҳо</h3></div>
-        <div class="panel-body" id="course-stats"><div class="loading"><div class="spinner"></div></div></div>
+        <div class="panel-head">
+          <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Огоҳиҳо <span class="badge-count" id="alert-count">0</span></h3>
+          <button class="btn btn-ghost btn-sm" onclick="loadAlerts()">Навсозӣ</button>
+        </div>
+        <div class="panel-body" style="max-height:220px;overflow-y:auto;padding:.5rem" id="alerts-container">
+          <div class="loading"><div class="spin"></div></div>
+        </div>
       </div>
     </div>
 
-    <!-- Top/bottom groups -->
     <div class="g2">
+      <!-- Course stats -->
       <div class="panel">
-        <div class="panel-head"><h3>🏆 ТОП-5 Беҳтарин гурӯҳ</h3></div>
-        <div class="tw"><table class="tbl" id="top-groups-table"><tbody><tr><td colspan="3" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
+        <div class="panel-head"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/></svg>Оморӣ аз рӯи курс</h3></div>
+        <div class="panel-body" id="course-stats"><div class="loading"><div class="spin"></div></div></div>
       </div>
+      <!-- Shift stats -->
       <div class="panel">
-        <div class="panel-head"><h3>⚠️ ТОП-5 Бадтарин гурӯҳ</h3></div>
-        <div class="tw"><table class="tbl" id="bottom-groups-table"><tbody><tr><td colspan="3" class="loading"><div class="spinner"></div></td></tr></tbody></table></div>
+        <div class="panel-head"><h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Навбатҳо</h3></div>
+        <div class="panel-body">
+          <div style="margin-bottom:1rem">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.375rem"><span style="font-weight:600;font-size:.82rem">Навбати 1</span><span id="shift-1-pct" style="font-weight:700;color:var(--blue)">—</span></div>
+            <div class="prog"><div class="prog-fill" id="shift-1-bar" style="width:0"></div></div>
+            <div style="font-size:.7rem;color:var(--tx4);margin-top:.2rem" id="shift-1-sub">—</div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:.375rem"><span style="font-weight:600;font-size:.82rem">Навбати 2</span><span id="shift-2-pct" style="font-weight:700;color:var(--purple)">—</span></div>
+            <div class="prog"><div class="prog-fill" id="shift-2-bar" style="width:0;background:linear-gradient(90deg,var(--purple),#a855f7)"></div></div>
+            <div style="font-size:.7rem;color:var(--tx4);margin-top:.2rem" id="shift-2-sub">—</div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <!-- Alerts -->
-    <div class="panel">
-      <div class="panel-head">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>Огоҳиҳо (<span id="alert-count">0</span>)</h3>
-        <button class="btn btn-ghost btn-sm" onclick="loadAlerts()">Навсозӣ</button>
-      </div>
-      <div id="alerts-container" class="panel-body" style="max-height:280px;overflow-y:auto"><div class="loading"><div class="spinner"></div></div></div>
     </div>
   </section>
 
-  <!-- ══════════════════ DAILY CONTROL ══════════════════ -->
+  <!-- ══ DAILY CONTROL ══ -->
   <section id="daily-control" class="section">
     <div class="ph">
-      <div>
-        <h1>⏰ Назорати рӯзона</h1>
-        <p id="dc-date-label">Вазъи журналгузорӣ барои имрӯз</p>
-      </div>
-      <div class="ph-actions">
-        <input type="date" class="finp btn-sm" id="dcDate" onchange="loadDailyControl()">
+      <div class="ph-left"><h1>Назорати рӯзона</h1><p id="dc-date-label">Вазъи журналгузорӣ</p></div>
+      <div class="ph-right">
+        <input type="date" class="inp btn-sm" id="dcDate" onchange="loadDailyControl()" style="width:auto">
         <button class="btn btn-primary btn-sm" onclick="loadDailyControl()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
           Навсозӣ
         </button>
       </div>
     </div>
 
-    <!-- Summary row -->
-    <div class="kpi-grid" id="dc-summary" style="grid-template-columns:repeat(3,1fr);max-width:600px;margin-bottom:1.25rem">
-      <div class="kpi green" style="padding:.875rem"><div class="kpi-text"><p>Пур кардашуда</p><div class="val" style="font-size:1.5rem" id="dc-done">—</div></div></div>
-      <div class="kpi warning" style="padding:.875rem"><div class="kpi-text"><p>Ҷараён дорад</p><div class="val" style="font-size:1.5rem" id="dc-prog">—</div></div></div>
-      <div class="kpi danger" style="padding:.875rem"><div class="kpi-text"><p>Қайд нашуд</p><div class="val" style="font-size:1.5rem" id="dc-none">—</div></div></div>
+    <div class="g3" style="max-width:600px">
+      <div class="kpi green" style="padding:.75rem"><div class="kpi-lbl" style="font-size:.7rem">Пур шуд</div><div class="kpi-val" id="dc-done" style="font-size:1.5rem">—</div></div>
+      <div class="kpi amber" style="padding:.75rem"><div class="kpi-lbl" style="font-size:.7rem">Ҷараён</div><div class="kpi-val" id="dc-prog" style="font-size:1.5rem">—</div></div>
+      <div class="kpi red" style="padding:.75rem"><div class="kpi-lbl" style="font-size:.7rem">Қайд нашуд</div><div class="kpi-val" id="dc-none" style="font-size:1.5rem">—</div></div>
     </div>
 
-    <div id="dc-loading" class="loading"><div class="spinner"></div></div>
+    <div id="dc-loading" class="loading"><div class="spin"></div><span>Зеркашӣ...</span></div>
     <div class="dc-grid" id="dc-cards" style="display:none"></div>
   </section>
 
-  <!-- ══════════════════ WEEKLY CONTROL ══════════════════ -->
+  <!-- ══ WEEKLY ══ -->
   <section id="weekly" class="section">
     <div class="ph">
-      <div>
-        <h1>📅 Назорати ҳафтаина</h1>
-        <p>Вазъи журналгузорӣ барои ҳафтаи ҷорӣ</p>
-      </div>
-      <div class="ph-actions">
-        <input type="date" class="finp btn-sm" id="wvWeekStart" onchange="loadWeeklyControl()">
+      <div class="ph-left"><h1>Назорати ҳафтаина</h1><p>Вазъи журналгузорӣ ҳафтаина</p></div>
+      <div class="ph-right">
+        <input type="date" class="inp btn-sm" id="wvWeekStart" onchange="loadWeeklyControl()" style="width:auto">
         <button class="btn btn-primary btn-sm" onclick="loadWeeklyControl()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
           Навсозӣ
         </button>
       </div>
     </div>
-    <div id="wv-loading" class="loading"><div class="spinner"></div></div>
+    <div id="wv-loading" class="loading"><div class="spin"></div><span>Зеркашӣ...</span></div>
     <div class="panel" id="wv-panel" style="display:none">
       <div class="panel-head">
-        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Ҳафтавӣ — Ҳама гурӯҳҳо</h3>
-        <div id="wv-legend" style="display:flex;gap:.625rem;font-size:.72rem;font-weight:600">
-          <span style="display:flex;align-items:center;gap:.3rem"><span class="day-dot ok">Д</span>Пур</span>
-          <span style="display:flex;align-items:center;gap:.3rem"><span class="day-dot miss">Д</span>Холӣ</span>
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Ҳафтаина — Ҳамаи гурӯҳҳо</h3>
+        <div style="display:flex;gap:.625rem;font-size:.72rem;font-weight:600;align-items:center">
+          <span style="display:flex;align-items:center;gap:.3rem"><span class="day-cell day-ok" style="font-size:.6rem">П</span>Пур</span>
+          <span style="display:flex;align-items:center;gap:.3rem"><span class="day-cell day-miss" style="font-size:.6rem">Х</span>Холӣ</span>
         </div>
       </div>
-      <div class="tw"><table class="wv-table" id="wv-table"><tbody></tbody></table></div>
+      <div class="tw"><table class="wv-tbl" id="wv-table"><thead id="wv-thead"></thead><tbody id="wv-tbody"></tbody></table></div>
     </div>
   </section>
 
-  <!-- ══════════════════ ANALYTICS ══════════════════ -->
-  <section id="analytics" class="section">
-    <div class="ph"><div><h1>📈 Аналитика</h1><p>Таҳлили амиқи маълумот</p></div></div>
-    <div class="g2">
-      <div class="panel">
-        <div class="panel-head"><h3>Навбат 1 ва 2</h3></div>
-        <div class="panel-body">
-          <div style="margin-bottom:1rem">
-            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="font-size:.83rem;font-weight:600">Навбати 1</span><span id="shift-1-pct" style="font-weight:700">0%</span></div>
-            <div class="prog-bar"><div class="prog-fill" id="shift-1-bar" style="width:0"></div></div>
-            <div style="font-size:.72rem;color:var(--text-3);margin-top:.25rem" id="shift-1-students">0 донишҷӯ</div>
-          </div>
-          <div>
-            <div style="display:flex;justify-content:space-between;margin-bottom:.4rem"><span style="font-size:.83rem;font-weight:600">Навбати 2</span><span id="shift-2-pct" style="font-weight:700">0%</span></div>
-            <div class="prog-bar"><div class="prog-fill" id="shift-2-bar" style="width:0;background:linear-gradient(90deg,var(--primary),#60a5fa)"></div></div>
-            <div style="font-size:.72rem;color:var(--text-3);margin-top:.25rem" id="shift-2-students">0 донишҷӯ</div>
-          </div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><h3>Ҳафтаи охир</h3></div>
-        <div class="panel-body" id="weekly-stats"><div class="loading"><div class="spinner"></div></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ══════════════════ CURATORS ══════════════════ -->
+  <!-- ══ CURATORS ══ -->
   <section id="curators" class="section">
     <div class="ph">
-      <div><h1>👨‍🏫 Кураторон</h1></div>
-      <div class="ph-actions">
+      <div class="ph-left"><h1>Кураторон</h1></div>
+      <div class="ph-right">
         <button class="btn btn-primary btn-sm" onclick="openModal('curator-modal')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Куратори нав
         </button>
       </div>
     </div>
     <div class="panel">
-      <div class="panel-head"><h3>Рӯйхати кураторон</h3><input type="text" class="finp search-finp" id="curator-search" placeholder="Ҷустуҷӯ..." oninput="loadCurators()" style="max-width:250px"></div>
-      <div class="tw"><table class="tbl">
-        <thead><tr><th>#</th><th>Ном</th><th>Username</th><th>Гурӯҳ</th><th>Тел.</th><th>Вазъ</th><th>Амалиёт</th></tr></thead>
-        <tbody id="curators-table"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
-      </table></div>
+      <div class="panel-head">
+        <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Рӯйхати кураторон</h3>
+        <input type="text" class="inp" id="curator-search" placeholder="Ҷустуҷӯ..." oninput="filterCurators()" style="max-width:220px">
+      </div>
+      <div class="tw">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Ном ва насаб</th><th>Username</th><th>Гурӯҳ</th><th>Телефон</th><th>Сол</th><th>Вазъ</th><th>Амал</th></tr></thead>
+          <tbody id="curators-table"><tr><td colspan="8"><div class="loading"><div class="spin"></div></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════════════ GROUPS ══════════════════ -->
+  <!-- ══ GROUPS ══ -->
   <section id="groups" class="section">
     <div class="ph">
-      <div><h1>👥 Гурӯҳҳо</h1></div>
-      <div class="ph-actions">
+      <div class="ph-left"><h1>Гурӯҳҳо</h1></div>
+      <div class="ph-right">
         <button class="btn btn-primary btn-sm" onclick="openGroupModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
           Гурӯҳи нав
         </button>
       </div>
     </div>
     <div class="panel">
-      <div class="tw"><table class="tbl">
-        <thead><tr><th>#</th><th>Рақам</th><th>Курс</th><th>Навбат</th><th>Куратор</th><th>Д-ён</th><th>Амалиёт</th></tr></thead>
-        <tbody id="groups-table"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
-      </table></div>
+      <div class="tw">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Рақам</th><th>Курс</th><th>Навбат</th><th>Куратор</th><th>Донишҷӯён</th><th>Вазъ</th><th>Амал</th></tr></thead>
+          <tbody id="groups-table"><tr><td colspan="8"><div class="loading"><div class="spin"></div></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════════════ STUDENTS ══════════════════ -->
+  <!-- ══ STUDENTS ══ -->
   <section id="students" class="section">
     <div class="ph">
-      <div><h1>🎓 Донишҷӯён</h1></div>
-      <div class="ph-actions">
-        <button class="btn btn-success btn-sm" onclick="exportData('students')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Экспорт
+      <div class="ph-left"><h1>Донишҷӯён</h1><p>Ҷамъ: <strong id="total-students">—</strong></p></div>
+      <div class="ph-right">
+        <button class="btn btn-success btn-sm" onclick="openStudentModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Донишҷӯи нав
         </button>
-        <button class="btn btn-primary btn-sm" onclick="openStudentModal()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" width="13" height="13"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Нав
+        <button class="btn btn-ghost btn-sm" onclick="exportData('students')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Экспорт
         </button>
       </div>
     </div>
     <div class="panel">
-      <div class="panel-head" style="flex-wrap:wrap;gap:.625rem">
-        <div class="filters" style="margin:0;flex:1">
-          <select class="finp" id="student-filter-group" onchange="loadStudents()" style="min-width:140px"><option value="">Ҳама гурӯҳ</option></select>
-          <select class="finp" id="student-filter-course" onchange="loadStudents()" style="min-width:120px"><option value="">Ҳама курс</option><option value="1">1-курс</option><option value="2">2-курс</option><option value="3">3-курс</option><option value="4">4-курс</option></select>
-          <input type="text" class="finp" id="student-filter-birthplace" placeholder="Ҷои таваллуд..." oninput="debounceSearch()" style="min-width:150px">
-          <input type="text" class="finp search-finp" id="student-search" placeholder="Ҷустуҷӯ..." oninput="debounceSearch()" style="flex:1">
+      <div class="panel-head">
+        <div class="filters" style="margin:0;flex-wrap:wrap">
+          <input type="text" class="inp" id="student-search" placeholder="Ҷустуҷӯ..." oninput="debounceSearch()" style="min-width:180px">
+          <select class="inp" id="student-filter-group" onchange="loadStudents()"><option value="">Ҳама гурӯҳ</option></select>
+          <select class="inp" id="student-filter-course" onchange="loadStudents()"><option value="">Ҳама курс</option><option value="1">1-курс</option><option value="2">2-курс</option><option value="3">3-курс</option><option value="4">4-курс</option></select>
         </div>
       </div>
-      <div class="tw"><table class="tbl">
-        <thead><tr><th><input type="checkbox" id="select-all-header" onchange="toggleAll('student')"></th><th>#</th><th>Ном</th><th>Код</th><th>Гурӯҳ</th><th>Курс</th><th>Ҷои тав.</th><th>NB</th><th>Амалиёт</th></tr></thead>
-        <tbody id="students-table"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
-      </table></div>
-      <div style="padding:.875rem 1.125rem;border-top:1px solid var(--border-light);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.625rem">
-        <div style="font-size:.8rem;color:var(--text-3)">Ҳамагӣ: <strong id="total-students" style="color:var(--text)">0</strong> донишҷӯ</div>
-        <div id="pagination-controls" class="pager"></div>
+      <div class="tw">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Ном ва насаб</th><th>Код</th><th>Гурӯҳ</th><th>Курс</th><th>Зодгоҳ</th><th>Тел. волидайн</th><th>NB</th><th>Амал</th></tr></thead>
+          <tbody id="students-table"><tr><td colspan="9"><div class="loading"><div class="spin"></div></div></td></tr></tbody>
+        </table>
+      </div>
+      <div style="padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--bdr-l)">
+        <div style="font-size:.75rem;color:var(--tx3)" id="page-info"></div>
+        <div class="pager" id="pagination-controls"></div>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════ AT-RISK ══════════════════ -->
+  <!-- ══ AT-RISK ══ -->
   <section id="at-risk" class="section">
     <div class="ph">
-      <div><h1>🚨 Хавфнок (NB)</h1><p>Донишҷӯёне ки NB аз ҳад зиёд аст</p></div>
-      <div class="ph-actions">
-        <button class="btn btn-success btn-sm" onclick="exportData('nb')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="13" height="13"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <div class="ph-left"><h1>Донишҷӯёни хавфнок (NB)</h1><p>Ғайбудии зиёд аз ҳадди муқарраршуда</p></div>
+      <div class="ph-right">
+        <button class="btn btn-ghost btn-sm" onclick="exportData('nb')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Экспорт NB
         </button>
       </div>
@@ -572,62 +600,74 @@ select.finp{min-width:150px}
     <div class="panel">
       <div class="panel-head">
         <div class="filters" style="margin:0">
-          <select class="finp" id="at-risk-filter-group" onchange="loadAtRiskStudents()"><option value="">Ҳама гурӯҳ</option></select>
-          <select class="finp" id="at-risk-filter-course" onchange="loadAtRiskStudents()"><option value="">Ҳама курс</option><option value="1">1-курс</option><option value="2">2-курс</option><option value="3">3-курс</option><option value="4">4-курс</option></select>
+          <select class="inp" id="at-risk-filter-group" onchange="loadAtRiskStudents()"><option value="">Ҳама гурӯҳ</option></select>
+          <select class="inp" id="at-risk-filter-course" onchange="loadAtRiskStudents()"><option value="">Ҳама курс</option><option value="1">1-курс</option><option value="2">2-курс</option><option value="3">3-курс</option><option value="4">4-курс</option></select>
         </div>
       </div>
-      <div class="tw"><table class="tbl">
-        <thead><tr><th>#</th><th>Ном</th><th>Код</th><th>Гурӯҳ</th><th>NB</th><th>Тел. волидайн</th><th>Амалиёт</th></tr></thead>
-        <tbody id="at-risk-table"><tr><td colspan="7"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
-      </table></div>
+      <div class="tw">
+        <table class="tbl">
+          <thead><tr><th>#</th><th>Ном ва насаб</th><th>Код</th><th>Гурӯҳ</th><th>Курс</th><th>NB соат</th><th>Тел. волидайн</th><th>Амал</th></tr></thead>
+          <tbody id="at-risk-table"><tr><td colspan="8"><div class="loading"><div class="spin"></div></div></td></tr></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
-  <!-- ══════════════════ AUDIT LOG ══════════════════ -->
+  <!-- ══ AUDIT LOG ══ -->
   <section id="audit-log" class="section">
-    <div class="ph"><div><h1>📋 Аудит лог</h1></div></div>
+    <div class="ph"><div class="ph-left"><h1>Аудит лог</h1></div></div>
     <div class="panel">
       <div class="panel-head">
         <div class="filters" style="margin:0">
-          <select class="finp" id="audit-filter-action"><option value="">Ҳамаи амалиётҳо</option></select>
-          <input type="date" class="finp" id="audit-date">
+          <input type="date" class="inp" id="audit-date" style="width:auto">
           <button class="btn btn-primary btn-sm" onclick="loadAuditLog()">Ҷустуҷӯ</button>
         </div>
       </div>
-      <div class="tw"><table class="tbl">
-        <thead><tr><th>Сана</th><th>Корбар</th><th>Амалиёт</th><th>Объект</th><th>Тафсилот</th></tr></thead>
-        <tbody id="audit-table"><tr><td colspan="5"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
-      </table></div>
-    </div>
-  </section>
-
-  <!-- ══════════════════ PROFILE ══════════════════ -->
-  <section id="profile" class="section">
-    <div class="ph"><div><h1>👤 Профил</h1></div></div>
-    <div style="max-width:500px">
-      <div class="panel">
-        <div class="panel-head"><h3>Маълумоти шахсӣ</h3></div>
-        <div class="panel-body">
-          <form onsubmit="saveProfile(event)">
-            <div class="fg"><label>Ному насаб *</label><input class="finp" id="profile-full-name" value="{{ user.full_name or '' }}" required></div>
-            <div class="fg"><label>Email</label><input type="email" class="finp" id="profile-email" value="{{ user.email or '' }}"></div>
-            <div class="fg"><label>Телефон</label><input class="finp" id="profile-phone" value="{{ user.phone or '' }}"></div>
-            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Сабт кардан</button>
-          </form>
-        </div>
+      <div class="tw">
+        <table class="tbl">
+          <thead><tr><th>Сана</th><th>Корбар</th><th>Амалиёт</th><th>Объект</th><th>Тафсилот</th></tr></thead>
+          <tbody id="audit-table"><tr><td colspan="5"><div class="loading"><div class="spin"></div></div></td></tr></tbody>
+        </table>
       </div>
     </div>
   </section>
 
-  <!-- ══════════════════ CHANGE PASSWORD ══════════════════ -->
-  <section id="change-password" class="section">
-    <div class="ph"><div><h1>🔐 Иваз кардани парол</h1></div></div>
-    <div style="max-width:400px">
+  <!-- ══ PROFILE ══ -->
+  <section id="profile" class="section">
+    <div class="ph"><div class="ph-left"><h1>Профили ман</h1></div></div>
+    <div style="max-width:600px">
+      <div class="profile-card">
+        <div class="profile-av" id="p-av">Д</div>
+        <div>
+          <div class="profile-name" id="p-name">{{ user.full_name or '—' }}</div>
+          <div class="profile-sub">Декан · @{{ user.username }}</div>
+          <div class="profile-sub" id="p-faculty">{{ faculty.name if faculty else '—' }}</div>
+        </div>
+      </div>
       <div class="panel">
+        <div class="panel-head"><h3>Маълумоти умумӣ</h3></div>
         <div class="panel-body">
-          <form action="/dean/change-password" method="post">
-            <div class="fg"><label>Пароли нав (6 рақам)</label><input type="password" class="finp" name="new_password" maxlength="6" pattern="\d{6}" required placeholder="••••••" style="letter-spacing:6px;font-size:1.25rem;text-align:center"></div>
-            <button type="submit" class="btn btn-warning" style="width:100%;justify-content:center">Иваз кардан</button>
+          <div class="info-row"><span class="info-lbl">ID</span><span class="info-val mono">#{{ user.id }}</span></div>
+          <div class="info-row"><span class="info-lbl">Username</span><span class="info-val mono">@{{ user.username }}</span></div>
+          <div class="info-row"><span class="info-lbl">Факултет</span><span class="info-val">{{ faculty.name if faculty else '—' }}</span></div>
+          <div class="info-row"><span class="info-lbl">Кад шуд</span><span class="info-val">{{ user.created_at.strftime('%d.%m.%Y') if user.created_at else '—' }}</span></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-head"><h3>Таҳрири маълумот</h3></div>
+        <div class="panel-body">
+          <form onsubmit="saveProfile(event)">
+            <div class="g2">
+              <div class="fg"><label>Ному насаб *</label><input class="inp" id="pf-name" value="{{ user.full_name or '' }}" required></div>
+              <div class="fg"><label>Соли таваллуд</label><input type="number" class="inp" id="pf-birth" value="{{ user.birth_year or '' }}" min="1950" max="2010"></div>
+              <div class="fg"><label>Email</label><input type="email" class="inp" id="pf-email" value="{{ user.email or '' }}"></div>
+              <div class="fg"><label>Телефон</label><input class="inp" id="pf-phone" value="{{ user.phone or '' }}" placeholder="+992..."></div>
+            </div>
+            <div class="fg"><label>Кафедра / Вазифа</label><input class="inp" id="pf-dept" value="{{ user.department or '' }}"></div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Сабт кардан
+            </button>
           </form>
         </div>
       </div>
@@ -637,521 +677,890 @@ select.finp{min-width:150px}
   </div><!-- /content -->
 </div><!-- /main -->
 
-<!-- ══════════ MODALS ══════════ -->
-<!-- Curator Modal -->
+<!-- ══ MODALS ══ -->
+
+<!-- Curator Create -->
 <div class="modal-ov" id="curator-modal">
-  <div class="modal-box">
-    <div class="modal-title"><h3>👨‍🏫 Куратори нав</h3><button class="modal-close" onclick="closeModal('curator-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <form id="curator-form" onsubmit="createCurator(event)">
-      <div class="fg"><label>Номи пурра *</label><input type="text" name="full_name" required class="finp" placeholder="Фамилия Ном"></div>
-      <div class="fg"><label>Username *</label><input type="text" name="username" required class="finp" placeholder="username"></div>
-      <div class="fg"><label>Email</label><input type="email" name="email" class="finp" placeholder="email@gmail.com"></div>
-      <div class="fg"><label>Телефон</label><input type="text" name="phone" class="finp" placeholder="+992..."></div>
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary">Эҷод кардан</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('curator-modal')">Бекор</button>
-      </div>
-    </form>
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <h3>Куратори нав</h3>
+      <button class="modal-close" onclick="closeModal('curator-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="curator-form" onsubmit="createCurator(event)">
+        <div class="fg"><label>Ному насаб *</label><input type="text" name="full_name" required class="inp" placeholder="Фамилия Ном Отчество"></div>
+        <div class="fg"><label>Username *</label><input type="text" name="username" required class="inp" placeholder="username"></div>
+        <div class="fg"><label>Email</label><input type="email" name="email" class="inp" placeholder="email@gmail.com"></div>
+        <div class="fg"><label>Телефон</label><input type="text" name="phone" class="inp" placeholder="+992..."></div>
+        <div class="fg"><label>Соли таваллуд</label><input type="number" name="birth_year" class="inp" min="1960" max="2000" placeholder="1985"></div>
+        <div class="modal-foot" style="padding:0;border:none;margin-top:.5rem">
+          <button type="submit" class="btn btn-primary">Эҷод кардан</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal('curator-modal')">Бекор</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
-<!-- Edit Curator Modal -->
+<!-- Curator Edit -->
 <div class="modal-ov" id="edit-curator-modal">
-  <div class="modal-box">
-    <div class="modal-title"><h3>✏️ Вироиши куратор</h3><button class="modal-close" onclick="closeModal('edit-curator-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <form id="edit-curator-form" onsubmit="saveCuratorEdit(event)">
-      <input type="hidden" id="edit-curator-id">
-      <div class="fg"><label>Номи пурра *</label><input type="text" id="edit-curator-full-name" required class="finp"></div>
-      <div class="fg"><label>Email</label><input type="email" id="edit-curator-email" class="finp"></div>
-      <div class="fg"><label>Телефон</label><input type="text" id="edit-curator-phone" class="finp"></div>
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-success">Сабт</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('edit-curator-modal')">Бекор</button>
-      </div>
-    </form>
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <h3>Вироиши куратор</h3>
+      <button class="modal-close" onclick="closeModal('edit-curator-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="edit-curator-form" onsubmit="saveCuratorEdit(event)">
+        <input type="hidden" id="ec-id">
+        <div class="fg"><label>Ному насаб *</label><input type="text" id="ec-name" required class="inp"></div>
+        <div class="fg"><label>Email</label><input type="email" id="ec-email" class="inp"></div>
+        <div class="fg"><label>Телефон</label><input type="text" id="ec-phone" class="inp"></div>
+        <div class="fg"><label>Кафедра</label><input type="text" id="ec-dept" class="inp"></div>
+        <div class="modal-foot" style="padding:0;border:none;margin-top:.5rem">
+          <button type="submit" class="btn btn-success">Сабт</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal('edit-curator-modal')">Бекор</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
 <!-- Group Modal -->
 <div class="modal-ov" id="group-modal">
-  <div class="modal-box">
-    <div class="modal-title"><h3 id="groupModalTitle">👥 Гурӯҳи нав</h3><button class="modal-close" onclick="closeModal('group-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <form id="group-form" onsubmit="saveGroup(event)">
-      <input type="hidden" id="group-id">
-      <div class="fg"><label>Рақами гурӯҳ *</label><input type="text" name="number" id="group-number" required class="finp" placeholder="ФМ-101"></div>
-      <div class="frow2">
-        <div class="fg"><label>Курс *</label><select name="course_id" id="group-course-select" required class="finp"><option value="">Интихоб...</option></select></div>
-        <div class="fg"><label>Навбат *</label><select name="shift" id="group-shift" required class="finp"><option value="">Интихоб...</option><option value="1">1-навбат</option><option value="2">2-навбат</option></select></div>
-      </div>
-      <div class="fg"><label>Куратор</label><select name="curator_id" id="group-curator-select" class="finp"><option value="">Холӣ</option></select></div>
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" id="groupSubmitBtn">Эҷод</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('group-modal')">Бекор</button>
-      </div>
-    </form>
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <h3 id="groupModalTitle">Гурӯҳи нав</h3>
+      <button class="modal-close" onclick="closeModal('group-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="group-form" onsubmit="saveGroup(event)">
+        <input type="hidden" id="group-id">
+        <div class="fg"><label>Рақами гурӯҳ *</label><input type="text" id="group-number" required class="inp" placeholder="мис: ИА-21-1"></div>
+        
+        <div class="fg">
+  <label>Номи гурӯҳ *</label>
+  <input type="text"
+         name="name"
+         id="group-name"
+         required
+         class="inp"
+         placeholder="мис: Информатика 2021">
+</div>
+        <div class="g2">
+          <div class="fg"><label>Курс *</label>
+            <select class="inp" id="group-course-select" required><option value="">Интихоб...</option></select>
+          </div>
+          <div class="fg"><label>Навбат *</label>
+            <select class="inp" id="group-shift"><option value="1">1-навбат</option><option value="2">2-навбат</option></select>
+          </div>
+        </div>
+        <div class="fg"><label>Куратор</label>
+          <select class="inp" id="group-curator-select"><option value="">Бе куратор</option></select>
+        </div>
+        <div class="modal-foot" style="padding:0;border:none;margin-top:.5rem">
+          <button type="submit" class="btn btn-primary" id="groupSubmitBtn">Эҷод</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal('group-modal')">Бекор</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
 <!-- Student Modal -->
 <div class="modal-ov" id="student-modal">
   <div class="modal-box">
-    <div class="modal-title"><h3 id="studentModalTitle">🎓 Донишҷӯи нав</h3><button class="modal-close" onclick="closeModal('student-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
-    <form id="student-form" onsubmit="saveStudent(event)">
-      <input type="hidden" id="student-id">
-      <div class="fg"><label>Ному насаб *</label><input type="text" id="s-full-name" required class="finp" placeholder="Фамилия Ном Отасм"></div>
-      <div class="frow2">
-        <div class="fg"><label>Код</label><input type="text" id="s-code" class="finp" placeholder="STU-001"></div>
-        <div class="fg"><label>Гурӯҳ *</label><select id="s-group" required class="finp"><option value="">Интихоб...</option></select></div>
-      </div>
-      <div class="frow2">
-        <div class="fg"><label>Соли таваллуд</label><input type="number" id="s-birth-year" class="finp" min="1990" max="2010"></div>
-        <div class="fg"><label>Ҷои таваллуд</label><input type="text" id="s-birth-place" class="finp"></div>
-      </div>
-      <div class="frow2">
-        <div class="fg"><label>Телефон</label><input type="text" id="s-phone" class="finp" placeholder="+992..."></div>
-        <div class="fg"><label>Тел. волидайн</label><input type="text" id="s-parent-phone" class="finp" placeholder="+992..."></div>
-      </div>
-      <div class="modal-actions">
-        <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Сабт</button>
-        <button type="button" class="btn btn-ghost" onclick="closeModal('student-modal')">Бекор</button>
-      </div>
-    </form>
+    <div class="modal-head">
+      <h3 id="studentModalTitle">Донишҷӯи нав</h3>
+      <button class="modal-close" onclick="closeModal('student-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <form id="student-form" onsubmit="saveStudent(event)">
+        <input type="hidden" id="student-id">
+        <div class="g2">
+          <div class="fg" style="grid-column:span 2"><label>Ному насаб *</label><input type="text" id="s-name" required class="inp" placeholder="Фамилия Ном Отчество"></div>
+          <div class="fg"><label>Рамзи донишҷӯ</label><input type="text" id="s-code" class="inp" placeholder="Автоматӣ"></div>
+          <div class="fg"><label>Гурӯҳ *</label><select class="inp" id="s-group" required><option value="">Интихоб...</option></select></div>
+          <div class="fg"><label>Соли таваллуд</label><input type="number" id="s-birth-year" class="inp" min="1970" max="2010"></div>
+          <div class="fg"><label>Зодгоҳ</label><input type="text" id="s-birth-place" class="inp" placeholder="Шаҳр / Ноҳия"></div>
+          <div class="fg"><label>Вилоят</label><input type="text" id="s-region" class="inp"></div>
+          <div class="fg"><label>Тел. волидайн</label><input type="text" id="s-parent-phone" class="inp" placeholder="+992..."></div>
+        </div>
+        <div class="modal-foot" style="padding:0;border:none;margin-top:.5rem">
+          <button type="submit" class="btn btn-primary" id="studentSubmitBtn">Илова кардан</button>
+          <button type="button" class="btn btn-ghost" onclick="closeModal('student-modal')">Бекор</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 
-<div class="toast-cnt" id="toasts"></div>
+<!-- Assign Curator to Group -->
+<div class="modal-ov" id="assign-curator-modal">
+  <div class="modal-box narrow">
+    <div class="modal-head">
+      <h3>Куратор ба гурӯҳ</h3>
+      <button class="modal-close" onclick="closeModal('assign-curator-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="ac-group-id">
+      <div class="fg"><label>Гурӯҳ</label><div class="inp" style="background:var(--surf2);font-weight:600" id="ac-group-num">—</div></div>
+      <div class="fg"><label>Куратор</label><select class="inp" id="ac-curator-select"><option value="">Бе куратор</option></select></div>
+      <div class="modal-foot" style="padding:0;border:none;margin-top:.5rem">
+        <button class="btn btn-success" onclick="saveAssignCurator()">Таъин кардан</button>
+        <button class="btn btn-ghost" onclick="closeModal('assign-curator-modal')">Бекор</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- ══════════ JS ══════════ -->
+<!-- VIEW: Student Profile -->
+<div class="modal-ov" id="student-view-modal">
+  <div class="modal-box wide">
+    <div class="modal-head">
+      <h3>Профили донишҷӯ</h3>
+      <button class="modal-close" onclick="closeModal('student-view-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="student-view-body" style="padding:1.25rem"><div class="loading"><div class="spin"></div></div></div>
+  </div>
+</div>
+
+<!-- VIEW: Curator Profile -->
+<div class="modal-ov" id="curator-view-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Профили куратор</h3>
+      <button class="modal-close" onclick="closeModal('curator-view-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="curator-view-body" style="padding:1.25rem"><div class="loading"><div class="spin"></div></div></div>
+  </div>
+</div>
+
+<!-- VIEW: Group Profile -->
+<div class="modal-ov" id="group-view-modal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h3>Профили гурӯҳ</h3>
+      <button class="modal-close" onclick="closeModal('group-view-modal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div id="group-view-body" style="padding:1.25rem"><div class="loading"><div class="spin"></div></div></div>
+  </div>
+</div>
+
+<!-- TOASTS -->
+<div class="toast-wrap" id="toasts"></div>
+
 <script>
 'use strict';
-let attendanceChart=null, currentChartMode='daily', currentSection='dashboard';
-let searchTimeout=null, currentPage=1;
-const pageSize=50;
-let allCurators=[], allGroups=[];
+// ── State ──────────────────────────────────────────────
+let attendanceChart=null,currentChartMode='daily',currentSection='dashboard';
+let searchTimeout=null,currentPage=1;
+const PAGE_SIZE=50;
+let allCurators=[],allGroups=[];
 
-/* ── SIDEBAR ── */
+// ── Date ───────────────────────────────────────────────
+(function(){
+  const d=new Date();
+  const days=['Якшанбе','Душанбе','Сешанбе','Чоршанбе','Панҷшанбе','Ҷумъа','Шанбе'];
+  const months=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  document.getElementById('tb-date').textContent=`${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]}`;
+})();
+
+// ── Sidebar ────────────────────────────────────────────
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
 
-/* ── NAV ── */
-const sectionTitles={dashboard:'Умумӣ','daily-control':'Назорати рӯзона',weekly:'Назорати ҳафтаина',analytics:'Аналитика',curators:'Кураторон',groups:'Гурӯҳҳо',students:'Донишҷӯён','at-risk':'Хавфнок (NB)','audit-log':'Аудит лог',profile:'Профил','change-password':'Иваз кардани парол'};
+// ── Section Nav ────────────────────────────────────────
+const TITLES={dashboard:'Умумӣ','daily-control':'Назорати рӯзона',weekly:'Назорати ҳафтаина',curators:'Кураторон',groups:'Гурӯҳҳо',students:'Донишҷӯён','at-risk':'Хавфнок (NB)','audit-log':'Аудит лог',profile:'Профили ман'};
 function showSection(name,el){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active-section'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-  document.getElementById(name).classList.add('active-section');
+  document.getElementById(name)?.classList.add('active-section');
   if(el)el.classList.add('active');
-  document.getElementById('page-title').textContent=sectionTitles[name]||name;
-  currentSection=name; closeSidebar();
-  const loaders={dashboard:loadDashboard,'daily-control':loadDailyControl,weekly:loadWeeklyControl,analytics:loadAnalytics,curators:loadCurators,groups:loadGroups,students:()=>{loadStudents();loadGroupsForFilter();},'at-risk':()=>{loadAtRiskStudents();loadGroupsForFilter();},'audit-log':loadAuditLog};
-  if(loaders[name])loaders[name]();
+  document.getElementById('page-title').textContent=TITLES[name]||name;
+  currentSection=name;closeSidebar();
+  const map={
+    dashboard:()=>{loadDashboard();loadAlerts();updateChart('daily')},
+    'daily-control':loadDailyControl,
+    weekly:loadWeeklyControl,
+    curators:loadCurators,
+    groups:loadGroups,
+    students:()=>{loadStudents();loadGroupsForFilter()},
+    'at-risk':()=>{loadAtRiskStudents();loadGroupsForFilter()},
+    'audit-log':loadAuditLog,
+  };
+  if(map[name])map[name]();
 }
 function refreshCurrentSection(){
-  const icon=document.getElementById('refresh-icon');
-  icon.style.animation='spin .7s linear';
-  setTimeout(()=>icon.style.animation='',700);
+  const ic=document.getElementById('refresh-icon');
+  ic.style.animation='spin .7s linear';setTimeout(()=>ic.style.animation='',800);
   showSection(currentSection,null);
 }
 
-/* ── API ── */
+// ── API ────────────────────────────────────────────────
 async function api(url,opts={}){
-  const h={};if(!(opts.body instanceof FormData))h['Content-Type']='application/json';
-  const r=await fetch(url,{credentials:'same-origin',...opts,headers:{...h,...(opts.headers||{})}});
-  if(r.status===401||r.status===403){window.location.href='/login';throw new Error('Сессия тамом шуд');}
-  if(!r.ok){let m='Хатогӣ';try{const e=await r.json();m=e.detail||m;}catch(e){}throw new Error(m);}
+  const headers={'Content-Type':'application/json',...(opts.headers||{})};
+  const r=await fetch(url,{credentials:'same-origin',...opts,headers});
+  if(r.status===401||r.status===403){window.location.href='/login';throw new Error('Сессия тамом')}
+  if(!r.ok){let m='Хатогӣ';try{const e=await r.json();m=e.detail||m;}catch(e){}throw new Error(m)}
+  if(r.status===204)return{};
   return r.json();
 }
-function fmt(d){if(!d)return'—';try{return new Date(d).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch{return d;}}
-function debounceSearch(){clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>{currentPage=1;loadStudents();},500);}
 
-/* ── MODAL ── */
+// ── Toast ──────────────────────────────────────────────
+function toast(type,msg){
+  const w=document.getElementById('toasts');
+  const el=document.createElement('div');el.className=`toast ${type}`;
+  const icons={succ:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>',err:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>',warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>'};
+  el.innerHTML=(icons[type]||icons.err)+msg;w.appendChild(el);setTimeout(()=>el.remove(),3500);
+}
+
+// ── Modal ──────────────────────────────────────────────
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
 document.querySelectorAll('.modal-ov').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('show')}));
 
-/* ── TOAST ── */
-function toast(type,msg){
-  const c=document.getElementById('toasts');const el=document.createElement('div');el.className=`toast ${type}`;
-  const icons={succ:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`,err:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,warn:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg>`};
-  el.innerHTML=`${icons[type]||icons.err}${msg}`;c.appendChild(el);setTimeout(()=>el.remove(),3500);
-}
+// ── Format ─────────────────────────────────────────────
+function fmtDate(d){if(!d)return'—';try{return new Date(d).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}catch{return d}}
+function debounceSearch(){clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>{currentPage=1;loadStudents();},450)}
 
-/* ── DASHBOARD ── */
+// ── DASHBOARD ──────────────────────────────────────────
 async function loadDashboard(){
-  try{const d=await api('/dean/api/stats');
+  try{
+    const d=await api('/dean/api/stats');
     document.getElementById('kpi-students').textContent=d.total_students||0;
     document.getElementById('kpi-curators').textContent=d.total_curators||0;
     document.getElementById('kpi-groups').textContent=d.total_groups||0;
     document.getElementById('kpi-high-absence').textContent=d.high_absence_count||0;
     document.getElementById('kpi-attendance').textContent=(d.attendance_rate||0)+'%';
+    document.getElementById('nb-limit-lbl').textContent=d.nb_limit||35;
     if(d.shift_stats){
-      document.getElementById('shift-1-pct').textContent=(d.shift_stats.shift1?.attendance_rate||0)+'%';
-      document.getElementById('shift-2-pct').textContent=(d.shift_stats.shift2?.attendance_rate||0)+'%';
-      document.getElementById('shift-1-bar').style.width=(d.shift_stats.shift1?.attendance_rate||0)+'%';
-      document.getElementById('shift-2-bar').style.width=(d.shift_stats.shift2?.attendance_rate||0)+'%';
-      document.getElementById('shift-1-students').textContent=(d.shift_stats.shift1?.total_students||0)+' донишҷӯ';
-      document.getElementById('shift-2-students').textContent=(d.shift_stats.shift2?.total_students||0)+' донишҷӯ';
+      const s1=d.shift_stats.shift1||{},s2=d.shift_stats.shift2||{};
+      document.getElementById('shift-1-pct').textContent=(s1.attendance_rate||0)+'%';
+      document.getElementById('shift-2-pct').textContent=(s2.attendance_rate||0)+'%';
+      document.getElementById('shift-1-bar').style.width=(s1.attendance_rate||0)+'%';
+      document.getElementById('shift-2-bar').style.width=(s2.attendance_rate||0)+'%';
+      document.getElementById('shift-1-sub').textContent=(s1.total_students||0)+' донишҷӯ · '+(s1.groups||0)+' гурӯҳ';
+      document.getElementById('shift-2-sub').textContent=(s2.total_students||0)+' донишҷӯ · '+(s2.groups||0)+' гурӯҳ';
     }
-    if(d.course_stats){
-      const cs=document.getElementById('course-stats');
-      cs.innerHTML=d.course_stats.map(c=>`<div style="margin-bottom:.875rem"><div style="display:flex;justify-content:space-between;margin-bottom:.3rem"><span style="font-size:.83rem;font-weight:600">${c.course_year}-курс</span><span style="font-size:.83rem;font-weight:700;color:var(--primary)">${c.attendance_rate||0}%</span></div><div class="prog-bar"><div class="prog-fill" style="width:${c.attendance_rate||0}%"></div></div><div style="font-size:.72rem;color:var(--text-3);margin-top:.2rem">${c.total_students||0} донишҷӯ · ${c.groups||0} гурӯҳ</div></div>`).join('');
+    if(d.course_stats&&d.course_stats.length){
+      document.getElementById('course-stats').innerHTML=d.course_stats.map(c=>`
+        <div style="margin-bottom:.875rem">
+          <div style="display:flex;justify-content:space-between;margin-bottom:.25rem">
+            <span style="font-size:.82rem;font-weight:600">${c.course_year||c.year||'?'}-курс</span>
+            <span style="font-size:.82rem;font-weight:700;color:var(--blue)">${c.attendance_rate||0}%</span>
+          </div>
+          <div class="prog"><div class="prog-fill" style="width:${c.attendance_rate||0}%"></div></div>
+          <div style="font-size:.7rem;color:var(--tx4);margin-top:.2rem">${c.total_students||0} донишҷӯ · ${c.groups||0} гурӯҳ</div>
+        </div>`).join('');
+    }else{
+      document.getElementById('course-stats').innerHTML='<div class="empty"><p>Маълумот нест</p></div>';
     }
-    renderTopGroups(d.top_groups||[],d.bottom_groups||[]);
-  }catch(e){toast('err',e.message);}
-  loadAlerts();
-  updateChart('daily');
-}
-
-function renderTopGroups(top,bot){
-  const render=(arr,id,isTop)=>{
-    const el=document.getElementById(id);
-    if(!arr.length){el.innerHTML='<tr><td colspan="3"><div class="empty"><p>Маълумот нест</p></div></td></tr>';return;}
-  };
-  render(top,'top-groups-table',true);render(bot,'bottom-groups-table',false);
+  }catch(e){toast('err',e.message)}
 }
 
 async function loadAlerts(){
-  try{const d=await api('/dean/api/alerts');
+  const c=document.getElementById('alerts-container');
+  c.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  try{
+    const d=await api('/dean/api/alerts');
     document.getElementById('alert-count').textContent=d.length||0;
-    const c=document.getElementById('alerts-container');
-    if(!d.length){c.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="20 6 9 17 4 12"/></svg><p>Огоҳиҳои нав нест</p></div>';return;}
-    const cls={WARNING:'warn-alert',HIGH_ABSENCE:'danger-alert',INFO:'info-alert'};
-    c.innerHTML=d.map(a=>`<div class="alert-item ${cls[a.alert_type]||'info-alert'}"><div class="alert-text"><h5>${a.message||'Огоҳӣ'}</h5><div class="alert-time">${fmt(a.created_at)}</div></div></div>`).join('');
+    if(!d.length){c.innerHTML='<div class="empty" style="padding:1.5rem"><p>Огоҳиҳои нав нест ✓</p></div>';return;}
+    const cls={WARNING:'warn',HIGH_ABSENCE:'danger',INFO:'info'};
+    c.innerHTML=d.map(a=>`<div class="alert-item ${cls[a.alert_type]||'info'}">
+      <div style="flex:1">
+        <div style="font-weight:600;font-size:.8rem">${a.message||'Огоҳӣ'}</div>
+        <div style="font-size:.7rem;color:var(--tx4);margin-top:.15rem">${fmtDate(a.created_at)}</div>
+      </div>
+    </div>`).join('');
   }catch(e){}
 }
 
 async function updateChart(mode){
   currentChartMode=mode;
   ['daily','weekly','monthly'].forEach(m=>{
-    const b=document.getElementById(`cBtn-${m}`);if(!b)return;
-    b.className=m===mode?'btn btn-sm btn-primary':'btn btn-ghost btn-sm';
+    const b=document.getElementById(`cBtn-${m}`);
+    if(b)b.className=`btn btn-sm ${m===mode?'btn-primary':'btn-ghost'}`;
   });
-  try{const d=await api(`/dean/api/attendance?mode=${mode}`);
+  try{
+    const d=await api(`/dean/api/attendance?mode=${mode}`);
     const ctx=document.getElementById('attendanceChart').getContext('2d');
     if(attendanceChart)attendanceChart.destroy();
-    attendanceChart=new Chart(ctx,{type:'line',data:{labels:d.labels||[],datasets:[{label:'НБ',data:d.values||[],borderColor:'var(--primary)',backgroundColor:'rgba(37,99,235,.1)',fill:true,tension:0.4,borderWidth:2,pointBackgroundColor:'var(--primary)',pointRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,grid:{color:'var(--border-light)'},ticks:{color:'var(--text-3)',font:{size:11}}},x:{grid:{display:false},ticks:{color:'var(--text-3)',font:{size:11}}}}}});
+    attendanceChart=new Chart(ctx,{
+      type:'line',
+      data:{labels:d.labels||[],datasets:[{label:'Давомот %',data:d.values||[],borderColor:'#2563eb',backgroundColor:'rgba(37,99,235,.08)',fill:true,tension:0.4,borderWidth:2.5,pointBackgroundColor:'#2563eb',pointRadius:3,pointHoverRadius:5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.parsed.y}%`}}},scales:{y:{beginAtZero:true,max:100,grid:{color:'#f1f5f9'},ticks:{color:'#94a3b8',font:{size:10},callback:v=>v+'%'}},x:{grid:{display:false},ticks:{color:'#94a3b8',font:{size:10}}}}}
+    });
   }catch(e){}
 }
 
-/* ── DAILY CONTROL ── */
+// ── DAILY CONTROL ──────────────────────────────────────
 async function loadDailyControl(){
   const dc=document.getElementById('dcDate');
-  if(!dc.value){dc.value=new Date().toISOString().split('T')[0];}
-  const date=dc.value;
+  if(!dc.value)dc.value=new Date().toISOString().split('T')[0];
+  const d=dc.value;
   document.getElementById('dc-loading').style.display='flex';
   document.getElementById('dc-cards').style.display='none';
-  document.getElementById('dc-date-label').textContent=`Вазъи журналгузорӣ: ${new Date(date+'T00:00:00').toLocaleDateString('tg-TJ',{weekday:'long',day:'numeric',month:'long'})}`;
+  const dn=new Date(d+'T00:00:00');
+  const opts={weekday:'long',day:'numeric',month:'long',year:'numeric'};
+  document.getElementById('dc-date-label').textContent='Журналгузорӣ: '+dn.toLocaleDateString('tg-TJ',opts);
   try{
-    const d=await api(`/dean/api/daily-control?target_date=${date}`);
-    const groups=d.groups||d||[];
-    const done=groups.filter(g=>g.status==='COMPLETED').length;
-    const prog=groups.filter(g=>g.status==='IN_PROGRESS').length;
-    const none=groups.filter(g=>g.status==='NOT_STARTED').length;
-    document.getElementById('dc-done').textContent=done;
-    document.getElementById('dc-prog').textContent=prog;
-    document.getElementById('dc-none').textContent=none;
-    const cards=document.getElementById('dc-cards');
-    if(!groups.length){cards.innerHTML='<div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>Гурӯҳ ёфт нашуд</p></div>';cards.style.display='block';}
-    else{
-      cards.innerHTML=groups.map(g=>{
-        const sc=g.status==='COMPLETED'?'completed':g.status==='IN_PROGRESS'?'in-progress':'not-started';
-        const bc=g.status==='COMPLETED'?'done':g.status==='IN_PROGRESS'?'prog':'none';
-        const blab=g.status==='COMPLETED'?'✅ Пур':'⏳ Ҷараён дорад';
-        const blab2=g.status==='NOT_STARTED'?'❌ Қайд нашуд':blab;
-        const pct=g.completion_percentage||Math.round((g.marked||g.marked_count||0)/Math.max(g.total_students||1,1)*100);
-        return`<div class="dc-card ${sc}"><div class="dc-header"><span class="dc-group">Гурӯҳ ${g.group_number||g.group||''}</span><span class="dc-badge ${bc}">${blab2}</span></div><div class="dc-curator"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" width="12" height="12"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>${g.curator_name||'Куратор таъин нашуд'}</div><div class="dc-progress"><div class="dc-progress-bar" style="width:${pct}%;background:${pct>=100?'var(--success)':pct>0?'var(--warning)':'var(--danger)'}"></div></div><div class="dc-stats">${g.marked||g.marked_count||0} / ${g.total_students||0} донишҷӯ қайд шуд · ${pct}%</div></div>`;
-      }).join('');
-      cards.style.display='grid';
-    }
+    const data=await api(`/dean/api/daily-control?target_date=${d}`);
+    const groups=data.groups||[];
+    const sum=data.summary||{};
+    document.getElementById('dc-done').textContent=sum.completed||0;
+    document.getElementById('dc-prog').textContent=sum.in_progress||0;
+    document.getElementById('dc-none').textContent=sum.not_started||0;
+    const c=document.getElementById('dc-cards');
+    if(!groups.length){c.innerHTML='<div class="empty"><p>Гурӯҳ нест</p></div>';c.style.display='block';document.getElementById('dc-loading').style.display='none';return;}
+    c.innerHTML=groups.map(g=>{
+      const cls=g.status==='COMPLETED'?'done':g.status==='IN_PROGRESS'?'prog':'none';
+      const lbl=g.status==='COMPLETED'?'Пур шуд':g.status==='IN_PROGRESS'?'Ҷараён':'-Қайд нашуд';
+      const pct=g.completion_percentage||0;
+      return`<div class="dc-card ${cls}">
+        <div class="dc-card-top">
+          <div class="dc-num">Гурӯҳ ${g.group_number||'?'}</div>
+          <span class="dc-tag ${cls}">${lbl}</span>
+        </div>
+        <div class="prog" style="margin:.5rem 0"><div class="prog-fill ${cls==='done'?'':''}
+" style="width:${pct}%;background:${cls==='done'?'linear-gradient(90deg,#059669,#34d399)':cls==='prog'?'linear-gradient(90deg,#d97706,#fbbf24)':'linear-gradient(90deg,#dc2626,#f87171)'}"></div></div>
+        <div class="dc-info">
+          ${g.course_year?`<span class="chip chip-blue">${g.course_year}-курс</span>`:''}
+          <span>${g.shift||1}-навбат</span>
+          ${g.curator_name?`<span>👤 ${g.curator_name}</span>`:''}
+          <span>${g.marked_count||0}/${g.total_students||0} д-ён</span>
+        </div>
+      </div>`
+    }).join('');
+    c.style.display='grid';
     document.getElementById('dc-loading').style.display='none';
-  }catch(e){document.getElementById('dc-loading').innerHTML=`<div class="empty"><p>${e.message}</p></div>`;}
+  }catch(e){toast('err',e.message);document.getElementById('dc-loading').style.display='none'}
 }
 
-/* ── WEEKLY CONTROL ── */
+// ── WEEKLY CONTROL ─────────────────────────────────────
 async function loadWeeklyControl(){
-  const ws=document.getElementById('wvWeekStart');
-  if(!ws.value){
-    const d=new Date();const day=d.getDay()||7;d.setDate(d.getDate()-day+1);
-    ws.value=d.toISOString().split('T')[0];
-  }
   document.getElementById('wv-loading').style.display='flex';
   document.getElementById('wv-panel').style.display='none';
+  const ws=document.getElementById('wvWeekStart').value;
+  const params=ws?`?week_start=${ws}`:'';
   try{
-    const d=await api(`/dean/api/weekly-control?week_start=${ws.value}`);
-    const groups=d.groups||[];
-    const days=d.days||[];  // array of date strings e.g. ["2026-02-23", ...]
-    const dayLabels=['Дш','Ес','Ча','Пш','Ҷм','Шб'];
-    const tbl=document.getElementById('wv-table');
-    let th=`<thead><tr><th>Гурӯҳ</th><th>Куратор</th>`;
-    days.forEach((day,i)=>{
-      const short=typeof day==='string'?day.slice(5):(dayLabels[i]||i+1);
-      th+=`<th>${short}</th>`;
-    });
-    th+=`<th>Пурсозӣ</th></tr></thead><tbody>`;
-    let tbody='';
-    groups.forEach(g=>{
-      const daysObj=g.days||{};  // {date_str: {status, marked, total}}
-      const pct=g.completion_pct||0;
-      tbody+=`<tr><td><strong>Гурӯҳ ${g.group_number||''}</strong></td><td style="color:var(--text-3)">${g.curator_name||'—'}</td>`;
-      days.forEach(dayStr=>{
-        const info=daysObj[dayStr]||{status:'NOT_STARTED'};
-        const cls=info.status==='COMPLETED'?'ok':info.status==='IN_PROGRESS'?'na':'miss';
-        const lbl=info.status==='COMPLETED'?'✓':'✗';
-        tbody+=`<td><span class="day-dot ${cls}" title="${info.marked||0}/${info.total||0}">${lbl}</span></td>`;
-      });
-      tbody+=`<td><div class="prog-bar" style="min-width:60px"><div class="prog-fill" style="width:${pct}%"></div></div><div style="font-size:.68rem;color:var(--text-3);margin-top:.2rem">${pct}%</div></td></tr>`;
-    });
-    if(!groups.length)tbody='<tr><td colspan="'+(days.length+3)+'"><div class="empty"><p>Гурӯҳ ёфт нашуд</p></div></td></tr>';
-    tbl.innerHTML=th+tbody+'</tbody>';
+    const data=await api(`/dean/api/weekly-control${params}`);
+    const days=data.days||[];
+    const groups=data.groups||[];
+    const dayNames=['Д','С','Ч','П','Ҷ','Ш'];
+    const thead=document.getElementById('wv-thead');
+    const tbody=document.getElementById('wv-tbody');
+    thead.innerHTML=`<tr>
+      <th style="min-width:130px">Гурӯҳ</th>
+      <th>Куратор</th>
+      ${days.map((d,i)=>`<th title="${d}">${dayNames[i]||d.split('-')[2]}</th>`).join('')}
+      <th>%</th>
+    </tr>`;
+    if(!groups.length){tbody.innerHTML='<tr><td colspan="'+(days.length+3)+'"><div class="empty"><p>Маълумот нест</p></div></td></tr>';}
+    else{
+      tbody.innerHTML=groups.map(g=>{
+        const cells=days.map(d=>{
+          const info=g.days?.[d]||{};
+          const cls=info.status==='COMPLETED'?'day-ok':info.status==='IN_PROGRESS'?'day-empty':'day-miss';
+          const lbl=info.status==='COMPLETED'?'✓':info.status==='IN_PROGRESS'?'~':'✗';
+          return`<td><span class="day-cell ${cls}" title="${info.marked||0}/${info.total||0}">${lbl}</span></td>`;
+        }).join('');
+        const pct=g.completion_pct||0;
+        const pColor=pct>=80?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
+        return`<tr>
+          <td><strong>${g.group_number||'?'}</strong>${g.course_year?` <span class="chip chip-blue" style="font-size:.6rem">${g.course_year}-к</span>`:''}</td>
+          <td style="font-size:.75rem;color:var(--tx3)">${g.curator_name||'—'}</td>
+          ${cells}
+          <td><span style="font-weight:700;color:${pColor};font-size:.82rem">${pct}%</span></td>
+        </tr>`;
+      }).join('');
+    }
     document.getElementById('wv-loading').style.display='none';
     document.getElementById('wv-panel').style.display='block';
-  }catch(e){document.getElementById('wv-loading').innerHTML=`<div class="empty"><p>${e.message}</p></div>`;}
+  }catch(e){toast('err',e.message);document.getElementById('wv-loading').style.display='none'}
 }
 
-/* ── ANALYTICS ── */
-async function loadAnalytics(){
-  try{const d=await api('/dean/api/stats');
-    if(d.shift_stats){
-      const s1=d.shift_stats.shift1||{};const s2=d.shift_stats.shift2||{};
-      document.getElementById('shift-1-pct').textContent=(s1.attendance_rate||0)+'%';
-      document.getElementById('shift-2-pct').textContent=(s2.attendance_rate||0)+'%';
-      document.getElementById('shift-1-bar').style.width=(s1.attendance_rate||0)+'%';
-      document.getElementById('shift-2-bar').style.width=(s2.attendance_rate||0)+'%';
-      document.getElementById('shift-1-students').textContent=(s1.total_students||0)+' донишҷӯ';
-      document.getElementById('shift-2-students').textContent=(s2.total_students||0)+' донишҷӯ';
-    }
-  }catch(e){}
-  try{const d=await api('/dean/api/weekly-stats');
-    const el=document.getElementById('weekly-stats');
-    el.innerHTML=(d||[]).map(w=>`<div style="display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid var(--border-light)"><span style="font-size:.83rem">${w.week||w.date||'—'}</span><span style="font-size:.83rem;font-weight:700;color:var(--primary)">${w.avg_nb||w.value||0} НБ</span></div>`).join('')||'<div class="empty"><p>Маълумот нест</p></div>';
-  }catch(e){document.getElementById('weekly-stats').innerHTML='<div class="empty"><p>Маълумот нест</p></div>';}
-}
-
-/* ── CURATORS ── */
+// ── CURATORS ───────────────────────────────────────────
 async function loadCurators(){
-  const search=(document.getElementById('curator-search')?.value||'').toLowerCase();
-  try{const d=await api('/dean/api/curators');allCurators=d;
-    const filtered=search?d.filter(c=>c.full_name?.toLowerCase().includes(search)||c.username?.toLowerCase().includes(search)):d;
-    const tb=document.getElementById('curators-table');
-    if(!filtered.length){tb.innerHTML=`<tr><td colspan="7"><div class="empty"><p>Куратор ёфт нашуд</p></div></td></tr>`;return;}
-    tb.innerHTML=filtered.map((c,i)=>`<tr>
-      <td class="mono">${i+1}</td>
-      <td><strong>${c.full_name||'—'}</strong></td>
-      <td class="mono">${c.username||'—'}</td>
-      <td>${c.group?.number||'—'}</td>
-      <td>${c.phone||'—'}</td>
-      <td><span class="chip ${c.is_active!==false?'chip-green':'chip-red'}">${c.is_active!==false?'Фаъол':'Ғайрифаъол'}</span></td>
-      <td style="display:flex;gap:.375rem">
-        <button class="btn btn-primary btn-xs" onclick="editCurator(${c.id})">✏️</button>
-        <button class="btn btn-warning btn-xs" onclick="resetCuratorPwd(${c.id},'${c.full_name||''}')">🔑</button>
-        <button class="btn btn-danger btn-xs" onclick="deleteCurator(${c.id})">🗑</button>
-      </td>
-    </tr>`).join('');
-  }catch(e){toast('err',e.message);}
+  try{
+    const d=await api('/dean/api/curators');allCurators=d;
+    filterCurators();
+  }catch(e){toast('err',e.message)}
 }
-async function createCurator(e){e.preventDefault();
+function filterCurators(){
+  const q=(document.getElementById('curator-search')?.value||'').toLowerCase();
+  const tb=document.getElementById('curators-table');
+  const filtered=allCurators.filter(c=>(c.full_name||'').toLowerCase().includes(q)||(c.username||'').toLowerCase().includes(q));
+  if(!filtered.length){tb.innerHTML=`<tr><td colspan="8"><div class="empty"><p>Куратор ёфт нашуд</p></div></td></tr>`;return;}
+  tb.innerHTML=filtered.map((c,i)=>`<tr>
+    <td class="mono">${i+1}</td>
+    <td><strong>${c.full_name||'—'}</strong></td>
+    <td class="mono" style="color:var(--tx3)">@${c.username||'—'}</td>
+    <td>${c.group_number?`<span class="chip chip-blue">${c.group_number}</span>`:'<span style="color:var(--tx4)">—</span>'}</td>
+    <td style="font-size:.78rem">${c.phone||'—'}</td>
+    <td class="mono">${c.birth_year||'—'}</td>
+    <td><span class="chip ${c.is_active!==false?'chip-green':'chip-amber'}">${c.is_active!==false?'Фаъол':'Ғайрифаъол'}</span></td>
+    <td style="display:flex;gap:.25rem;flex-wrap:wrap">
+      <button class="btn btn-primary btn-xs" onclick="viewCuratorProfile(${c.id})">Профил</button>
+      <button class="btn btn-ghost btn-xs" onclick="editCurator(${c.id})">Таҳрир</button>
+      <button class="btn btn-amber btn-xs" onclick="resetCuratorPwd(${c.id},'${(c.full_name||'').replace(/'/g,'')}')" title="Ресет парол">🔑</button>
+      <button class="btn btn-danger btn-xs" onclick="deleteCurator(${c.id})">🗑</button>
+    </td>
+  </tr>`).join('');
+}
+async function createCurator(e){
+  e.preventDefault();
   const fd=new FormData(e.target);
-  try{await api('/dean/api/curators',{method:'POST',body:fd});toast('succ','✅ Куратор эҷод шуд');closeModal('curator-modal');e.target.reset();loadCurators();}
-  catch(err){toast('err',err.message);}
+  const body=Object.fromEntries(fd.entries());
+  try{await api('/dean/api/curators',{method:'POST',body:JSON.stringify(body)});
+    toast('succ','Куратор эҷод шуд');closeModal('curator-modal');e.target.reset();loadCurators();}
+  catch(err){toast('err',err.message)}
 }
 function editCurator(id){
   const c=allCurators.find(x=>x.id===id);if(!c)return;
-  document.getElementById('edit-curator-id').value=id;
-  document.getElementById('edit-curator-full-name').value=c.full_name||'';
-  document.getElementById('edit-curator-email').value=c.email||'';
-  document.getElementById('edit-curator-phone').value=c.phone||'';
+  document.getElementById('ec-id').value=id;
+  document.getElementById('ec-name').value=c.full_name||'';
+  document.getElementById('ec-email').value=c.email||'';
+  document.getElementById('ec-phone').value=c.phone||'';
+  document.getElementById('ec-dept').value=c.department||'';
   openModal('edit-curator-modal');
 }
-async function saveCuratorEdit(e){e.preventDefault();
-  const id=document.getElementById('edit-curator-id').value;
-  const fd=new FormData(e.target);
-  try{await api(`/dean/api/curators/${id}`,{method:'PUT',body:fd});toast('succ','✅ Сабт шуд');closeModal('edit-curator-modal');loadCurators();}
-  catch(err){toast('err',err.message);}
+async function saveCuratorEdit(e){
+  e.preventDefault();
+  const id=document.getElementById('ec-id').value;
+  const body={full_name:document.getElementById('ec-name').value,email:document.getElementById('ec-email').value||null,phone:document.getElementById('ec-phone').value||null,department:document.getElementById('ec-dept').value||null};
+  try{await api(`/dean/api/curators/${id}`,{method:'PUT',body:JSON.stringify(body)});
+    toast('succ','Сабт шуд');closeModal('edit-curator-modal');loadCurators();}
+  catch(err){toast('err',err.message)}
 }
 async function resetCuratorPwd(id,name){
-  if(!confirm(`"${name}" пароли навро ба ${id}020304 ресет мекунем?`))return;
-  try{await api(`/dean/api/curators/${id}/reset-password`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});toast('succ','🔑 Парол ресет шуд');}
-  catch(e){toast('err',e.message);}
+  if(!confirm(`"${name}" пароли навро ресет мекунем?`))return;
+  try{await api(`/dean/api/curators/${id}/reset-password`,{method:'POST',body:JSON.stringify({})});
+    toast('succ','Парол ресет шуд · 020304');}
+  catch(e){toast('err',e.message)}
 }
 async function deleteCurator(id){
   if(!confirm('Куратор нест карда шавад?'))return;
-  try{await api(`/dean/api/curators/${id}`,{method:'DELETE'});toast('succ','🗑 Нест шуд');loadCurators();}
-  catch(e){toast('err',e.message);}
+  try{await api(`/dean/api/curators/${id}`,{method:'DELETE'});toast('succ','Нест шуд');loadCurators();}
+  catch(e){toast('err',e.message)}
+}
+async function viewCuratorProfile(uid){
+  openModal('curator-view-modal');
+  const body=document.getElementById('curator-view-body');
+  body.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  try{
+    const c=await api(`/dean/api/curators/${uid}`);
+    body.innerHTML=`
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding:.875rem;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:var(--rsm);color:#fff">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;border:2px solid rgba(255,255,255,.4)">${(c.full_name||'?')[0].toUpperCase()}</div>
+        <div>
+          <div style="font-size:1.05rem;font-weight:800">${c.full_name}</div>
+          <div style="font-size:.78rem;opacity:.85">@${c.username} · Куратор</div>
+        </div>
+        <span style="margin-left:auto;background:rgba(255,255,255,.2);padding:.25rem .625rem;border-radius:20px;font-size:.72rem;font-weight:600">${c.group_number?'Гурӯҳ '+c.group_number:'Бе гурӯҳ'}</span>
+      </div>
+      <div class="info-row"><span class="info-lbl">ID</span><span class="info-val mono">#${c.id}</span></div>
+      <div class="info-row"><span class="info-lbl">Email</span><span class="info-val">${c.email||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Телефон</span><span class="info-val">${c.phone||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Кафедра</span><span class="info-val">${c.department||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Соли таваллуд</span><span class="info-val">${c.birth_year||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Сабт шуд</span><span class="info-val">${c.created_at?c.created_at.split('T')[0]:'—'}</span></div>
+      ${c.groups&&c.groups.length?`
+        <div style="margin-top:1rem;padding-top:.875rem;border-top:1px solid var(--bdr)">
+          <div style="font-size:.72rem;font-weight:700;color:var(--tx4);text-transform:uppercase;margin-bottom:.5rem">Гурӯҳҳо</div>
+          ${c.groups.map(g=>`<div style="display:flex;align-items:center;gap:.5rem;padding:.375rem 0;border-bottom:1px solid var(--bdr-l)">
+            <span class="chip chip-blue">${g.number}</span>
+            <span style="font-size:.78rem">${g.course_year?g.course_year+'-курс':'—'} · ${g.shift}-навбат</span>
+            ${g.is_closed?'<span class="closed-badge">Баста</span>':g.is_active!==false?'<span class="chip chip-green" style="margin-left:auto">Фаъол</span>':'<span class="chip chip-amber" style="margin-left:auto">Ғайрифаъол</span>'}
+          </div>`).join('')}
+        </div>`:''
+      }
+    `;
+  }catch(e){body.innerHTML=`<div class="empty"><p>Хатогӣ: ${e.message}</p></div>`}
 }
 
-/* ── GROUPS ── */
+// ── GROUPS ─────────────────────────────────────────────
 async function loadGroups(){
-  try{const d=await api('/dean/api/groups');allGroups=d;
+  try{
+    const d=await api('/dean/api/groups');allGroups=d;
     const tb=document.getElementById('groups-table');
-    if(!d.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><p>Гурӯҳ нест</p></div></td></tr>';return;}
+    if(!d.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><p>Гурӯҳ нест</p></div></td></tr>';return;}
     tb.innerHTML=d.map((g,i)=>`<tr>
       <td class="mono">${i+1}</td>
-      <td><strong>${g.number||'—'}</strong></td>
+      <td>
+        <strong>${g.number||'—'}</strong>
+        ${g.is_closed?'<span class="closed-badge" style="margin-left:.375rem">🔒 Баста</span>':''}
+      </td>
       <td><span class="chip chip-blue">${g.course_year||'?'}-курс</span></td>
-      <td>${g.shift}-навбат</td>
-      <td>${g.curator_name||'—'}</td>
-      <td class="mono">${g.total_students||g.student_count||0}</td>
-      <td style="display:flex;gap:.375rem">
-        <button class="btn btn-primary btn-xs" onclick="editGroup(${g.id})">✏️</button>
+      <td>${g.shift||1}-навбат</td>
+      <td>
+        ${g.curator_name
+          ?`<span style="font-weight:600">${g.curator_name}</span>${g.curator_phone?`<br><span style="font-size:.7rem;color:var(--tx4)">${g.curator_phone}</span>`:''}`
+          :'<span class="btn btn-xs btn-amber" onclick="openAssignCurator('+g.id+',\''+g.number+'\')">+ Куратор</span>'
+        }
+      </td>
+      <td class="mono">${g.total_students||0}</td>
+      <td>
+        ${g.is_closed
+          ?'<span class="chip chip-gray">🔒 Баста</span>'
+          :g.is_active!==false
+          ?'<span class="chip chip-green">Фаъол</span>'
+          :'<span class="chip chip-amber">Ғайрифаъол</span>'
+        }
+      </td>
+      <td style="display:flex;gap:.25rem;flex-wrap:wrap">
+        <button class="btn btn-primary btn-xs" onclick="viewGroupProfile(${g.id})">Профил</button>
+        <button class="btn btn-ghost btn-xs" onclick="openAssignCurator(${g.id},'${g.number}')">Куратор</button>
+        ${!g.is_closed
+          ?`<button class="btn btn-amber btn-xs" onclick="closeGroup(${g.id},'${g.number}')">🔒</button>`
+          :`<button class="btn btn-success btn-xs" onclick="reopenGroup(${g.id},'${g.number}')">🔓</button>`
+        }
         <button class="btn btn-danger btn-xs" onclick="deleteGroup(${g.id})">🗑</button>
       </td>
     </tr>`).join('');
-  }catch(e){toast('err',e.message);}
+  }catch(e){toast('err',e.message)}
 }
 async function openGroupModal(id){
   document.getElementById('group-id').value=id||'';
-  document.getElementById('groupModalTitle').textContent=id?'✏️ Таҳрири гурӯҳ':'👥 Гурӯҳи нав';
+  document.getElementById('groupModalTitle').textContent=id?'Таҳрири гурӯҳ':'Гурӯҳи нав';
   document.getElementById('groupSubmitBtn').textContent=id?'Сабт':'Эҷод';
-  // Fill curators
+  // Curators
   const cs=document.getElementById('group-curator-select');
-  cs.innerHTML='<option value="">Холӣ</option>';
-  try{const curators=allCurators.length?allCurators:await api('/dean/api/curators');
-    curators.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.full_name;cs.appendChild(o);});
-  }catch(e){}
-  // Fill courses
-  try{const courses=await api('/dean/api/courses');
-    const cs2=document.getElementById('group-course-select');cs2.innerHTML='<option value="">Интихоб...</option>';
-    courses.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.year}-курс`;cs2.appendChild(o);});
-  }catch(e){}
-  if(id){const g=allGroups.find(x=>x.id===id);if(g){document.getElementById('group-number').value=g.number||'';document.getElementById('group-shift').value=g.shift||'';}}
+  cs.innerHTML='<option value="">Бе куратор</option>';
+  const curators=allCurators.length?allCurators:await api('/dean/api/curators').catch(()=>[]);
+  curators.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.full_name;cs.appendChild(o)});
+  // Courses
+  const cs2=document.getElementById('group-course-select');
+  cs2.innerHTML='<option value="">Интихоб...</option>';
+  const courses=await api('/dean/api/courses').catch(()=>[]);
+  courses.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=`${c.year}-курс`;cs2.appendChild(o)});
+  if(id){const g=allGroups.find(x=>x.id===id);if(g){document.getElementById('group-number').value=g.number||'';document.getElementById('group-shift').value=g.shift||'1';cs2.value=g.course_id||'';cs.value=g.curator_id||'';}}
+  else{document.getElementById('group-number').value='';}
   openModal('group-modal');
 }
-function editGroup(id){openGroupModal(id);}
-async function saveGroup(e){e.preventDefault();
-  const id=document.getElementById('group-id').value;const isNew=!id;
-  const fd=new FormData(e.target);
-  try{await api(isNew?'/dean/api/groups':`/dean/api/groups/${id}`,{method:isNew?'POST':'PUT',body:fd});
-    toast('succ',isNew?'✅ Гурӯҳ эҷод шуд':'✅ Сабт шуд');closeModal('group-modal');loadGroups();}
-  catch(err){toast('err',err.message);}
-}
-async function deleteGroup(id){
-  if(!confirm('Гурӯҳ нест карда шавад?'))return;
-  try{await api(`/dean/api/groups/${id}`,{method:'DELETE'});toast('succ','🗑 Нест шуд');loadGroups();}
-  catch(e){toast('err',e.message);}
+
+
+
+async function saveGroup(e){
+  e.preventDefault();
+
+  const fd = new FormData();
+
+  fd.append("name", document.getElementById("group-name").value);
+  fd.append("number", document.getElementById("group-number").value);
+  fd.append("shift", document.getElementById("group-shift").value);
+  fd.append("course_id", document.getElementById("group-course-select").value);
+
+  const curator = document.getElementById("group-curator-select").value;
+  if(curator) fd.append("curator_id", curator);
+
+  try{
+    await fetch("/dean/api/groups",{
+      method:"POST",
+      body: fd,
+      credentials:"same-origin"
+    });
+
+    toast("succ","Гурӯҳ эҷод шуд");
+    closeModal("group-modal");
+    loadGroups();
+
+  }catch(err){
+    toast("err","Хатогӣ ҳангоми сабт");
+  }
 }
 
-/* ── STUDENTS ── */
+
+
+
+async function deleteGroup(id){
+  if(!confirm('Гурӯҳ нест карда шавад?'))return;
+  try{await api(`/dean/api/groups/${id}`,{method:'DELETE'});toast('succ','Нест шуд');loadGroups();}
+  catch(e){toast('err',e.message)}
+}
+async function closeGroup(id,num){
+  if(!confirm(`Гурӯҳ ${num} маҳкам карда шавад? Баъди маҳкамшавӣ ҳеҷ амале иҷозат дода намешавад!`))return;
+  try{await api(`/dean/api/groups/${id}/close`,{method:'POST',body:JSON.stringify({})});toast('succ','🔒 Гурӯҳ маҳкам шуд');loadGroups();}
+  catch(e){toast('err',e.message)}
+}
+async function reopenGroup(id,num){
+  if(!confirm(`Гурӯҳ ${num} кушода шавад?`))return;
+  try{await api(`/dean/api/groups/${id}/reopen`,{method:'POST',body:JSON.stringify({})});toast('succ','🔓 Гурӯҳ кушода шуд');loadGroups();}
+  catch(e){toast('err',e.message)}
+}
+function openAssignCurator(gid,gnum){
+  document.getElementById('ac-group-id').value=gid;
+  document.getElementById('ac-group-num').textContent=gnum;
+  const cs=document.getElementById('ac-curator-select');
+  cs.innerHTML='<option value="">Бе куратор</option>';
+  const curators=allCurators.length?allCurators:[];
+  curators.forEach(c=>{const o=document.createElement('option');o.value=c.id;o.textContent=c.full_name;cs.appendChild(o)});
+  const g=allGroups.find(x=>x.id===gid);
+  if(g&&g.curator_id)cs.value=g.curator_id;
+  openModal('assign-curator-modal');
+}
+async function saveAssignCurator(){
+  const gid=document.getElementById('ac-group-id').value;
+  const cid=document.getElementById('ac-curator-select').value||null;
+  try{await api(`/dean/api/groups/${gid}/assign-curator`,{method:'POST',body:JSON.stringify({curator_id:cid?parseInt(cid):null})});
+    toast('succ','Куратор таъин шуд');closeModal('assign-curator-modal');loadGroups();}
+  catch(e){toast('err',e.message)}
+}
+async function viewGroupProfile(gid){
+  openModal('group-view-modal');
+  const body=document.getElementById('group-view-body');
+  body.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  try{
+    const groups=allGroups.length?allGroups:await api('/dean/api/groups');
+    const g=groups.find(x=>x.id===gid);
+    if(!g)throw new Error('Гурӯҳ ёфт нашуд');
+    const students=await api(`/dean/api/students?group_id=${gid}&page_size=200`);
+    const stuList=students.students||[];
+    body.innerHTML=`
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding:.875rem;background:linear-gradient(135deg,var(--blue),#0ea5e9);border-radius:var(--rsm);color:#fff">
+        <div style="width:52px;height:52px;border-radius:10px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800">👥</div>
+        <div style="flex:1">
+          <div style="font-size:1.1rem;font-weight:800">Гурӯҳ ${g.number}</div>
+          <div style="font-size:.78rem;opacity:.85">${g.course_year?g.course_year+'-курс':''} · ${g.shift}-навбат${g.study_lang?' · '+g.study_lang:''}</div>
+        </div>
+        ${g.is_closed?'<span style="background:rgba(255,255,255,.2);padding:.25rem .625rem;border-radius:20px;font-size:.72rem;font-weight:700">🔒 БАСТА</span>':''}
+      </div>
+      <div class="info-row"><span class="info-lbl">ID</span><span class="info-val mono">#${g.id}</span></div>
+      <div class="info-row"><span class="info-lbl">Куратор</span><span class="info-val">${g.curator_name||'—'}${g.curator_phone?` <span style="color:var(--tx3);font-size:.75rem">(${g.curator_phone})</span>`:''}</span></div>
+      <div class="info-row"><span class="info-lbl">Email куратор</span><span class="info-val">${g.curator_email||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Донишҷӯён</span><span class="info-val mono">${g.total_students||0}</span></div>
+      <div class="info-row"><span class="info-lbl">Соли таҳсил</span><span class="info-val">${g.academic_year_name||'—'}</span></div>
+      <div class="info-row"><span class="info-lbl">Вазъ</span><span class="info-val">${g.is_closed?'🔒 Баста':g.is_active!==false?'✅ Фаъол':'⚠️ Ғайрифаъол'}</span></div>
+      <div class="info-row"><span class="info-lbl">Эҷод шуд</span><span class="info-val">${g.created_at?g.created_at.split('T')[0]:'—'}</span></div>
+      ${stuList.length?`
+        <div style="margin-top:1rem;padding-top:.875rem;border-top:1px solid var(--bdr)">
+          <div style="font-size:.72rem;font-weight:700;color:var(--tx4);text-transform:uppercase;margin-bottom:.5rem">Донишҷӯён (${stuList.length})</div>
+          <div style="max-height:200px;overflow-y:auto">
+            ${stuList.map((s,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:.3rem 0;border-bottom:1px solid var(--bdr-l);font-size:.78rem">
+              <span>${i+1}. ${s.full_name}</span>
+              <span class="chip ${(s.total_absent_hours||0)>=35?'chip-red':(s.total_absent_hours||0)>=20?'chip-amber':'chip-green'}">${s.total_absent_hours||0} NB</span>
+            </div>`).join('')}
+          </div>
+        </div>`:''}
+    `;
+  }catch(e){body.innerHTML=`<div class="empty"><p>Хатогӣ: ${e.message}</p></div>`}
+}
+
+// ── STUDENTS ───────────────────────────────────────────
 async function loadGroupsForFilter(){
-  try{const d=await api('/dean/api/groups');
-    const opts=d.map(g=>`<option value="${g.id}">Гурӯҳ ${g.number}</option>`).join('');
-    ['student-filter-group','at-risk-filter-group'].forEach(id=>{const el=document.getElementById(id);if(el){const cur=el.value;el.innerHTML='<option value="">Ҳама гурӯҳ</option>'+opts;el.value=cur;}});
+  try{
+    const d=allGroups.length?allGroups:await api('/dean/api/groups');
+    const opts='<option value="">Ҳама гурӯҳ</option>'+d.map(g=>`<option value="${g.id}">Гурӯҳ ${g.number}</option>`).join('');
+    ['student-filter-group','at-risk-filter-group'].forEach(id=>{const el=document.getElementById(id);if(el){const cur=el.value;el.innerHTML=opts;el.value=cur;}});
   }catch(e){}
 }
 async function loadStudents(){
   const group=document.getElementById('student-filter-group')?.value||'';
   const course=document.getElementById('student-filter-course')?.value||'';
   const search=document.getElementById('student-search')?.value||'';
-  const birthplace=document.getElementById('student-filter-birthplace')?.value||'';
   const params=new URLSearchParams();
   if(group)params.append('group_id',group);
   if(course)params.append('course',course);
-  if(search)params.append('search',search);
-  if(birthplace)params.append('birth_place',birthplace);
-  params.append('page',currentPage);params.append('page_size',pageSize);
-  try{const d=await api(`/dean/api/students?${params}`);
-    const students=d.students||d||[];const total=d.total||students.length;
-    const nb_lim=d.nb_limit||35;
+  if(search.length>=2)params.append('search',search);
+  params.append('page',currentPage);params.append('page_size',PAGE_SIZE);
+  try{
+    const d=await api(`/dean/api/students?${params}`);
+    const students=d.students||[];const total=d.total||0;const nb_lim=d.nb_limit||35;
     document.getElementById('total-students').textContent=total;
+    document.getElementById('page-info').textContent=`${(currentPage-1)*PAGE_SIZE+1}–${Math.min(currentPage*PAGE_SIZE,total)} / ${total}`;
     const tb=document.getElementById('students-table');
     if(!students.length){tb.innerHTML='<tr><td colspan="9"><div class="empty"><p>Донишҷӯ ёфт нашуд</p></div></td></tr>';return;}
-    tb.innerHTML=students.map((s,i)=>`<tr>
-      <td><input type="checkbox" class="student-cb" value="${s.id}"></td>
-      <td class="mono">${(currentPage-1)*pageSize+i+1}</td>
-      <td><strong>${s.full_name||'—'}</strong></td>
-      <td class="mono">${s.student_code||'—'}</td>
-      <td>${s.group_number||'—'}</td>
-      <td>${s.course_year||'—'}</td>
-      <td style="font-size:.78rem;color:var(--text-3)">${s.birth_place||'—'}</td>
-      <td><span class="chip ${(s.total_absent_hours||0)>=nb_lim?'chip-red':(s.total_absent_hours||0)>=20?'chip-warn':'chip-green'}">${s.total_absent_hours||0}</span></td>
-      <td style="display:flex;gap:.375rem">
-        <button class="btn btn-primary btn-xs" onclick="editStudent(${s.id})">✏️</button>
-        <button class="btn btn-danger btn-xs" onclick="deleteStudent(${s.id})">🗑</button>
-      </td>
-    </tr>`).join('');
-    const pages=Math.ceil(total/pageSize);
+    tb.innerHTML=students.map((s,i)=>{
+      const nb=s.total_absent_hours||0;
+      const nbCls=nb>=nb_lim?'chip-red':nb>=Math.floor(nb_lim*0.6)?'chip-amber':'chip-green';
+      return`<tr>
+        <td class="mono">${(currentPage-1)*PAGE_SIZE+i+1}</td>
+        <td><strong>${s.full_name||'—'}</strong></td>
+        <td class="mono" style="color:var(--tx3)">${s.student_code||'—'}</td>
+        <td>${s.group_number||'—'}</td>
+        <td>${s.course_year?s.course_year+'-к':'—'}</td>
+        <td style="font-size:.75rem;color:var(--tx3)">${s.birth_place||'—'}</td>
+        <td style="font-size:.75rem">${s.parent_phone||'—'}</td>
+        <td><span class="chip ${nbCls}">${nb}</span></td>
+        <td style="display:flex;gap:.25rem;flex-wrap:wrap">
+          <button class="btn btn-primary btn-xs" onclick="viewStudentProfile(${s.id})">Профил</button>
+          <button class="btn btn-ghost btn-xs" onclick="editStudent(${s.id})">✏️</button>
+          <button class="btn btn-danger btn-xs" onclick="deleteStudent(${s.id})">🗑</button>
+        </td>
+      </tr>`;
+    }).join('');
+    const pages=Math.ceil(total/PAGE_SIZE);
     const pc=document.getElementById('pagination-controls');pc.innerHTML='';
-    for(let p=1;p<=Math.min(pages,10);p++){const b=document.createElement('button');b.className=`pager-btn${p===currentPage?' active':''}`;b.textContent=p;b.onclick=()=>{currentPage=p;loadStudents();};pc.appendChild(b);}
-  }catch(e){toast('err',e.message);}
+    for(let p=1;p<=Math.min(pages,10);p++){
+      const b=document.createElement('button');b.className=`pg-btn${p===currentPage?' active':''}`;
+      b.textContent=p;b.onclick=()=>{currentPage=p;loadStudents();};pc.appendChild(b);
+    }
+  }catch(e){toast('err',e.message)}
 }
-function toggleAll(type){const cbs=document.querySelectorAll(`.${type}-cb`);const all=document.getElementById(`select-all-${type==='student'?'header':'header'}`);cbs.forEach(cb=>cb.checked=all.checked);}
 function openStudentModal(id){
   document.getElementById('student-id').value=id||'';
-  document.getElementById('studentModalTitle').textContent=id?'✏️ Таҳрири донишҷӯ':'🎓 Донишҷӯи нав';
+  document.getElementById('studentModalTitle').textContent=id?'Таҳрири донишҷӯ':'Донишҷӯи нав';
   document.getElementById('studentSubmitBtn').textContent=id?'Сабт':'Илова';
-  // Fill group select
-  const gs=document.getElementById('s-group');gs.innerHTML='<option value="">Интихоб...</option>';
-  allGroups.forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=`Гурӯҳ ${g.number}`;gs.appendChild(o);});
-  if(id){api(`/dean/api/students/${id}`).then(s=>{document.getElementById('s-full-name').value=s.full_name||'';document.getElementById('s-code').value=s.student_code||'';document.getElementById('s-birth-year').value=s.birth_year||'';document.getElementById('s-birth-place').value=s.birth_place||'';document.getElementById('s-phone').value=s.phone||'';document.getElementById('s-parent-phone').value=s.parent_phone||'';document.getElementById('s-group').value=s.group_id||'';}).catch(()=>{});}
-  else{['s-full-name','s-code','s-birth-place','s-phone','s-parent-phone'].forEach(i=>document.getElementById(i).value='');document.getElementById('s-birth-year').value='';}
+  const gs=document.getElementById('s-group');
+  gs.innerHTML='<option value="">Интихоб...</option>';
+  allGroups.filter(g=>!g.is_closed).forEach(g=>{const o=document.createElement('option');o.value=g.id;o.textContent=`Гурӯҳ ${g.number} (${g.course_year||'?'}-курс)`;gs.appendChild(o)});
+  if(id){
+    api(`/dean/api/students/${id}`).then(s=>{
+      document.getElementById('s-name').value=s.full_name||'';
+      document.getElementById('s-code').value=s.student_code||'';
+      document.getElementById('s-birth-year').value=s.birth_year||'';
+      document.getElementById('s-birth-place').value=s.birth_place||'';
+      document.getElementById('s-region').value=s.region||'';
+      document.getElementById('s-parent-phone').value=s.parent_phone||'';
+      gs.value=s.group_id||'';
+    }).catch(()=>{});
+  }else{
+    ['s-name','s-code','s-birth-place','s-region','s-parent-phone'].forEach(i=>document.getElementById(i).value='');
+    document.getElementById('s-birth-year').value='';
+  }
   openModal('student-modal');
 }
-function editStudent(id){openStudentModal(id);}
-async function saveStudent(e){e.preventDefault();
+function editStudent(id){openStudentModal(id)}
+async function saveStudent(e){
+  e.preventDefault();
   const id=document.getElementById('student-id').value;const isNew=!id;
-  const fd=new FormData();
-  fd.append('full_name',document.getElementById('s-full-name').value);
-  fd.append('student_code',document.getElementById('s-code').value||'');
-  fd.append('group_id',document.getElementById('s-group').value);
-  fd.append('birth_year',document.getElementById('s-birth-year').value||'');
-  fd.append('birth_place',document.getElementById('s-birth-place').value||'');
-  fd.append('phone',document.getElementById('s-phone').value||'');
-  fd.append('parent_phone',document.getElementById('s-parent-phone').value||'');
-  try{await api(isNew?'/dean/api/students':`/dean/api/students/${id}`,{method:isNew?'POST':'PUT',body:fd});
-    toast('succ',isNew?'✅ Донишҷӯ илова шуд':'✅ Сабт шуд');closeModal('student-modal');loadStudents();}
-  catch(err){toast('err',err.message);}
+  const body={
+    full_name:document.getElementById('s-name').value,
+    student_code:document.getElementById('s-code').value||null,
+    group_id:parseInt(document.getElementById('s-group').value)||null,
+    birth_year:document.getElementById('s-birth-year').value?parseInt(document.getElementById('s-birth-year').value):null,
+    birth_place:document.getElementById('s-birth-place').value||null,
+    region:document.getElementById('s-region').value||null,
+    parent_phone:document.getElementById('s-parent-phone').value||null,
+  };
+  try{await api(isNew?'/dean/api/students':`/dean/api/students/${id}`,{method:isNew?'POST':'PUT',body:JSON.stringify(body)});
+    toast('succ',isNew?'Донишҷӯ илова шуд':'Сабт шуд');closeModal('student-modal');loadStudents();}
+  catch(err){toast('err',err.message)}
 }
 async function deleteStudent(id){
   if(!confirm('Донишҷӯ нест карда шавад?'))return;
-  try{await api(`/dean/api/students/${id}`,{method:'DELETE'});toast('succ','🗑 Нест шуд');loadStudents();}
-  catch(e){toast('err',e.message);}
+  try{await api(`/dean/api/students/${id}`,{method:'DELETE'});toast('succ','Нест шуд');loadStudents();}
+  catch(e){toast('err',e.message)}
 }
+
+// ── STUDENT PROFILE VIEW ───────────────────────────────
+async function viewStudentProfile(sid){
+  openModal('student-view-modal');
+  const body=document.getElementById('student-view-body');
+  body.innerHTML='<div class="loading"><div class="spin"></div></div>';
+  try{
+    const s=await api('/dean/api/students/'+sid);
+    const nb=s.total_absent_hours||0;
+    const nbLim=s.nb_limit||35;
+    const nbCls=nb>=nbLim?'chip-red':nb>=(nbLim*0.6)?'chip-amber':'chip-green';
+    const nbRows=(s.nb_history||[]).map(r=>`<tr>
+      <td style="font-weight:600">${r.date}</td>
+      <td><span class="chip chip-red" style="font-size:.7rem">${r.nb_hours||'—'}</span></td>
+      <td style="font-size:.75rem;color:var(--tx3)">${r.comment||'—'}</td>
+      <td>${r.is_reasoned?`<span class="chip chip-green" style="font-size:.68rem">✓ Ҷоиз</span><br><span style="font-size:.68rem;color:var(--tx3)">${r.reason_text||''}</span>`:''}</td>
+    </tr>`).join('');
+    body.innerHTML=`
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding:1rem;background:linear-gradient(135deg,#7c3aed,#a855f7);border-radius:var(--rsm);color:#fff;flex-wrap:wrap">
+        <div style="width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:800;border:2px solid rgba(255,255,255,.35);flex-shrink:0">${(s.full_name||'?')[0].toUpperCase()}</div>
+        <div style="flex:1">
+          <div style="font-size:1.1rem;font-weight:800">${s.full_name}</div>
+          <div style="font-size:.78rem;opacity:.85">${s.student_code||''}</div>
+        </div>
+        <span class="chip ${nbCls}" style="font-size:.85rem;padding:.35rem .75rem">${nb} NB соат</span>
+      </div>
+      <div class="g2" style="gap:.375rem;margin-bottom:1.25rem">
+        <div class="info-row"><span class="info-lbl">ID</span><span class="info-val mono">#${s.id}</span></div>
+        <div class="info-row"><span class="info-lbl">Гурӯҳ</span><span class="info-val">${s.group_number||'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Курс</span><span class="info-val">${s.course_year?s.course_year+'-курс':'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Навбат</span><span class="info-val">${s.group_shift?s.group_shift+'-навбат':'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Соли таваллуд</span><span class="info-val">${s.birth_year||'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Зодгоҳ</span><span class="info-val">${s.birth_place||'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Чои зист</span><span class="info-val">${s.region||'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Тел. волидайн</span><span class="info-val">${s.parent_phone||'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Оғози таҳсил</span><span class="info-val">${s.study_start||'—'}</span></div>
+        <div class="info-row"><span class="info-lbl">Хатми тахминӣ</span><span class="info-val">${s.expected_graduation||'—'}</span></div>
+        ${s.created_at?`<div class="info-row"><span class="info-lbl">Сабт шуд</span><span class="info-val mono" style="font-size:.73rem">${s.created_at.split('T')[0]}</span></div>`:''}
+      </div>
+      <!-- NB HISTORY -->
+      <div style="border:1px solid var(--bdr);border-radius:var(--rsm);overflow:hidden">
+        <div style="padding:.5rem .875rem;background:${nb>=nbLim?'#fff5f5':'#f8fafc'};display:flex;align-items:center;justify-content:space-between">
+          <span style="font-size:.72rem;font-weight:700;color:var(--tx3);text-transform:uppercase">Таърихи ғайбуд (NB)</span>
+          <span class="chip ${nbCls}">${(s.nb_history||[]).length} қайд · ${nb} соат</span>
+        </div>
+        ${nbRows
+          ?`<div style="overflow-x:auto"><table class="nb-tbl">
+              <thead><tr><th>Сана</th><th>Соат</th><th>Изоҳ</th><th>Ҷоиз / Сабаб</th></tr></thead>
+              <tbody>${nbRows}</tbody>
+            </table></div>`
+          :'<div style="padding:1.5rem;text-align:center;color:var(--tx4);font-size:.85rem">NB қайд нашудааст ✓</div>'
+        }
+      </div>
+    `;
+  }catch(e){body.innerHTML=`<div class="empty"><p>Хатогӣ: ${e.message}</p></div>`}
+}
+
+// ── AT-RISK ────────────────────────────────────────────
 async function loadAtRiskStudents(){
   const group=document.getElementById('at-risk-filter-group')?.value||'';
   const course=document.getElementById('at-risk-filter-course')?.value||'';
   const params=new URLSearchParams();if(group)params.append('group_id',group);if(course)params.append('course',course);
-  try{const d=await api(`/dean/api/at-risk?${params}`);
+  try{
+    const d=await api(`/dean/api/at-risk?${params}`);
     const tb=document.getElementById('at-risk-table');
-    if(!d.length){tb.innerHTML='<tr><td colspan="7"><div class="empty"><p>Донишҷӯи хавфнок нест</p></div></td></tr>';return;}
-    tb.innerHTML=d.map((s,i)=>`<tr><td class="mono">${i+1}</td><td><strong>${s.full_name||'—'}</strong></td><td class="mono">${s.student_code||'—'}</td><td>${s.group_number||'—'}</td><td><span class="chip chip-red">${s.total_absent_hours||0}</span></td><td>${s.parent_phone||'—'}</td><td><button class="btn btn-success btn-xs" onclick="justifyAbsence(${s.attendance_id||s.id})">Justify</button></td></tr>`).join('');
-  }catch(e){toast('err',e.message);}
-}
-async function justifyAbsence(id){
-  try{await api(`/dean/api/attendance/${id}/justify`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});toast('succ','✅ Тасдиқ шуд');loadAtRiskStudents();}
-  catch(e){toast('err',e.message);}
+    if(!d.length){tb.innerHTML='<tr><td colspan="8"><div class="empty"><p>Донишҷӯи хавфнок нест ✓</p></div></td></tr>';return;}
+    tb.innerHTML=d.map((s,i)=>`<tr>
+      <td class="mono">${i+1}</td>
+      <td><strong>${s.full_name||'—'}</strong></td>
+      <td class="mono" style="color:var(--tx3)">${s.student_code||'—'}</td>
+      <td>${s.group_number||'—'}</td>
+      <td>${s.birth_year?s.birth_year+'-й-таваллуд':'—'}</td>
+      <td><span class="chip chip-red" style="font-size:.8rem">${s.total_absent_hours||0}</span></td>
+      <td>${s.parent_phone||'—'}</td>
+      <td><button class="btn btn-primary btn-xs" onclick="viewStudentProfile(${s.id})">Профил</button></td>
+    </tr>`).join('');
+  }catch(e){toast('err',e.message)}
 }
 
-/* ── EXPORT ── */
-async function exportData(type){
-  try{window.open(`/dean/api/export/${type}`,'_blank');toast('succ','📥 Дарёфт мешавад...');}
-  catch(e){toast('err',e.message);}
-}
+// ── EXPORT ─────────────────────────────────────────────
+function exportData(type){window.open(`/dean/api/export/${type}`,'_blank')}
 
-/* ── AUDIT LOG ── */
+// ── AUDIT LOG ──────────────────────────────────────────
 async function loadAuditLog(){
-  const action=document.getElementById('audit-filter-action')?.value||'';
-  const date=document.getElementById('audit-date')?.value||'';
-  const params=new URLSearchParams();if(action)params.append('action',action);if(date)params.append('date',date);
-  try{const d=await api(`/dean/api/audit-log?${params}`);
+  const d=document.getElementById('audit-date')?.value||'';
+  const params=new URLSearchParams();if(d)params.append('date',d);
+  try{
+    const data=await api(`/dean/api/audit-log?${params}`);
     const tb=document.getElementById('audit-table');
-    if(!d.length){tb.innerHTML='<tr><td colspan="5"><div class="empty"><p>Маълумот нест</p></div></td></tr>';return;}
-    tb.innerHTML=d.map(l=>`<tr><td class="mono" style="font-size:.75rem">${fmt(l.created_at)}</td><td>${l.user_name||'—'}</td><td><span class="chip chip-blue">${l.action||'—'}</span></td><td>${l.object_type||'—'}</td><td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.details||'—'}</td></tr>`).join('');
+    if(!data.length){tb.innerHTML='<tr><td colspan="5"><div class="empty"><p>Маълумот нест</p></div></td></tr>';return;}
+    tb.innerHTML=data.map(l=>`<tr>
+      <td class="mono" style="font-size:.73rem;color:var(--tx3)">${fmtDate(l.created_at)}</td>
+      <td>${l.user_name||'—'}</td>
+      <td><span class="chip chip-blue" style="font-size:.67rem">${l.action||'—'}</span></td>
+      <td style="font-size:.75rem;color:var(--tx3)">${l.object_type||'—'}</td>
+      <td style="font-size:.75rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${l.details||'—'}</td>
+    </tr>`).join('');
   }catch(e){}
 }
 
-/* ── PROFILE ── */
-async function saveProfile(e){e.preventDefault();
-  const payload={
-    full_name:document.getElementById('profile-full-name').value,
-    email:document.getElementById('profile-email').value||'',
-    phone:document.getElementById('profile-phone').value||''
+// ── PROFILE ────────────────────────────────────────────
+async function saveProfile(e){
+  e.preventDefault();
+  const body={
+    full_name:document.getElementById('pf-name').value,
+    email:document.getElementById('pf-email').value||null,
+    phone:document.getElementById('pf-phone').value||null,
+    department:document.getElementById('pf-dept').value||null,
+    birth_year:document.getElementById('pf-birth').value?parseInt(document.getElementById('pf-birth').value):null,
   };
-  try{await api('/dean/api/profile',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});toast('succ','✅ Профил сабт шуд');}
-  catch(e){toast('err',e.message);}
+  try{await api('/dean/api/profile',{method:'PATCH',body:JSON.stringify(body)});toast('succ','Профил сабт шуд');}
+  catch(e){toast('err',e.message)}
 }
 
-/* ── INIT ── */
+// ── INIT ───────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('dcDate').value=new Date().toISOString().split('T')[0];
-  loadDashboard();loadCurators();loadGroups();
+  const fn='{{ user.full_name or "" }}';
+  if(fn){document.getElementById('sb-av').textContent=fn[0]?.toUpperCase()||'Д';}
+  loadDashboard();loadCurators();loadGroups();loadAlerts();
 });
 </script>
 </body>

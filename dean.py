@@ -469,11 +469,15 @@ async def at_risk(
         joinedload(Student.group).joinedload(Group.course)
     ).order_by(Student.total_absent_hours.desc()).all()
     return [{
-        "id": s.id, "full_name": s.full_name, "student_code": s.student_code,
+        "id": s.id,
+        "full_name": s.full_name,
+        "student_code": s.student_code,
         "group_number": s.group.number if s.group else None,
         "group_id": s.group_id,
         "total_absent_hours": int(s.total_absent_hours or 0),
         "parent_phone": s.parent_phone,
+        "birth_year": s.birth_year,
+        "region": s.region,
     } for s in students]
 
 
@@ -741,45 +745,140 @@ async def list_groups(
             Student.group_id.in_(group_ids), Student.is_deleted == False
         ).group_by(Student.group_id).all()}
 
+    # Also need academic_year info
+    ay_ids = list({g.academic_year_id for g in groups if g.academic_year_id})
+    ay_map = {}
+    if ay_ids:
+        from models import AcademicYear as AY
+        for ay in db.query(AY).filter(AY.id.in_(ay_ids)).all():
+            ay_map[ay.id] = ay.name
+
     return [{
-        "id": g.id, "number": g.number, "shift": g.shift,
-        "course_year": g.course.year if g.course else None,
+        # ── Core ──────────────────────────────────────────────────────────
+        "id": g.id,
+        "number": g.number,
+        "name": getattr(g, "name", None) or g.number,
+        # ── Schedule ──────────────────────────────────────────────────────
+        "shift": g.shift,
+        "study_lang": getattr(g, "study_lang", None),
+        # ── Relations ─────────────────────────────────────────────────────
         "course_id": g.course_id,
-        "curator": g.curator.full_name if g.curator else None,
-        "curator_name": g.curator.full_name if g.curator else None,
+        "course_year": g.course.year if g.course else None,
+        "academic_year_id": g.academic_year_id,
+        "academic_year_name": ay_map.get(g.academic_year_id),
+        "faculty_id": g.faculty_id,
+        # ── Curator (full info) ────────────────────────────────────────────
         "curator_id": g.curator_id,
-        "total_students": student_counts.get(g.id, 0),
+        "curator_name": g.curator.full_name if g.curator else None,
+        "curator_username": g.curator.username if g.curator else None,
+        "curator_phone": g.curator.phone if g.curator else None,
+        "curator_email": g.curator.email if g.curator else None,
+        "curator_department": g.curator.department if g.curator else None,
+        # ── Status ────────────────────────────────────────────────────────
         "is_active": g.is_active,
+        "is_closed": getattr(g, "is_closed", False),
+        "is_deleted": g.is_deleted,
+        # ── Stats ─────────────────────────────────────────────────────────
+        "total_students": student_counts.get(g.id, 0),
+        # ── Timestamps ────────────────────────────────────────────────────
+        "created_at": g.created_at.isoformat() if g.created_at else None,
+        "updated_at": g.updated_at.isoformat() if g.updated_at else None,
     } for g in groups]
 
 
+from sqlalchemy import text
+
 @router.post("/api/groups")
 async def create_group(
-    number: str = Form(...), shift: int = Form(...), course_id: int = Form(...),
+    number: str = Form(...),
+    name: str = Form(...),
+    shift: int = Form(...),
+    course_id: int = Form(...),
     curator_id: Optional[int] = Form(None),
     current_user: User = Depends(get_current_dean),
     db: Session = Depends(get_db),
 ):
-    ay = db.query(AcademicYear).filter(AcademicYear.is_current == True).first()
+    # 📌 academic year
+    ay = db.execute(text("""
+        SELECT id FROM academic_years
+        WHERE is_current = true
+        LIMIT 1
+    """)).fetchone()
+
     if not ay:
         raise HTTPException(400, "Соли таҳсили ҷорӣ муайян нашудааст")
+
+    academic_year_id = ay.id
+
+    # 📌 check course
+    course = db.execute(text("""
+        SELECT id FROM courses WHERE id = :course_id
+    """), {"course_id": course_id}).fetchone()
+
+    if not course:
+        raise HTTPException(400, "Курс ёфт нашуд")
+
+    # 📌 check curator
     if curator_id:
-        c = db.query(User).filter(
-            User.id == curator_id, User.faculty_id == current_user.faculty_id,
-            User.role == UserRole.CURATOR, User.is_deleted == False
-        ).first()
-        if not c:
+        curator = db.execute(text("""
+            SELECT id FROM users
+            WHERE id = :curator_id
+            AND faculty_id = :faculty_id
+            AND role = 'curator'
+            AND is_deleted = false
+        """), {
+            "curator_id": curator_id,
+            "faculty_id": current_user.faculty_id
+        }).fetchone()
+
+        if not curator:
             raise HTTPException(400, "Куратор ёфт нашуд")
-    g = Group(
-        number=number, shift=shift, course_id=course_id,
-        academic_year_id=ay.id, faculty_id=current_user.faculty_id,
-        curator_id=curator_id, is_active=True,
-    )
-    db.add(g)
+
+    # 📌 duplicate group number check
+    duplicate = db.execute(text("""
+        SELECT id FROM groups
+        WHERE number = :number
+        AND course_id = :course_id
+        AND faculty_id = :faculty_id
+        AND is_deleted = false
+    """), {
+        "number": number,
+        "course_id": course_id, 
+        "faculty_id": current_user.faculty_id,
+        "academic_year_id": academic_year_id
+    }).fetchone()
+
+    if duplicate:
+        raise HTTPException(400, "Ин рақами гурӯҳ аллакай вуҷуд дорад")
+
+    # 🚀 INSERT
+    result = db.execute(text("""
+        INSERT INTO groups (
+            name, number, shift, course_id,
+            academic_year_id, faculty_id, curator_id,
+            is_active
+        )
+        VALUES (
+            :name, :number, :shift, :course_id,
+            :academic_year_id, :faculty_id, :curator_id,
+            true
+        )
+        RETURNING id, name, number
+    """), {
+        "name": name,
+        "number": number,
+        "shift": shift,
+        "course_id": course_id,
+        "academic_year_id": academic_year_id,
+        "faculty_id": current_user.faculty_id,
+        "curator_id": curator_id
+    })
+
+    row = result.fetchone()
     db.commit()
-    _audit(db, current_user.id, "GROUP_CREATED", "groups", g.id, number)
-    db.commit()
-    return {"id": g.id, "number": g.number}
+
+    return dict(row._mapping)
+
 
 
 @router.put("/api/groups/{gid}")
@@ -949,16 +1048,31 @@ async def list_students(
         "page_size": page_size,
         "nb_limit": nb_limit,
         "students": [{
-            "id": s.id, "full_name": s.full_name, "student_code": s.student_code,
-            "group_number": s.group.number if s.group else None,
+            # ── Identity ──────────────────────────────────────────────────
+            "id": s.id,
+            "full_name": s.full_name,
+            "student_code": s.student_code,
+            # ── Group / Faculty ────────────────────────────────────────────
             "group_id": s.group_id,
+            "group_number": s.group.number if s.group else None,
             "course_year": s.group.course.year if s.group and s.group.course else None,
-            "total_absences": int(s.total_absent_hours or 0),
-            "total_absent_hours": int(s.total_absent_hours or 0),
+            "faculty_id": s.faculty_id,
+            # ── Personal ──────────────────────────────────────────────────
+            "birth_year": s.birth_year,
             "birth_place": s.birth_place or "",
             "region": s.region or "",
             "parent_phone": s.parent_phone or "",
+            # ── Education ─────────────────────────────────────────────────
+            "education_type": getattr(s, "education_type", None),
+            "study_start": str(s.study_start) if s.study_start else None,
+            "expected_graduation": str(s.expected_graduation) if s.expected_graduation else None,
+            # ── Attendance ────────────────────────────────────────────────
+            "total_absent_hours": int(s.total_absent_hours or 0),
+            "total_absences": int(s.total_absent_hours or 0),
             "is_high_risk": (s.total_absent_hours or 0) >= nb_limit,
+            # ── Timestamps ────────────────────────────────────────────────
+            "created_at": s.created_at.isoformat() if s.created_at else None,
+            "updated_at": s.updated_at.isoformat() if s.updated_at else None,
         } for s in students],
     }
 
@@ -976,16 +1090,99 @@ async def get_student(
     if not s:
         raise HTTPException(404, "Донишҷӯ ёфт нашуд")
     nb_limit = int(get_system_setting(db, "NB_LIMIT_HIGH", "35"))
+
+    # NB history with exact dates
+    nb_records = (
+        db.query(Attendance, Lesson)
+        .join(Lesson, Attendance.lesson_id == Lesson.id)
+        .filter(Attendance.student_id == sid, Attendance.status == "absent")
+        .order_by(Lesson.lesson_date.desc())
+        .all()
+    )
+
     return {
-        "id": s.id, "full_name": s.full_name, "student_code": s.student_code,
-        "birth_year": s.birth_year, "birth_place": s.birth_place,
-        "region": s.region, "parent_phone": s.parent_phone,
-        "study_start": str(s.study_start) if s.study_start else None,
-        "total_absent_hours": int(s.total_absent_hours or 0),
-        "group_number": s.group.number if s.group else None,
+        # ── Identity ──────────────────────────────────────────────────────
+        "id": s.id,
+        "full_name": s.full_name,
+        "student_code": s.student_code,
+        # ── Group / Faculty ────────────────────────────────────────────────
         "group_id": s.group_id,
+        "group_number": s.group.number if s.group else None,
+        "group_name": getattr(s.group, "name", None) if s.group else None,
+        "group_shift": s.group.shift if s.group else None,
         "course_year": s.group.course.year if s.group and s.group.course else None,
+        "faculty_id": s.faculty_id,
+        # ── Personal ──────────────────────────────────────────────────────
+        "birth_year": s.birth_year,
+        "birth_place": s.birth_place or "",
+        "region": s.region or "",
+        "parent_phone": s.parent_phone or "",
+        # ── Education ─────────────────────────────────────────────────────
+        "education_type": getattr(s, "education_type", None),
+        "study_start": str(s.study_start) if s.study_start else None,
+        "expected_graduation": str(s.expected_graduation) if s.expected_graduation else None,
+        # ── Attendance ────────────────────────────────────────────────────
+        "total_absent_hours": int(s.total_absent_hours or 0),
         "is_high_risk": (s.total_absent_hours or 0) >= nb_limit,
+        # ── NB History ────────────────────────────────────────────────────
+        "nb_history": [
+            {
+                "date": str(l.lesson_date),
+                "nb_hours": a.nb_hours,
+                "comment": a.comment or "",
+                "is_reasoned": a.is_reasoned,
+                "reason_text": a.reason_text or "",
+            }
+            for a, l in nb_records
+        ],
+        # ── Timestamps ────────────────────────────────────────────────────
+        "created_at": s.created_at.isoformat() if s.created_at else None,
+        "updated_at": s.updated_at.isoformat() if s.updated_at else None,
+        "is_deleted": s.is_deleted,
+    }
+
+
+@router.get("/api/students/{sid}/nb-history")
+async def student_nb_history(
+    sid: int,
+    current_user: User = Depends(get_current_dean),
+    db: Session = Depends(get_db),
+):
+    """
+    Detailed NB (absence) history for a student with exact dates.
+    Dean requirement: show all NB records with precise dates.
+    """
+    fid = current_user.faculty_id
+    s = db.query(Student).join(Group).filter(
+        Student.id == sid, Group.faculty_id == fid, Student.is_deleted == False
+    ).first()
+    if not s:
+        raise HTTPException(404, "Донишҷӯ ёфт нашуд")
+
+    records = (
+        db.query(Attendance, Lesson)
+        .join(Lesson, Attendance.lesson_id == Lesson.id)
+        .filter(
+            Attendance.student_id == sid,
+            Attendance.status == "absent",
+        )
+        .order_by(Lesson.lesson_date.desc())
+        .all()
+    )
+    return {
+        "student_id": sid,
+        "full_name": s.full_name,
+        "total_absent_hours": int(s.total_absent_hours or 0),
+        "nb_records": [
+            {
+                "date": str(l.lesson_date),
+                "nb_hours": a.nb_hours,
+                "comment": a.comment or "",
+                "is_reasoned": a.is_reasoned,
+                "reason_text": getattr(a, "reason_text", "") or "",
+            }
+            for a, l in records
+        ],
     }
 
 
@@ -1136,13 +1333,88 @@ async def list_curators(
     for c in curators:
         grp = grp_map.get(c.id)
         result.append({
-            "id": c.id, "full_name": c.full_name, "username": c.username,
-            "email": c.email, "phone": c.phone, "department": c.department,
-            "is_active": not getattr(c, "is_deleted", False),
+            # ── Identity ──────────────────────────────────────────────────
+            "id": c.id,
+            "full_name": c.full_name,
+            "username": c.username,
+            "role": c.role.value if c.role else None,
+            # ── Contact ───────────────────────────────────────────────────
+            "email": c.email,
+            "phone": c.phone,
+            "department": c.department,
+            # ── Personal ──────────────────────────────────────────────────
+            "birth_year": c.birth_year,
+            # ── Faculty ───────────────────────────────────────────────────
+            "faculty_id": c.faculty_id,
+            # ── Group ─────────────────────────────────────────────────────
             "group": grp,
+            "group_id": grp["id"] if grp else None,
             "group_number": grp["number"] if grp else None,
+            # ── Account ───────────────────────────────────────────────────
+            "force_password_change": c.force_password_change,
+            "token_version": c.token_version,
+            "is_active": not getattr(c, "is_deleted", False),
+            "is_deleted": c.is_deleted,
+            # ── Timestamps ────────────────────────────────────────────────
+            "created_at": c.created_at.isoformat() if c.created_at else None,
+            "updated_at": c.updated_at.isoformat() if c.updated_at else None,
         })
     return result
+
+
+@router.get("/api/curators/{cid}")
+async def get_curator(
+    cid: int,
+    current_user: User = Depends(get_current_dean),
+    db: Session = Depends(get_db),
+):
+    """Full curator profile with all fields and their groups."""
+    c = db.query(User).filter(
+        User.id == cid,
+        User.faculty_id == current_user.faculty_id,
+        User.role == UserRole.CURATOR,
+        User.is_deleted == False,
+    ).first()
+    if not c:
+        raise HTTPException(404, "Куратор ёфт нашуд")
+
+    # All groups for this curator
+    groups = db.query(Group).filter(
+        Group.curator_id == c.id, Group.is_deleted == False
+    ).options(joinedload(Group.course)).all()
+
+    return {
+        # ── Identity ──────────────────────────────────────────────────────
+        "id": c.id,
+        "full_name": c.full_name,
+        "username": c.username,
+        "role": c.role.value if c.role else None,
+        # ── Contact ───────────────────────────────────────────────────────
+        "email": c.email,
+        "phone": c.phone,
+        "department": c.department,
+        # ── Personal ──────────────────────────────────────────────────────
+        "birth_year": c.birth_year,
+        # ── Faculty ───────────────────────────────────────────────────────
+        "faculty_id": c.faculty_id,
+        # ── Groups ────────────────────────────────────────────────────────
+        "group_id": groups[0].id if groups else None,
+        "group_number": groups[0].number if groups else None,
+        "groups": [{
+            "id": g.id,
+            "number": g.number,
+            "shift": g.shift,
+            "course_year": g.course.year if g.course else None,
+            "is_active": g.is_active,
+        } for g in groups],
+        # ── Account ───────────────────────────────────────────────────────
+        "force_password_change": c.force_password_change,
+        "token_version": c.token_version,
+        "is_deleted": c.is_deleted,
+        # ── Timestamps ────────────────────────────────────────────────────
+        "created_at": c.created_at.isoformat() if c.created_at else None,
+        "updated_at": c.updated_at.isoformat() if c.updated_at else None,
+    }
 
 
 @router.post("/api/curators")
@@ -1325,11 +1597,29 @@ async def get_profile(
 ):
     faculty = db.query(Faculty).filter(Faculty.id == current_user.faculty_id).first()
     return {
-        "id": current_user.id, "full_name": current_user.full_name,
-        "username": current_user.username, "email": current_user.email,
-        "phone": current_user.phone, "department": current_user.department,
+        # ── Identity ──────────────────────────────────────────────────────
+        "id": current_user.id,
+        "full_name": current_user.full_name,
+        "username": current_user.username,
+        "role": current_user.role.value,
+        # ── Contact ───────────────────────────────────────────────────────
+        "email": current_user.email,
+        "phone": current_user.phone,
+        "department": current_user.department,
+        # ── Personal ──────────────────────────────────────────────────────
         "birth_year": current_user.birth_year,
+        # ── Faculty ───────────────────────────────────────────────────────
+        "faculty_id": current_user.faculty_id,
         "faculty": faculty.name if faculty else None,
+        "faculty_name": faculty.name if faculty else None,
+        "faculty_code": faculty.code if faculty else None,
+        # ── Account ───────────────────────────────────────────────────────
+        "force_password_change": current_user.force_password_change,
+        "token_version": current_user.token_version,
+        "is_deleted": current_user.is_deleted,
+        # ── Timestamps ────────────────────────────────────────────────────
+        "created_at": current_user.created_at.isoformat() if current_user.created_at else None,
+        "updated_at": current_user.updated_at.isoformat() if current_user.updated_at else None,
     }
 
 
@@ -1340,11 +1630,18 @@ async def patch_profile(
     db: Session = Depends(get_db),
 ):
     if "full_name" in payload and payload["full_name"]:
-        current_user.full_name = payload["full_name"]
+        current_user.full_name = str(payload["full_name"]).strip()
     if "email" in payload:
         current_user.email = payload["email"] or None
     if "phone" in payload:
         current_user.phone = payload["phone"] or None
+    if "department" in payload:
+        current_user.department = payload["department"] or None
+    if "birth_year" in payload and payload["birth_year"]:
+        try:
+            current_user.birth_year = int(payload["birth_year"])
+        except (ValueError, TypeError):
+            pass
     _audit(db, current_user.id, "PROFILE_UPDATED", "users", current_user.id)
     db.commit()
     return {"ok": True, "full_name": current_user.full_name}
